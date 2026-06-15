@@ -1,7 +1,7 @@
-import styles from './App.module.scss'
+import { ColliderPage } from "./pages/ColliderPage"
 
 function App() {
-  return <h1 className={styles.title}>Collider start</h1>
+  return <ColliderPage />
 }
 
 export default App
