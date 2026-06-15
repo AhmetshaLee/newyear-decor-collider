@@ -1,0 +1,1 @@
+export { BasePageLayout } from './BasePageLayout'
