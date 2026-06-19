@@ -3,13 +3,14 @@ import { useState, type CSSProperties } from 'react'
 import styles from './ColliderFrame.module.scss'
 
 type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
+type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'
 
 type MonitorState = {
   userShards: number
   decorationProject: string
   selectedLevel: string
   selectedAlbum: AlbumValue
-  selectedType: string
+  selectedType: DecorationTypeValue
   isAntiRepeatOn: boolean
 }
 
@@ -25,8 +26,16 @@ const INITIAL_MONITOR_STATE: MonitorState = {
   decorationProject: 'Проект украшения',
   selectedLevel: 'II',
   selectedAlbum: 'classic',
-  selectedType: 'Подарок под ель',
+  selectedType: 'floor',
   isAntiRepeatOn: false,
+}
+
+const TYPE_DISPLAY_NAME: Record<DecorationTypeValue, string> = {
+  random: 'Случайный',
+  top: 'Верхушка',
+  lights: 'Гирлянды',
+  toys: 'Навесные игрушки',
+  floor: 'Нижние игрушки',
 }
 
 const ALBUM_OPTIONS: AlbumOption[] = [
@@ -97,6 +106,13 @@ export function ColliderFrame() {
     selectAlbum(nextAlbumOption.value)
   }
 
+  const selectType = (decorationType: DecorationTypeValue) => {
+    setMonitorState((currentState) => ({
+      ...currentState,
+      selectedType: decorationType,
+    }))
+  }
+
   return (
     <section className={styles.frame}>
       <div className={styles.panelGrid}>
@@ -117,7 +133,7 @@ export function ColliderFrame() {
                 Альбом: {selectedAlbumOption.displayName}
               </p>
               <p className={styles.screenLine}>
-                Тип украшения: {monitorState.selectedType}
+                Тип украшения: {TYPE_DISPLAY_NAME[monitorState.selectedType]}
               </p>
               <p className={styles.screenLine}>
                 Антиповторитель:{' '}
@@ -183,6 +199,27 @@ export function ColliderFrame() {
               <span className={styles.rotorPointer} />
             </button>
           </div>
+        </section>
+
+        <section className={styles.typeButtonGroup}>
+          <span className={styles.typeButtonFrame}>
+            <button
+              className={`${styles.typeButton} ${monitorState.selectedType === 'random' ? styles.activeTypeButton : ''}`}
+              type="button"
+              onClick={() => selectType('random')}
+            >
+              ?
+            </button>
+          </span>
+          <span className={styles.typeButtonFrame}>
+            <button
+              className={`${styles.typeButton} ${monitorState.selectedType === 'floor' ? styles.activeTypeButton : ''}`}
+              type="button"
+              onClick={() => selectType('floor')}
+            >
+              ◆
+            </button>
+          </span>
         </section>
       </div>
     </section>
