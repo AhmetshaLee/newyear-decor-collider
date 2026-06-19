@@ -13,6 +13,13 @@
     0 28px 70px rgba(0, 0, 0, 0.36);
 }
 
+.panelGrid {
+  display: grid;
+  grid-template-columns: 560px 290px;
+  align-items: center;
+  gap: 40px;
+}
+
 .monitorPanel {
   width: 560px;
   padding: 14px;
@@ -43,7 +50,7 @@
   border-radius: 4px;
   color: #62d789;
   font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 1.4;
   background:
@@ -56,23 +63,155 @@
     #101a18;
 }
 
-.screen p {
-  margin: 0;
-}
-
-.shardsLine {
-  margin-bottom: 8px;
+.screenLine {
+  margin-block: 0;
 }
 
 .divider {
   height: 2px;
-  margin: 8px 0 18px;
-  border-radius: 999px;
+  margin-block: 8px 18px;
   background: rgba(89, 221, 128, 0.72);
 }
 
-.projectLine {
-  margin-bottom: 4px;
-  font-size: 22px;
+.projectTitle {
+  margin-block: 0 4px;
+  font-size: 20px;
   text-transform: uppercase;
+}
+
+.rotorPanel {
+  width: 290px;
+  padding: 14px 16px 10px;
+  border: 1px solid rgba(12, 16, 15, 0.72);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%), #2f3330;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -12px 22px rgba(0, 0, 0, 0.24),
+    0 18px 32px rgba(0, 0, 0, 0.24);
+}
+
+.rotorTitle {
+  margin-block: 0 14px;
+  color: rgba(221, 226, 215, 0.72);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.rotorScale {
+  position: relative;
+  width: 230px;
+  height: 160px;
+  margin-inline: auto;
+}
+
+.rotorScale::before {
+  position: absolute;
+  top: 52px;
+  left: 35px;
+  width: 160px;
+  height: 80px;
+  border: 4px solid rgba(107, 126, 117, 0.38);
+  border-bottom: 0;
+  border-radius: 160px 160px 0 0;
+  content: '';
+}
+
+.rotorTick {
+  --tick-angle: 0deg;
+
+  position: absolute;
+  left: 50%;
+  top: 130px;
+  width: 10px;
+  height: 2px;
+  background: rgba(126, 147, 137, 0.52);
+  transform-origin: left center;
+  transform: rotate(var(--tick-angle)) translateX(77px) translateZ(0);
+}
+
+.majorTick {
+  width: 14px;
+  height: 2px;
+  background: rgba(173, 190, 180, 0.7);
+}
+
+.rotorIcon {
+  --icon-angle: 0deg;
+  --icon-upright-angle: 0deg;
+
+  position: absolute;
+  left: 50%;
+  top: 130px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: rgba(210, 215, 207, 0.56);
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  background: transparent;
+  transform: translate(-50%, -50%) rotate(var(--icon-angle)) translateX(112px)
+    rotate(var(--icon-upright-angle));
+  transition:
+    color 140ms ease,
+    text-shadow 140ms ease;
+}
+
+.rotorIcon:hover {
+  color: rgba(255, 216, 182, 0.86);
+  text-shadow:
+    0 0 6px rgba(255, 137, 72, 0.55),
+    0 0 14px rgba(255, 107, 54, 0.34);
+}
+
+.activeRotorIcon {
+  color: #ffb078;
+  text-shadow:
+    0 0 8px rgba(255, 107, 54, 0.8),
+    0 0 18px rgba(255, 107, 54, 0.52);
+}
+
+.rotorKnob {
+  --rotor-angle: 0deg;
+
+  position: absolute;
+  left: 50%;
+  top: 130px;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 1px solid rgba(3, 5, 5, 0.78);
+  border-radius: 50%;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 34%),
+    radial-gradient(circle at center, #151918 0 42%, #0b0e0d 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.06),
+    inset 0 -6px 9px rgba(0, 0, 0, 0.36),
+    0 4px 7px rgba(0, 0, 0, 0.24);
+  transform: translate(-50%, -50%) rotate(var(--rotor-angle));
+  transition: transform 180ms ease;
+}
+
+.rotorPointer {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  z-index: 1;
+  width: 48px;
+  height: 108px;
+  background: linear-gradient(90deg, #080a09 0 26%, #171b1a 52%, #090b0a 100%);
+  clip-path: polygon(46% 0, 54% 0, 82% 100%, 18% 100%);
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.26));
+  transform: translateX(-50%);
 }
