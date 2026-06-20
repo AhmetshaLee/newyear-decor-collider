@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react'
+import { ShardCostCounter } from '../ShardCostCounter'
 
 import styles from './ColliderFrame.module.scss'
 
@@ -74,6 +75,8 @@ const ALBUM_OPTIONS: AlbumOption[] = [
 const ALBUM_TICK_ANGLES = [
   -180, -157.5, -135, -112.5, -90, -67.5, -45, -22.5, 0,
 ]
+
+const displayedCraftCost = 120
 
 const getAlbumOption = (value: AlbumValue) => {
   return (
@@ -226,6 +229,8 @@ export function ColliderFrame() {
             </div>
           </div>
         </section>
+
+        <ShardCostCounter value={displayedCraftCost} />
       </div>
     </section>
   )

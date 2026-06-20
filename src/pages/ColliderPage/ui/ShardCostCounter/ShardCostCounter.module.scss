@@ -1,0 +1,98 @@
+.counter {
+  width: 158px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1px solid rgba(9, 11, 12, 0.78);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 40%),
+    linear-gradient(
+      90deg,
+      #6f747a 0%,
+      #60656b 24%,
+      #5a5f65 52%,
+      #686d73 76%,
+      #767b82 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -8px 14px rgba(0, 0, 0, 0.34),
+    0 8px 14px rgba(0, 0, 0, 0.28);
+}
+
+.display {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding-inline: 8px;
+  border: 1px solid rgba(16, 17, 18, 0.88);
+  border-radius: 5px;
+  overflow: hidden;
+  font-family: 'Consolas', 'Courier New', monospace;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(62, 27, 18, 0.72) 0%,
+      rgba(28, 19, 16, 0.92) 52%,
+      rgba(10, 10, 12, 0.98) 100%
+    ),
+    #101113;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.72),
+    inset 0 0 16px rgba(255, 86, 36, 0.16);
+}
+
+.digitSlot {
+  position: relative;
+  width: 32px;
+  flex: 0 0 32px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.digitSlot::before {
+  position: absolute;
+  inset: 2px 3px 0;
+  z-index: -1;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 184, 88, 0.18),
+    rgba(255, 112, 45, 0.38) 45%,
+    rgba(255, 58, 28, 0.22) 100%
+  );
+  filter: blur(5px);
+  content: '';
+}
+
+.digit {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.activeDigit {
+  color: #ffad5f;
+  text-shadow:
+    0 0 4px rgba(255, 196, 112, 0.95),
+    0 0 10px rgba(255, 112, 48, 0.72),
+    0 0 18px rgba(255, 71, 31, 0.46);
+}
+
+.zeroDigit {
+  color: #b75f38;
+  text-shadow:
+    0 0 3px rgba(255, 129, 62, 0.42),
+    0 0 8px rgba(196, 67, 31, 0.24);
+}
