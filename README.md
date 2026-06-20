@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# Newyear Decor Collider
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Новогодний Коллайдер** — клиентская SPA-панель управления выдуманным новогодним прибором, который превращает внутриигровые осколки в праздничные украшения.
 
-Currently, two official plugins are available:
+## О проекте
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Игрок получает осколки через ежедневный календарь, тратит их в коллайдере на создание украшений, хранит созданные предметы в инвентаре и открывает уникальные позиции в книге коллекций. Прогресс хранится в `localStorage`.
 
-## React Compiler
+Основные части приложения:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `/collider` — главный экран прибора с аналоговой панелью, настройками рецепта и запуском крафта.
+- `/calendar` — ежедневный календарь наград с time-lock логикой и сезонным сбросом месяца.
+- `/inventory` — хранилище созданных украшений с механикой утилизации предметов.
+- `/collection` — книга коллекций с прогрессом открытия уникальных украшений по альбомам.
 
-## Expanding the ESLint configuration
+## Технологии
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- ⚛️ **React 19.2** — основа пользовательского интерфейса.
+- 🟦 **TypeScript 6** — строгая типизация приложения и доменной логики.
+- ⚡ **Vite 8** — dev-сервер, сборка и быстрый HMR.
+- 🧭 **React Router 7** — маршрутизация между экранами приложения.
+- 🎨 **SCSS Modules** — локальные стили компонентов без UI-библиотек.
+- 🧹 **ESLint + Prettier** — проверка качества кода и единое форматирование.
+- 💾 **localStorage** — сохранение игрового прогресса на стороне клиента.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Архитектура
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Код организуется по принципам Feature-Sliced Design. Ниже перечислены только слои и директории, которые уже используются в проекте или напрямую предусмотрены текущей спецификацией:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- `src/app` — инициализация приложения, роутер, глобальные стили и layout-компоненты.
+- `src/pages` — страницы маршрутов: календарь, коллайдер, инвентарь и коллекция.
+- `shared/lib` — место для чистых функций бизнес-логики, расчетов, фильтрации наград и работы с датами.
+
+## Быстрый старт
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+После запуска приложение доступно на локальном адресе, который выведет Vite.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Скрипты
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `pnpm dev` — запуск dev-сервера.
+- `pnpm build` — проверка TypeScript и production-сборка.
+- `pnpm preview` — локальный просмотр production-сборки.
+- `pnpm type-check` — проверка типов без сборки.
+- `pnpm lint` — запуск ESLint.
+- `pnpm lint:fix` — автоматическое исправление доступных ESLint-ошибок.
+- `pnpm format` — форматирование Prettier.
+- `pnpm format:check` — проверка форматирования.
+
+## Документация
+
+Проектная логика описана в `docs`. Документация находится в процессе развития и может меняться:
+
+- `docs/01-project-core.md` — глобальный стейт, `localStorage`, навигация и роутинг.
+- `docs/02-daily-calendar.md` — ежедневный календарь, пропуски, time-lock и сброс месяца.
+- `docs/03-collider.md` — элементы управления коллайдером, инварианты и формула цены.
+- `docs/03a-collider-canvas.md` — правила отображения холста и масштабирования прибора.
+- `docs/04-collection-book.md` — инвентарь, книга коллекций, фильтрация наград и антиповторитель.
+- `docs/CODE_STYLE.md` — архитектурные правила, стиль кода и формат коммитов.
