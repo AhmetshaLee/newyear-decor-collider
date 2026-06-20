@@ -224,20 +224,38 @@
 
 // ==== DECORATION TYPE BUTTONS ====
 
+.typePanel {
+  width: max-content;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  gap: 12px;
+}
+
+.typePanelTitle {
+  width: 0;
+  min-width: 100%;
+  color: rgba(221, 226, 215, 0.72);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+}
+
+.typePanelBody {
+  padding: 10px 12px;
+  border: 2px solid rgba(210, 215, 207, 0.56);
+  border-radius: 8px;
+}
+
 .typeButtonGroup {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 14px;
-  border: 1px solid rgba(12, 16, 15, 0.72);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 44%),
-    rgba(47, 51, 48, 0.82);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -10px 18px rgba(0, 0, 0, 0.22),
-    0 12px 22px rgba(0, 0, 0, 0.22);
+  gap: 12px;
 }
 
 .typeButtonFrame {
@@ -255,8 +273,8 @@
 .typeButton {
   position: relative;
   z-index: 1;
-  width: 88px;
-  height: 52px;
+  width: 102px;
+  height: 56px;
   display: grid;
   place-items: center;
   padding: 0;

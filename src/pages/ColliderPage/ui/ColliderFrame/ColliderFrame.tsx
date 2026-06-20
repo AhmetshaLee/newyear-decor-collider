@@ -201,25 +201,30 @@ export function ColliderFrame() {
           </div>
         </section>
 
-        <section className={styles.typeButtonGroup}>
-          <span className={styles.typeButtonFrame}>
-            <button
-              className={`${styles.typeButton} ${monitorState.selectedType === 'random' ? styles.activeTypeButton : ''}`}
-              type="button"
-              onClick={() => selectType('random')}
-            >
-              ?
-            </button>
-          </span>
-          <span className={styles.typeButtonFrame}>
-            <button
-              className={`${styles.typeButton} ${monitorState.selectedType === 'floor' ? styles.activeTypeButton : ''}`}
-              type="button"
-              onClick={() => selectType('floor')}
-            >
-              ◆
-            </button>
-          </span>
+        <section className={styles.typePanel}>
+          <h2 className={styles.typePanelTitle}>Тип украшения</h2>
+          <div className={styles.typePanelBody}>
+            <div className={styles.typeButtonGroup}>
+              <span className={styles.typeButtonFrame}>
+                <button
+                  className={`${styles.typeButton} ${monitorState.selectedType === 'random' ? styles.activeTypeButton : ''}`}
+                  type="button"
+                  onClick={() => selectType('random')}
+                >
+                  ?
+                </button>
+              </span>
+              <span className={styles.typeButtonFrame}>
+                <button
+                  className={`${styles.typeButton} ${monitorState.selectedType === 'floor' ? styles.activeTypeButton : ''}`}
+                  type="button"
+                  onClick={() => selectType('floor')}
+                >
+                  ◆
+                </button>
+              </span>
+            </div>
+          </div>
         </section>
       </div>
     </section>
