@@ -16,15 +16,25 @@
 }
 
 .panelGrid {
+  width: 100%;
+  height: 100%;
   display: grid;
-  grid-template-columns: 560px 290px;
+  grid-template-areas:
+    'albumRotor monitorPanel decorationType'
+    'craftCost startButton decorationType'
+    'craftCost startButton .';
+  grid-template-columns: 290px 560px 220px;
+  grid-template-rows: 222px 98px 1fr;
   align-items: center;
-  gap: 40px;
+  justify-content: space-between;
+  column-gap: 40px;
+  row-gap: 26px;
 }
 
 // ==== MONITOR ====
 
 .monitorPanel {
+  grid-area: monitorPanel;
   width: 560px;
   padding: 14px;
   border: 1px solid rgba(12, 16, 15, 0.72);
@@ -86,6 +96,7 @@
 // ==== ALBUM ROTOR ====
 
 .rotorPanel {
+  grid-area: albumRotor;
   width: 290px;
   padding: 14px 16px 10px;
   border: 1px solid rgba(12, 16, 15, 0.72);
@@ -225,6 +236,7 @@
 // ==== DECORATION TYPE BUTTONS ====
 
 .typePanel {
+  grid-area: decorationType;
   width: max-content;
   display: inline-flex;
   flex-direction: column;
@@ -354,4 +366,11 @@
     inset 0 -1px 2px rgba(255, 234, 205, 0.22),
     0 0 18px rgba(255, 117, 54, 0.48);
   transform: translateY(1px);
+}
+
+// ==== CRAFT COST ====
+
+.costControl {
+  grid-area: craftCost;
+  justify-self: center;
 }

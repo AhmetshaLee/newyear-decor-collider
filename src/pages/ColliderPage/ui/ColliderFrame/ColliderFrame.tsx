@@ -230,7 +230,9 @@ export function ColliderFrame() {
           </div>
         </section>
 
-        <ShardCostCounter value={displayedCraftCost} />
+        <div className={styles.costControl}>
+          <ShardCostCounter value={displayedCraftCost} />
+        </div>
       </div>
     </section>
   )
