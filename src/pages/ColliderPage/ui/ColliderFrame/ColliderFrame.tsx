@@ -233,6 +233,11 @@ export function ColliderFrame() {
         <div className={styles.costControl}>
           <ShardCostCounter value={displayedCraftCost} />
         </div>
+
+        <div className={styles.startControl}>
+          <button className={styles.startButton} type="button" />
+          <p className={styles.startButtonLabel}>Создать украшение</p>
+        </div>
       </div>
     </section>
   )
