@@ -2,6 +2,7 @@ import { useState, type CSSProperties } from 'react'
 import { ShardCostCounter } from '../ShardCostCounter'
 
 import styles from './ColliderFrame.module.scss'
+import { ColliderMonitor } from '../ColliderMonitor'
 
 type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
 type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'
@@ -176,32 +177,16 @@ export function ColliderFrame() {
   return (
     <section className={styles.frame}>
       <div className={styles.panelGrid}>
-        <div className={styles.monitorPanel}>
-          <div className={styles.monitorBezel}>
-            <div className={styles.screen}>
-              <p className={styles.screenLine}>
-                Осталось осколков: {monitorState.userShards}
-              </p>
-              <div className={styles.divider} />
-              <p className={styles.projectTitle}>
-                {monitorState.decorationProject}
-              </p>
-              <p className={styles.screenLine}>
-                Уровень: {monitorState.selectedLevel}
-              </p>
-              <p className={styles.screenLine}>
-                Альбом: {selectedAlbumOption.displayName}
-              </p>
-              <p className={styles.screenLine}>
-                Тип украшения: {TYPE_DISPLAY_NAME[monitorState.selectedType]}
-              </p>
-              <p className={styles.screenLine}>
-                Антиповторитель: {selectedAntiRepeatOption.displayName}
-              </p>
-            </div>
-          </div>
+        <div className={styles.monitorSlot}>
+          <ColliderMonitor
+            availableShards={monitorState.userShards}
+            projectTitle={monitorState.decorationProject}
+            levelName={monitorState.selectedLevel}
+            albumName={selectedAlbumOption.displayName}
+            decorationTypeName={TYPE_DISPLAY_NAME[monitorState.selectedType]}
+            antiRepeatModeName={selectedAntiRepeatOption.displayName}
+          />
         </div>
-
         <section className={styles.rotorPanel}>
           <h2 className={styles.rotorTitle}>Альбом</h2>
 
@@ -322,8 +307,7 @@ export function ColliderFrame() {
             {ANTI_REPEAT_OPTIONS.map((antiRepeatOption) => (
               <button
                 className={`${styles.rotorIcon} ${styles.antiRepeatOption} ${
-                  antiRepeatOption.value ===
-                  monitorState.selectedAntiRepeatMode
+                  antiRepeatOption.value === monitorState.selectedAntiRepeatMode
                     ? styles.activeRotorIcon
                     : ''
                 }`}

@@ -31,66 +31,8 @@
   row-gap: 26px;
 }
 
-// ==== MONITOR ====
-
-.monitorPanel {
+.monitorSlot {
   grid-area: monitorPanel;
-  width: 560px;
-  padding: 14px;
-  border: 1px solid rgba(12, 16, 15, 0.72);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 42%), #2f3330;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -12px 22px rgba(0, 0, 0, 0.26),
-    0 18px 32px rgba(0, 0, 0, 0.28);
-}
-
-.monitorBezel {
-  padding: 10px;
-  border: 2px solid rgba(4, 7, 6, 0.86);
-  border-radius: 6px;
-  background: #171c1a;
-  box-shadow:
-    inset 0 2px 4px rgba(255, 255, 255, 0.08),
-    inset 0 -6px 12px rgba(0, 0, 0, 0.42);
-}
-
-.screen {
-  min-height: 230px;
-  padding: 20px 22px;
-  border: 1px solid rgba(73, 145, 91, 0.28);
-  border-radius: 4px;
-  color: #62d789;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 1.4;
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(63, 135, 84, 0.16) 0%,
-      rgba(25, 48, 37, 0.2) 48%,
-      rgba(8, 16, 14, 0.62) 100%
-    ),
-    #101a18;
-}
-
-.screenLine {
-  margin-block: 0;
-}
-
-.divider {
-  height: 2px;
-  margin-block: 8px 18px;
-  background: rgba(89, 221, 128, 0.72);
-}
-
-.projectTitle {
-  margin-block: 0 4px;
-  font-size: 20px;
-  text-transform: uppercase;
 }
 
 // ==== ALBUM ROTOR ====
@@ -435,8 +377,7 @@
   --cap-mid-color: #932819;
   --cap-edge-color: #742022;
   --cap-shadow:
-    0 13px 15px rgba(15, 5, 5, 0.58),
-    0 0 9px rgba(185, 57, 20, 0.18);
+    0 13px 15px rgba(15, 5, 5, 0.58), 0 0 9px rgba(185, 57, 20, 0.18);
   --cap-inner-shadow:
     inset 0 0 0 1px rgba(83, 18, 18, 0.34),
     inset 0 4px 0 rgba(238, 117, 69, 0.24),
@@ -471,7 +412,7 @@
 
   &::before,
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 50%;
     top: 50%;
@@ -483,8 +424,7 @@
 
   &::before {
     z-index: 1;
-    background:
-      radial-gradient(circle at center, #7e221d 0%, #571719 100%);
+    background: radial-gradient(circle at center, #7e221d 0%, #571719 100%);
     box-shadow:
       inset 0 7px 8px rgba(205, 82, 43, 0.18),
       inset 0 -10px 12px rgba(39, 9, 10, 0.32);
@@ -493,16 +433,13 @@
 
   &::after {
     z-index: 2;
-    background:
-      radial-gradient(
-        circle at center,
-        var(--cap-center-color) 0%,
-        var(--cap-mid-color) 48%,
-        var(--cap-edge-color) 100%
-      );
-    box-shadow:
-      var(--cap-shadow),
-      var(--cap-inner-shadow);
+    background: radial-gradient(
+      circle at center,
+      var(--cap-center-color) 0%,
+      var(--cap-mid-color) 48%,
+      var(--cap-edge-color) 100%
+    );
+    box-shadow: var(--cap-shadow), var(--cap-inner-shadow);
     transform: translate(-50%, calc(-50% + var(--cap-offset-y)));
     transition:
       box-shadow 140ms ease,
@@ -515,8 +452,7 @@
     --cap-mid-color: #9c2d18;
     --cap-edge-color: #762021;
     --cap-shadow:
-      0 11px 13px rgba(15, 5, 5, 0.46),
-      0 0 13px rgba(207, 72, 28, 0.2);
+      0 11px 13px rgba(15, 5, 5, 0.46), 0 0 13px rgba(207, 72, 28, 0.2);
     --cap-inner-shadow:
       inset 0 0 0 1px rgba(83, 18, 18, 0.34),
       inset 0 4px 0 rgba(235, 111, 64, 0.24),
@@ -531,8 +467,7 @@
     --cap-mid-color: #a93218;
     --cap-edge-color: #7b2020;
     --cap-shadow:
-      0 5px 7px rgba(15, 5, 5, 0.34),
-      0 0 15px rgba(207, 72, 28, 0.3);
+      0 5px 7px rgba(15, 5, 5, 0.34), 0 0 15px rgba(207, 72, 28, 0.3);
     --cap-inner-shadow:
       inset 0 0 0 1px rgba(83, 18, 18, 0.42),
       inset 0 3px 0 rgba(235, 111, 64, 0.3),
