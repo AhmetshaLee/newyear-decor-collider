@@ -18,20 +18,16 @@ export function ColliderMonitor({
   antiRepeatModeName,
 }: ColliderMonitorProps) {
   return (
-    <div className={styles.monitorPanel}>
-      <div className={styles.monitorBezel}>
+    <div className={styles.panel}>
+      <div className={styles.bezel}>
         <div className={styles.screen}>
-          <p className={styles.screenLine}>
-            Осталось осколков: {availableShards}
-          </p>
+          <p className={styles.line}>Осталось осколков: {availableShards}</p>
           <div className={styles.divider} />
-          <p className={styles.projectTitle}>{projectTitle}</p>
-          <p className={styles.screenLine}>Уровень: {levelName}</p>
-          <p className={styles.screenLine}>Альбом: {albumName}</p>
-          <p className={styles.screenLine}>
-            Тип украшения: {decorationTypeName}
-          </p>
-          <p className={styles.screenLine}>
+          <p className={styles.title}>{projectTitle}</p>
+          <p className={styles.line}>Уровень: {levelName}</p>
+          <p className={styles.line}>Альбом: {albumName}</p>
+          <p className={styles.line}>Тип украшения: {decorationTypeName}</p>
+          <p className={styles.line}>
             Антиповторитель: {antiRepeatModeName}
           </p>
         </div>

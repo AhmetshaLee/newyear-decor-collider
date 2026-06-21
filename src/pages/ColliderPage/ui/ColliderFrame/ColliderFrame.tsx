@@ -1,8 +1,8 @@
 import { useState, type CSSProperties } from 'react'
 import { ShardCostCounter } from '../ShardCostCounter'
+import { ColliderMonitor } from '../ColliderMonitor'
 
 import styles from './ColliderFrame.module.scss'
-import { ColliderMonitor } from '../ColliderMonitor'
 
 type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
 type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'

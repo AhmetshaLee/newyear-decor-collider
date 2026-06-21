@@ -1,4 +1,4 @@
-.monitorPanel {
+.panel {
   width: 560px;
   padding: 14px;
   border: 1px solid rgba(12, 16, 15, 0.72);
@@ -11,7 +11,7 @@
     0 18px 32px rgba(0, 0, 0, 0.28);
 }
 
-.monitorBezel {
+.bezel {
   padding: 10px;
   border: 2px solid rgba(4, 7, 6, 0.86);
   border-radius: 6px;
@@ -41,7 +41,7 @@
     #101a18;
 }
 
-.screenLine {
+.line {
   margin-block: 0;
 }
 
@@ -51,7 +51,7 @@
   background: rgba(89, 221, 128, 0.72);
 }
 
-.projectTitle {
+.title {
   margin-block: 0 4px;
   font-size: 20px;
   text-transform: uppercase;
