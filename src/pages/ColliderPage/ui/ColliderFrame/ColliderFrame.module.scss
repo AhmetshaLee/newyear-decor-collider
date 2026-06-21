@@ -21,13 +21,13 @@
   display: grid;
   grid-template-areas:
     'albumRotor monitorPanel decorationType'
-    'craftCost startButton decorationType'
-    'craftCost startButton .';
-  grid-template-columns: 290px 560px 220px;
+    'craftCost antiRepeat decorationType'
+    'craftCost antiRepeat startButton';
+  grid-template-columns: 290px 560px 290px;
   grid-template-rows: 222px 98px 1fr;
   align-items: center;
   justify-content: space-between;
-  column-gap: 40px;
+  column-gap: 14px;
   row-gap: 26px;
 }
 
@@ -126,16 +126,13 @@
   margin-inline: auto;
 }
 
-.rotorScale::before {
+.rotorArc {
   position: absolute;
-  top: 52px;
-  left: 35px;
-  width: 160px;
-  height: 80px;
-  border: 4px solid rgba(107, 126, 117, 0.38);
-  border-bottom: 0;
-  border-radius: 160px 160px 0 0;
-  content: '';
+  inset: 0;
+  fill: none;
+  stroke: rgba(107, 126, 117, 0.38);
+  stroke-width: 4px;
+  pointer-events: none;
 }
 
 .rotorTick {
@@ -231,6 +228,51 @@
   clip-path: polygon(46% 0, 54% 0, 82% 100%, 18% 100%);
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.26));
   transform: translateX(-50%);
+}
+
+// ==== ANTI-REPEAT ROTOR ====
+
+.antiRepeatPanel {
+  grid-area: antiRepeat;
+}
+
+.antiRepeatScale {
+  position: relative;
+  width: 230px;
+  height: 160px;
+  margin-inline: 0 auto;
+}
+
+.antiRepeatArc {
+  stroke-linecap: round;
+}
+
+.antiRepeatTick {
+  left: 90px;
+  top: 50px;
+  transform: rotate(var(--tick-angle)) translateX(70px) translateZ(0);
+}
+
+.antiRepeatOption {
+  left: 90px;
+  top: 50px;
+  font-size: 16px;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) rotate(var(--icon-angle))
+    translateX(var(--icon-offset, 96px)) rotate(var(--icon-upright-angle));
+}
+
+.antiRepeatKnob {
+  left: 90px;
+  top: 50px;
+  width: 54px;
+  height: 54px;
+}
+
+.antiRepeatPointer {
+  top: -34px;
+  width: 48px;
+  height: 108px;
 }
 
 // ==== DECORATION TYPE BUTTONS ====
