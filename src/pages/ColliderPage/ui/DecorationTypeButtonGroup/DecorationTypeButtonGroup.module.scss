@@ -1,0 +1,12 @@
+.frame {
+  padding: 10px 12px;
+  border: 2px solid rgba(210, 215, 207, 0.56);
+  border-radius: 8px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}

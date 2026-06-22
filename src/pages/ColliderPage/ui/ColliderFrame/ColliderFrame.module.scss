@@ -22,7 +22,7 @@
   grid-template-areas:
     'albumRotor monitorPanel decorationType'
     'craftCost antiRepeat decorationType'
-    'craftCost antiRepeat startButton';
+    'startButton antiRepeat decorationType';
   grid-template-columns: 290px 560px 290px;
   grid-template-rows: 222px 98px 1fr;
   align-items: center;
@@ -226,130 +226,15 @@
   flex-direction: column;
   align-items: center;
   justify-self: center;
-  gap: 12px;
+  gap: 18px;
 }
 
-.typePanelTitle {
-  width: 0;
-  min-width: 100%;
-  color: rgba(221, 226, 215, 0.72);
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 1;
-  text-align: center;
-  text-transform: uppercase;
-  overflow-wrap: break-word;
-}
-
-.typePanelBody {
-  padding: 10px 12px;
-  border: 2px solid rgba(210, 215, 207, 0.56);
-  border-radius: 8px;
-}
-
-.typeButtonGroup {
+.typeControl {
+  width: max-content;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-}
-
-.typeButtonFrame {
-  display: inline-grid;
-  padding: 3px;
-  border: 3px solid rgba(28, 31, 30, 0.82);
-  border-radius: 12px;
-  background: rgba(14, 17, 16, 0.42);
-  overflow: visible;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.typeButton {
-  position: relative;
-  z-index: 1;
-  width: 102px;
-  height: 56px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid rgba(7, 9, 8, 0.78);
-  border-radius: 8px;
-  color: rgba(32, 20, 14, 0.72);
-  font-size: 26px;
-  line-height: 1;
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(236, 166, 104, 0.42) 0%,
-      rgba(199, 125, 76, 0.2) 30%,
-      transparent 66%
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 42%), #5f554d;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -5px 8px rgba(0, 0, 0, 0.32),
-    0 4px 7px rgba(0, 0, 0, 0.28);
-  transition:
-    color 140ms ease,
-    background 140ms ease,
-    box-shadow 140ms ease,
-    transform 140ms ease;
-}
-
-.typeButton:hover {
-  color: rgba(72, 31, 14, 0.92);
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(255, 186, 109, 0.64) 0%,
-      rgba(240, 130, 70, 0.28) 36%,
-      transparent 70%
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 42%), #806658;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -4px 7px rgba(0, 0, 0, 0.24),
-    0 0 12px rgba(255, 137, 72, 0.28),
-    0 7px 10px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
-}
-
-.activeTypeButton {
-  cursor: default;
-  color: rgba(59, 22, 10, 0.96);
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(255, 239, 161, 0.96) 0%,
-      rgba(255, 164, 82, 0.82) 28%,
-      rgba(232, 88, 48, 0.46) 58%,
-      rgba(119, 61, 48, 0.2) 100%
-    ),
-    linear-gradient(180deg, rgba(255, 225, 190, 0.26), transparent 46%), #b7644e;
-  box-shadow:
-    inset 0 5px 9px rgba(62, 24, 8, 0.38),
-    inset 0 -1px 2px rgba(255, 234, 205, 0.2),
-    0 0 16px rgba(255, 117, 54, 0.44);
-  transform: translateY(1px);
-}
-
-.activeTypeButton:hover {
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(255, 245, 176, 1) 0%,
-      rgba(255, 174, 86, 0.88) 30%,
-      rgba(238, 96, 48, 0.52) 60%,
-      rgba(124, 63, 48, 0.22) 100%
-    ),
-    linear-gradient(180deg, rgba(255, 225, 190, 0.3), transparent 46%), #c66c50;
-  box-shadow:
-    inset 0 5px 9px rgba(62, 24, 8, 0.34),
-    inset 0 -1px 2px rgba(255, 234, 205, 0.22),
-    0 0 18px rgba(255, 117, 54, 0.48);
-  transform: translateY(1px);
 }
 
 // ==== CRAFT COST ====

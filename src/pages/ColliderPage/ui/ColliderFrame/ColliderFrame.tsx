@@ -1,6 +1,9 @@
 import { useState, type CSSProperties } from 'react'
-import { ShardCostCounter } from '../ShardCostCounter'
 import { ColliderMonitor } from '../ColliderMonitor'
+import { ColliderControlLabel } from '../ColliderControlLabel'
+import { DecorationTypeButton } from '../DecorationTypeButton'
+import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
+import { ShardCostCounter } from '../ShardCostCounter'
 
 import styles from './ColliderFrame.module.scss'
 
@@ -15,6 +18,12 @@ type MonitorState = {
   selectedAlbum: AlbumValue
   selectedType: DecorationTypeValue
   selectedAntiRepeatMode: AntiRepeatMode
+}
+
+type DecorationTypeOption = {
+  value: DecorationTypeValue
+  icon: string
+  label: string
 }
 
 type AlbumOption = {
@@ -37,7 +46,7 @@ const INITIAL_MONITOR_STATE: MonitorState = {
   decorationProject: 'Проект украшения',
   selectedLevel: 'II',
   selectedAlbum: 'classic',
-  selectedType: 'floor',
+  selectedType: 'random',
   selectedAntiRepeatMode: 'off',
 }
 
@@ -48,6 +57,13 @@ const TYPE_DISPLAY_NAME: Record<DecorationTypeValue, string> = {
   toys: 'Навесные игрушки',
   floor: 'Нижние игрушки',
 }
+
+const DECORATION_TYPE_OPTIONS = [
+  { value: 'top', icon: '▲', label: 'Верхушка' },
+  { value: 'lights', icon: '✦', label: 'Гирлянды' },
+  { value: 'toys', icon: '◆', label: 'Навесные игрушки' },
+  { value: 'floor', icon: '▣', label: 'Нижние игрушки' },
+] satisfies DecorationTypeOption[]
 
 const ALBUM_OPTIONS: AlbumOption[] = [
   {
@@ -250,28 +266,36 @@ export function ColliderFrame() {
         </section>
 
         <section className={styles.typePanel}>
-          <h2 className={styles.typePanelTitle}>Тип украшения</h2>
-          <div className={styles.typePanelBody}>
-            <div className={styles.typeButtonGroup}>
-              <span className={styles.typeButtonFrame}>
-                <button
-                  className={`${styles.typeButton} ${monitorState.selectedType === 'random' ? styles.activeTypeButton : ''}`}
-                  type="button"
-                  onClick={() => selectType('random')}
-                >
-                  ?
-                </button>
-              </span>
-              <span className={styles.typeButtonFrame}>
-                <button
-                  className={`${styles.typeButton} ${monitorState.selectedType === 'floor' ? styles.activeTypeButton : ''}`}
-                  type="button"
-                  onClick={() => selectType('floor')}
-                >
-                  ◆
-                </button>
-              </span>
-            </div>
+          <div className={styles.typeControl}>
+            <ColliderControlLabel>Случайный</ColliderControlLabel>
+            <DecorationTypeButtonGroup>
+              <DecorationTypeButton
+                isSelected={monitorState.selectedType === 'random'}
+                onClick={() => selectType('random')}
+              >
+                ?
+              </DecorationTypeButton>
+            </DecorationTypeButtonGroup>
+          </div>
+
+          <div className={styles.typeControl}>
+            <ColliderControlLabel>Тип украшения</ColliderControlLabel>
+            <DecorationTypeButtonGroup>
+              {DECORATION_TYPE_OPTIONS.map((typeOption) => {
+                const isSelected =
+                  monitorState.selectedType === typeOption.value
+
+                return (
+                  <DecorationTypeButton
+                    isSelected={isSelected}
+                    key={typeOption.value}
+                    onClick={() => selectType(typeOption.value)}
+                  >
+                    {typeOption.icon}
+                  </DecorationTypeButton>
+                )
+              })}
+            </DecorationTypeButtonGroup>
           </div>
         </section>
 
