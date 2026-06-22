@@ -3,6 +3,7 @@ import { ColliderMonitor } from '../ColliderMonitor'
 import { ColliderControlLabel } from '../ColliderControlLabel'
 import { DecorationTypeButton } from '../DecorationTypeButton'
 import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
+import { CraftStartButton } from '../CraftStartButton'
 import { ShardCostCounter } from '../ShardCostCounter'
 
 import styles from './ColliderFrame.module.scss'
@@ -371,9 +372,11 @@ export function ColliderFrame() {
           <ShardCostCounter value={displayedCraftCost} />
         </div>
 
-        <div className={styles.startControl}>
-          <button className={styles.startButton} type="button" />
-          <p className={styles.startButtonLabel}>Создать украшение</p>
+        <div className={styles.startSlot}>
+          <div className={styles.startControl}>
+            <CraftStartButton />
+            <ColliderControlLabel>Создать украшение</ColliderControlLabel>
+          </div>
         </div>
       </div>
     </section>
