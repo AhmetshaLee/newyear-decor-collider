@@ -205,7 +205,9 @@ export function ColliderFrame() {
           />
         </div>
         <section className={styles.rotorPanel}>
-          <h2 className={styles.rotorTitle}>Альбом</h2>
+          <ColliderControlLabel className={styles.rotorLabel}>
+            Альбом
+          </ColliderControlLabel>
 
           <div className={styles.rotorScale}>
             <svg className={styles.rotorArc} viewBox="0 0 230 160">
@@ -303,7 +305,9 @@ export function ColliderFrame() {
         </div>
 
         <section className={`${styles.rotorPanel} ${styles.antiRepeatPanel}`}>
-          <h2 className={styles.rotorTitle}>Антиповторитель</h2>
+          <ColliderControlLabel className={styles.rotorLabel}>
+            Антиповторитель
+          </ColliderControlLabel>
 
           <div className={styles.antiRepeatScale}>
             <svg
