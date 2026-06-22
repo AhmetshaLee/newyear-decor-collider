@@ -219,13 +219,16 @@
 
 // ==== DECORATION TYPE BUTTONS ====
 
-.typePanel {
+.typeSlot {
   grid-area: decorationType;
+  justify-self: center;
+}
+
+.typePanel {
   width: max-content;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  justify-self: center;
   gap: 18px;
 }
 
@@ -239,7 +242,7 @@
 
 // ==== CRAFT COST ====
 
-.costControl {
+.costSlot {
   grid-area: craftCost;
   justify-self: center;
 }

@@ -266,39 +266,41 @@ export function ColliderFrame() {
           </div>
         </section>
 
-        <section className={styles.typePanel}>
-          <div className={styles.typeControl}>
-            <ColliderControlLabel>Случайный</ColliderControlLabel>
-            <DecorationTypeButtonGroup>
-              <DecorationTypeButton
-                isSelected={monitorState.selectedType === 'random'}
-                onClick={() => selectType('random')}
-              >
-                ?
-              </DecorationTypeButton>
-            </DecorationTypeButtonGroup>
-          </div>
+        <div className={styles.typeSlot}>
+          <section className={styles.typePanel}>
+            <div className={styles.typeControl}>
+              <ColliderControlLabel>Случайный</ColliderControlLabel>
+              <DecorationTypeButtonGroup>
+                <DecorationTypeButton
+                  isSelected={monitorState.selectedType === 'random'}
+                  onClick={() => selectType('random')}
+                >
+                  ?
+                </DecorationTypeButton>
+              </DecorationTypeButtonGroup>
+            </div>
 
-          <div className={styles.typeControl}>
-            <ColliderControlLabel>Тип украшения</ColliderControlLabel>
-            <DecorationTypeButtonGroup>
-              {DECORATION_TYPE_OPTIONS.map((typeOption) => {
-                const isSelected =
-                  monitorState.selectedType === typeOption.value
+            <div className={styles.typeControl}>
+              <ColliderControlLabel>Тип украшения</ColliderControlLabel>
+              <DecorationTypeButtonGroup>
+                {DECORATION_TYPE_OPTIONS.map((typeOption) => {
+                  const isSelected =
+                    monitorState.selectedType === typeOption.value
 
-                return (
-                  <DecorationTypeButton
-                    isSelected={isSelected}
-                    key={typeOption.value}
-                    onClick={() => selectType(typeOption.value)}
-                  >
-                    {typeOption.icon}
-                  </DecorationTypeButton>
-                )
-              })}
-            </DecorationTypeButtonGroup>
-          </div>
-        </section>
+                  return (
+                    <DecorationTypeButton
+                      isSelected={isSelected}
+                      key={typeOption.value}
+                      onClick={() => selectType(typeOption.value)}
+                    >
+                      {typeOption.icon}
+                    </DecorationTypeButton>
+                  )
+                })}
+              </DecorationTypeButtonGroup>
+            </div>
+          </section>
+        </div>
 
         <section className={`${styles.rotorPanel} ${styles.antiRepeatPanel}`}>
           <h2 className={styles.rotorTitle}>Антиповторитель</h2>
@@ -368,7 +370,7 @@ export function ColliderFrame() {
           </div>
         </section>
 
-        <div className={styles.costControl}>
+        <div className={styles.costSlot}>
           <ShardCostCounter value={displayedCraftCost} />
         </div>
 
