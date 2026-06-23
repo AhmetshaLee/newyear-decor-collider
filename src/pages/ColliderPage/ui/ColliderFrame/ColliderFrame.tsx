@@ -5,6 +5,11 @@ import { DecorationTypeButton } from '../DecorationTypeButton'
 import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftStartButton } from '../CraftStartButton'
 import { ShardCostCounter } from '../ShardCostCounter'
+import {
+  RotorAnchorSwitch,
+  type RotorAnchorSwitchArc,
+  type RotorAnchorSwitchItem,
+} from '../RotorAnchorSwitch'
 
 import styles from './ColliderFrame.module.scss'
 
@@ -25,13 +30,6 @@ type DecorationTypeOption = {
   value: DecorationTypeValue
   icon: string
   label: string
-}
-
-type AlbumOption = {
-  value: AlbumValue
-  icon: string
-  displayName: string
-  angle: number
 }
 
 type AntiRepeatOption = {
@@ -66,42 +64,39 @@ const DECORATION_TYPE_OPTIONS = [
   { value: 'floor', icon: '▣', label: 'Нижние игрушки' },
 ] satisfies DecorationTypeOption[]
 
-const ALBUM_OPTIONS: AlbumOption[] = [
+const ALBUM_OPTIONS = [
   {
     value: 'random',
     icon: '?',
-    displayName: 'Случайный',
-    angle: -180,
+    label: 'Случайный',
   },
   {
     value: 'classic',
     icon: '*',
-    displayName: 'Новогодняя классика',
-    angle: -135,
+    label: 'Новогодняя классика',
   },
   {
     value: 'fairytale',
     icon: 'C',
-    displayName: 'Рождественская сказка',
-    angle: -90,
+    label: 'Рождественская сказка',
   },
   {
     value: 'oriental',
     icon: '福',
-    displayName: 'Восточный календарь',
-    angle: -45,
+    label: 'Восточный календарь',
   },
   {
     value: 'magic',
     icon: '+',
-    displayName: 'Зимнее чудо',
-    angle: 0,
+    label: 'Зимнее чудо',
   },
-]
+] satisfies RotorAnchorSwitchItem<AlbumValue>[]
 
-const ALBUM_TICK_ANGLES = [
-  -180, -157.5, -135, -112.5, -90, -67.5, -45, -22.5, 0,
-]
+const ALBUM_ROTARY_ARC = {
+  radius: 66,
+  startAngle: -180,
+  endAngle: 0,
+} satisfies RotorAnchorSwitchArc
 
 const ANTI_REPEAT_OPTIONS: AntiRepeatOption[] = [
   {
@@ -156,16 +151,6 @@ export function ColliderFrame() {
     }))
   }
 
-  const selectNextAlbum = () => {
-    const currentIndex = ALBUM_OPTIONS.findIndex(
-      (albumOption) => albumOption.value === monitorState.selectedAlbum,
-    )
-    const nextAlbumOption =
-      ALBUM_OPTIONS[(currentIndex + 1) % ALBUM_OPTIONS.length]
-
-    selectAlbum(nextAlbumOption.value)
-  }
-
   const selectType = (decorationType: DecorationTypeValue) => {
     setMonitorState((currentState) => ({
       ...currentState,
@@ -199,7 +184,7 @@ export function ColliderFrame() {
             availableShards={monitorState.userShards}
             projectTitle={monitorState.decorationProject}
             levelName={monitorState.selectedLevel}
-            albumName={selectedAlbumOption.displayName}
+            albumName={selectedAlbumOption.label}
             decorationTypeName={TYPE_DISPLAY_NAME[monitorState.selectedType]}
             antiRepeatModeName={selectedAntiRepeatOption.displayName}
           />
@@ -209,63 +194,14 @@ export function ColliderFrame() {
             Альбом
           </ColliderControlLabel>
 
-          <div className={styles.rotorScale}>
-            <svg className={styles.rotorArc} viewBox="0 0 230 160">
-              <path d="M 35 132 A 80 80 0 0 1 195 132" />
-            </svg>
-
-            {ALBUM_TICK_ANGLES.map((tickAngle) => (
-              <span
-                className={`${styles.rotorTick} ${
-                  ALBUM_OPTIONS.some(
-                    (albumOption) => albumOption.angle === tickAngle,
-                  )
-                    ? styles.majorTick
-                    : ''
-                }`}
-                key={tickAngle}
-                style={
-                  {
-                    '--tick-angle': `${tickAngle}deg`,
-                  } as CSSProperties
-                }
-              />
-            ))}
-
-            {ALBUM_OPTIONS.map((albumOption) => (
-              <button
-                className={`${styles.rotorIcon} ${
-                  albumOption.value === monitorState.selectedAlbum
-                    ? styles.activeRotorIcon
-                    : ''
-                }`}
-                key={albumOption.value}
-                type="button"
-                style={
-                  {
-                    '--icon-angle': `${albumOption.angle}deg`,
-                    '--icon-upright-angle': `${-albumOption.angle}deg`,
-                  } as CSSProperties
-                }
-                onClick={() => selectAlbum(albumOption.value)}
-              >
-                {albumOption.icon}
-              </button>
-            ))}
-
-            <button
-              className={styles.rotorKnob}
-              type="button"
-              style={
-                {
-                  '--rotor-angle': `${selectedAlbumOption.angle + 90}deg`,
-                } as CSSProperties
-              }
-              onClick={selectNextAlbum}
-            >
-              <span className={styles.rotorPointer} />
-            </button>
-          </div>
+          <RotorAnchorSwitch
+            ariaLabel="Переключить альбом"
+            arc={ALBUM_ROTARY_ARC}
+            className={styles.albumRotorAnchor}
+            items={ALBUM_OPTIONS}
+            value={monitorState.selectedAlbum}
+            onValueChange={selectAlbum}
+          />
         </section>
 
         <div className={styles.typeSlot}>
