@@ -11,11 +11,9 @@ export type RotorAnchorSwitchArc = {
 export type RotorAnchorSwitchItem<TValue extends string> = {
   value: TValue
   icon: string
-  label: string
 }
 
 type RotorAnchorSwitchProps<TValue extends string> = {
-  ariaLabel: string
   arc: RotorAnchorSwitchArc
   className?: string
   items: RotorAnchorSwitchItem<TValue>[]
@@ -23,18 +21,11 @@ type RotorAnchorSwitchProps<TValue extends string> = {
   onValueChange: (value: TValue) => void
 }
 
-type Point = {
-  x: number
-  y: number
-}
-
-const KNOB_SIZE = 54
-const ITEM_SIZE = 38
 const ITEM_RADIUS_OFFSET = 32
 const FULL_CIRCLE = 360
 const FULL_CIRCLE_EPSILON = 0.001
 
-function getPoint(angle: number, radius: number): Point {
+function getPoint(angle: number, radius: number) {
   const angleRadians = (angle * Math.PI) / 180
 
   return {
@@ -46,10 +37,7 @@ function getPoint(angle: number, radius: number): Point {
 function isFullCircle(startAngle: number, endAngle: number) {
   const span = Math.abs(endAngle - startAngle)
 
-  return (
-    span > 0 &&
-    Math.abs(span % FULL_CIRCLE) < FULL_CIRCLE_EPSILON
-  )
+  return span > 0 && Math.abs(span % FULL_CIRCLE) < FULL_CIRCLE_EPSILON
 }
 
 function getDirectedSpan(arc: RotorAnchorSwitchArc) {
@@ -110,23 +98,20 @@ function getArcPath(arc: RotorAnchorSwitchArc) {
 }
 
 export function RotorAnchorSwitch<TValue extends string>({
-  ariaLabel,
   arc,
   className,
   items,
   value,
   onValueChange,
 }: RotorAnchorSwitchProps<TValue>) {
+  const [rotationOffset, setRotationOffset] = useState(0)
+  
   const selectedIndex = items.findIndex((item) => item.value === value)
   const safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : 0
   const selectedAngle = getStepAngle(safeSelectedIndex, items.length, arc)
   const isClosedArc = isFullCircle(arc.startAngle, arc.endAngle)
-  const [animatedAngle, setAnimatedAngle] = useState(selectedAngle)
   const itemRadius = arc.radius + ITEM_RADIUS_OFFSET
-  const tickAngles = items.map((_, itemIndex) =>
-    getStepAngle(itemIndex, items.length, arc),
-  )
-  const knobAngle = isClosedArc ? animatedAngle : selectedAngle
+  const knobAngle = selectedAngle + (isClosedArc ? rotationOffset : 0)
 
   const selectItem = (itemIndex: number) => {
     const item = items[itemIndex]
@@ -136,15 +121,11 @@ export function RotorAnchorSwitch<TValue extends string>({
     }
 
     if (isClosedArc && items.length > 1) {
-      const stepAngle = getDirectedSpan(arc) / items.length
-      const indexDelta =
-        itemIndex >= safeSelectedIndex
-          ? itemIndex - safeSelectedIndex
-          : itemIndex - safeSelectedIndex + items.length
-
-      setAnimatedAngle((currentAngle) => currentAngle + stepAngle * indexDelta)
-    } else {
-      setAnimatedAngle(getStepAngle(itemIndex, items.length, arc))
+      if (itemIndex < safeSelectedIndex) {
+        setRotationOffset(
+          (currentOffset) => currentOffset + getDirectedSpan(arc),
+        )
+      }
     }
 
     onValueChange(item.value)
@@ -164,14 +145,11 @@ export function RotorAnchorSwitch<TValue extends string>({
       style={
         {
           '--arc-size': `${arc.radius * 2}px`,
-          '--item-size': `${ITEM_SIZE}px`,
           '--knob-angle': `${knobAngle + 90}deg`,
-          '--knob-size': `${KNOB_SIZE}px`,
         } as CSSProperties
       }
     >
       <svg
-        aria-hidden="true"
         className={styles.arcLayer}
         viewBox={`${-arc.radius} ${-arc.radius} ${arc.radius * 2} ${
           arc.radius * 2
@@ -180,14 +158,14 @@ export function RotorAnchorSwitch<TValue extends string>({
         <path className={styles.arc} d={getArcPath(arc)} />
       </svg>
 
-      {tickAngles.map((tickAngle) => {
+      {items.map((item, itemIndex) => {
+        const tickAngle = getStepAngle(itemIndex, items.length, arc)
         const tickPoint = getPoint(tickAngle, arc.radius)
 
         return (
           <span
-            aria-hidden="true"
             className={styles.tick}
-            key={tickAngle}
+            key={item.value}
             style={
               {
                 '--tick-angle': `${tickAngle}deg`,
@@ -206,8 +184,6 @@ export function RotorAnchorSwitch<TValue extends string>({
 
         return (
           <button
-            aria-label={item.label}
-            aria-pressed={isSelected}
             className={`${styles.item} ${isSelected ? styles.activeItem : ''}`}
             key={item.value}
             type="button"
@@ -225,7 +201,6 @@ export function RotorAnchorSwitch<TValue extends string>({
       })}
 
       <button
-        aria-label={ariaLabel}
         className={styles.knob}
         type="button"
         onClick={selectNextItem}

@@ -16,6 +16,9 @@ import styles from './ColliderFrame.module.scss'
 type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
 type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'
 type AntiRepeatMode = 'off' | 'useShards'
+type AlbumOption = RotorAnchorSwitchItem<AlbumValue> & {
+  label: string
+}
 
 type MonitorState = {
   userShards: number
@@ -90,7 +93,7 @@ const ALBUM_OPTIONS = [
     icon: '+',
     label: 'Зимнее чудо',
   },
-] satisfies RotorAnchorSwitchItem<AlbumValue>[]
+] satisfies AlbumOption[]
 
 const ALBUM_ROTARY_ARC = {
   radius: 66,
@@ -195,7 +198,6 @@ export function ColliderFrame() {
           </ColliderControlLabel>
 
           <RotorAnchorSwitch
-            ariaLabel="Переключить альбом"
             arc={ALBUM_ROTARY_ARC}
             className={styles.albumRotorAnchor}
             items={ALBUM_OPTIONS}

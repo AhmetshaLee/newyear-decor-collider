@@ -1,12 +1,7 @@
 .root {
-  --arc-size: 160px;
-  --item-size: 38px;
-  --knob-angle: 90deg;
-  --knob-size: 54px;
-
   position: relative;
-  width: var(--knob-size);
-  height: var(--knob-size);
+  width: 54px;
+  height: 54px;
   overflow: visible;
 }
 
@@ -29,10 +24,6 @@
 }
 
 .tick {
-  --tick-angle: 0deg;
-  --tick-x: 0px;
-  --tick-y: 0px;
-
   position: absolute;
   left: calc(50% + var(--tick-x));
   top: calc(50% + var(--tick-y));
@@ -46,15 +37,12 @@
 }
 
 .item {
-  --item-x: 0px;
-  --item-y: 0px;
-
   position: absolute;
   left: calc(50% + var(--item-x));
   top: calc(50% + var(--item-y));
   z-index: 3;
-  width: var(--item-size);
-  height: var(--item-size);
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
   box-sizing: border-box;
