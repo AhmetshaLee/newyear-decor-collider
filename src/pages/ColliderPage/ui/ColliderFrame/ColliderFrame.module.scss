@@ -55,119 +55,8 @@
   margin-block-end: 14px;
 }
 
-.rotorScale {
-  position: relative;
-  width: 230px;
-  height: 160px;
-  margin-inline: auto;
-}
-
 .albumRotorAnchor {
   margin: 103px auto 27px;
-}
-
-.rotorArc {
-  position: absolute;
-  inset: 0;
-  fill: none;
-  stroke: rgba(107, 126, 117, 0.38);
-  stroke-width: 4px;
-  pointer-events: none;
-}
-
-.rotorTick {
-  --tick-angle: 0deg;
-
-  position: absolute;
-  left: 50%;
-  top: 130px;
-  width: 10px;
-  height: 2px;
-  background: rgba(126, 147, 137, 0.52);
-  transform-origin: left center;
-  transform: rotate(var(--tick-angle)) translateX(77px) translateZ(0);
-}
-
-.majorTick {
-  width: 14px;
-  height: 2px;
-  background: rgba(173, 190, 180, 0.7);
-}
-
-.rotorIcon {
-  --icon-angle: 0deg;
-  --icon-upright-angle: 0deg;
-
-  position: absolute;
-  left: 50%;
-  top: 130px;
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  color: rgba(210, 215, 207, 0.56);
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-  background: transparent;
-  transform: translate(-50%, -50%) rotate(var(--icon-angle)) translateX(112px)
-    rotate(var(--icon-upright-angle));
-  transition:
-    color 140ms ease,
-    text-shadow 140ms ease;
-}
-
-.rotorIcon:hover {
-  color: rgba(255, 216, 182, 0.86);
-  text-shadow:
-    0 0 6px rgba(255, 137, 72, 0.55),
-    0 0 14px rgba(255, 107, 54, 0.34);
-}
-
-.activeRotorIcon {
-  color: #ffb078;
-  text-shadow:
-    0 0 8px rgba(255, 107, 54, 0.8),
-    0 0 18px rgba(255, 107, 54, 0.52);
-}
-
-.rotorKnob {
-  --rotor-angle: 0deg;
-
-  position: absolute;
-  left: 50%;
-  top: 130px;
-  width: 54px;
-  height: 54px;
-  padding: 0;
-  border: 1px solid rgba(3, 5, 5, 0.78);
-  border-radius: 50%;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 34%),
-    radial-gradient(circle at center, #151918 0 42%, #0b0e0d 100%);
-  box-shadow:
-    inset 0 2px 4px rgba(255, 255, 255, 0.06),
-    inset 0 -6px 9px rgba(0, 0, 0, 0.36),
-    0 4px 7px rgba(0, 0, 0, 0.24);
-  transform: translate(-50%, -50%) rotate(var(--rotor-angle));
-  transition: transform 180ms ease;
-}
-
-.rotorPointer {
-  position: absolute;
-  top: -34px;
-  left: 50%;
-  z-index: 1;
-  width: 48px;
-  height: 108px;
-  background: linear-gradient(90deg, #080a09 0 26%, #171b1a 52%, #090b0a 100%);
-  clip-path: polygon(46% 0, 54% 0, 82% 100%, 18% 100%);
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.26));
-  transform: translateX(-50%);
 }
 
 // ==== ANTI-REPEAT ROTOR ====
@@ -176,43 +65,8 @@
   grid-area: antiRepeat;
 }
 
-.antiRepeatScale {
-  position: relative;
-  width: 230px;
-  height: 160px;
-  margin-inline: 0 auto;
-}
-
-.antiRepeatArc {
-  stroke-linecap: round;
-}
-
-.antiRepeatTick {
-  left: 90px;
-  top: 50px;
-  transform: rotate(var(--tick-angle)) translateX(70px) translateZ(0);
-}
-
-.antiRepeatOption {
-  left: 90px;
-  top: 50px;
-  font-size: 16px;
-  text-transform: uppercase;
-  transform: translate(-50%, -50%) rotate(var(--icon-angle))
-    translateX(var(--icon-offset, 96px)) rotate(var(--icon-upright-angle));
-}
-
-.antiRepeatKnob {
-  left: 90px;
-  top: 50px;
-  width: 54px;
-  height: 54px;
-}
-
-.antiRepeatPointer {
-  top: -34px;
-  width: 48px;
-  height: 108px;
+.antiRepeatRotorAnchor {
+  margin: 23px 0 83px 63px;
 }
 
 // ==== DECORATION TYPE BUTTONS ====

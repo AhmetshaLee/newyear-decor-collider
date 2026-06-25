@@ -105,7 +105,7 @@ export function RotorAnchorSwitch<TValue extends string>({
   onValueChange,
 }: RotorAnchorSwitchProps<TValue>) {
   const [rotationOffset, setRotationOffset] = useState(0)
-  
+
   const selectedIndex = items.findIndex((item) => item.value === value)
   const safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : 0
   const selectedAngle = getStepAngle(safeSelectedIndex, items.length, arc)

@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState } from 'react'
 import { ColliderMonitor } from '../ColliderMonitor'
 import { ColliderControlLabel } from '../ColliderControlLabel'
 import { DecorationTypeButton } from '../DecorationTypeButton'
@@ -35,12 +35,8 @@ type DecorationTypeOption = {
   label: string
 }
 
-type AntiRepeatOption = {
-  value: AntiRepeatMode
-  label: string
+type AntiRepeatOption = RotorAnchorSwitchItem<AntiRepeatMode> & {
   displayName: string
-  angle: number
-  labelOffset: number
 }
 
 const INITIAL_MONITOR_STATE: MonitorState = {
@@ -101,24 +97,24 @@ const ALBUM_ROTARY_ARC = {
   endAngle: 0,
 } satisfies RotorAnchorSwitchArc
 
-const ANTI_REPEAT_OPTIONS: AntiRepeatOption[] = [
+const ANTI_REPEAT_OPTIONS = [
   {
     value: 'off',
-    label: 'Выкл',
+    icon: 'Выкл',
     displayName: 'Выключен',
-    angle: 0,
-    labelOffset: 112,
   },
   {
     value: 'useShards',
-    label: 'Оск',
+    icon: 'Оск',
     displayName: 'За осколки',
-    angle: 80,
-    labelOffset: 96,
   },
-]
+] satisfies AntiRepeatOption[]
 
-const ANTI_REPEAT_TICK_ANGLES = [0, 80]
+const ANTI_REPEAT_ROTARY_ARC = {
+  radius: 66,
+  startAngle: 0,
+  endAngle: 80,
+} satisfies RotorAnchorSwitchArc
 
 const displayedCraftCost = 120
 
@@ -166,17 +162,6 @@ export function ColliderFrame() {
       ...currentState,
       selectedAntiRepeatMode: antiRepeatMode,
     }))
-  }
-
-  const selectNextAntiRepeatMode = () => {
-    const currentIndex = ANTI_REPEAT_OPTIONS.findIndex(
-      (antiRepeatOption) =>
-        antiRepeatOption.value === monitorState.selectedAntiRepeatMode,
-    )
-    const nextAntiRepeatOption =
-      ANTI_REPEAT_OPTIONS[(currentIndex + 1) % ANTI_REPEAT_OPTIONS.length]
-
-    selectAntiRepeatMode(nextAntiRepeatOption.value)
   }
 
   return (
@@ -247,69 +232,13 @@ export function ColliderFrame() {
             Антиповторитель
           </ColliderControlLabel>
 
-          <div className={styles.antiRepeatScale}>
-            <svg
-              className={`${styles.rotorArc} ${styles.antiRepeatArc}`}
-              viewBox="0 0 230 160"
-            >
-              <path d="M 160 50 A 70 70 0 0 1 102.2 118.9" />
-            </svg>
-
-            {ANTI_REPEAT_TICK_ANGLES.map((tickAngle) => (
-              <span
-                className={`${styles.rotorTick} ${styles.antiRepeatTick} ${
-                  ANTI_REPEAT_OPTIONS.some(
-                    (antiRepeatOption) => antiRepeatOption.angle === tickAngle,
-                  )
-                    ? styles.majorTick
-                    : ''
-                }`}
-                key={tickAngle}
-                style={
-                  {
-                    '--tick-angle': `${tickAngle}deg`,
-                  } as CSSProperties
-                }
-              />
-            ))}
-
-            {ANTI_REPEAT_OPTIONS.map((antiRepeatOption) => (
-              <button
-                className={`${styles.rotorIcon} ${styles.antiRepeatOption} ${
-                  antiRepeatOption.value === monitorState.selectedAntiRepeatMode
-                    ? styles.activeRotorIcon
-                    : ''
-                }`}
-                key={antiRepeatOption.value}
-                type="button"
-                style={
-                  {
-                    '--icon-angle': `${antiRepeatOption.angle}deg`,
-                    '--icon-offset': `${antiRepeatOption.labelOffset}px`,
-                    '--icon-upright-angle': `${-antiRepeatOption.angle}deg`,
-                  } as CSSProperties
-                }
-                onClick={() => selectAntiRepeatMode(antiRepeatOption.value)}
-              >
-                {antiRepeatOption.label}
-              </button>
-            ))}
-
-            <button
-              className={`${styles.rotorKnob} ${styles.antiRepeatKnob}`}
-              type="button"
-              style={
-                {
-                  '--rotor-angle': `${selectedAntiRepeatOption.angle + 90}deg`,
-                } as CSSProperties
-              }
-              onClick={selectNextAntiRepeatMode}
-            >
-              <span
-                className={`${styles.rotorPointer} ${styles.antiRepeatPointer}`}
-              />
-            </button>
-          </div>
+          <RotorAnchorSwitch
+            arc={ANTI_REPEAT_ROTARY_ARC}
+            className={styles.antiRepeatRotorAnchor}
+            items={ANTI_REPEAT_OPTIONS}
+            value={monitorState.selectedAntiRepeatMode}
+            onValueChange={selectAntiRepeatMode}
+          />
         </section>
 
         <div className={styles.costSlot}>
