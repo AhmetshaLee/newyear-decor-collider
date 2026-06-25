@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 
 import styles from './RotorAnchorSwitch.module.scss'
 
@@ -10,7 +10,7 @@ export type RotorAnchorSwitchArc = {
 
 export type RotorAnchorSwitchItem<TValue extends string> = {
   value: TValue
-  icon: string
+  content: ReactNode
 }
 
 type RotorAnchorSwitchProps<TValue extends string> = {
@@ -24,6 +24,7 @@ type RotorAnchorSwitchProps<TValue extends string> = {
 const ITEM_RADIUS_OFFSET = 32
 const FULL_CIRCLE = 360
 const FULL_CIRCLE_EPSILON = 0.001
+const VERTICAL_AXIS_EPSILON = 0.001
 
 function getPoint(angle: number, radius: number) {
   const angleRadians = (angle * Math.PI) / 180
@@ -32,6 +33,14 @@ function getPoint(angle: number, radius: number) {
     x: Math.cos(angleRadians) * radius,
     y: Math.sin(angleRadians) * radius,
   }
+}
+
+function getItemGrowthClass(itemX: number) {
+  if (Math.abs(itemX) < VERTICAL_AXIS_EPSILON) {
+    return styles.growCenter
+  }
+
+  return itemX > 0 ? styles.growRight : styles.growLeft
 }
 
 function isFullCircle(startAngle: number, endAngle: number) {
@@ -50,19 +59,13 @@ function getDirectedSpan(arc: RotorAnchorSwitchArc) {
   return span
 }
 
-function getStepAngle(
-  index: number,
-  count: number,
-  arc: RotorAnchorSwitchArc,
-) {
+function getStepAngle(index: number, count: number, arc: RotorAnchorSwitchArc) {
   if (count <= 1) {
     return arc.startAngle
   }
 
   const span = getDirectedSpan(arc)
-  const divisor = isFullCircle(arc.startAngle, arc.endAngle)
-    ? count
-    : count - 1
+  const divisor = isFullCircle(arc.startAngle, arc.endAngle) ? count : count - 1
 
   return arc.startAngle + (span / divisor) * index
 }
@@ -73,10 +76,7 @@ function getArcPath(arc: RotorAnchorSwitchArc) {
   const sweepFlag = span >= 0 ? 1 : 0
 
   if (isFullCircle(arc.startAngle, arc.endAngle)) {
-    const middlePoint = getPoint(
-      arc.startAngle + span / 2,
-      arc.radius,
-    )
+    const middlePoint = getPoint(arc.startAngle + span / 2, arc.radius)
 
     return [
       `M ${startPoint.x.toFixed(2)} ${startPoint.y.toFixed(2)}`,
@@ -183,28 +183,32 @@ export function RotorAnchorSwitch<TValue extends string>({
         const isSelected = item.value === value
 
         return (
-          <button
-            className={`${styles.item} ${isSelected ? styles.activeItem : ''}`}
+          <div
+            className={`${styles.itemAnchor} ${getItemGrowthClass(
+              itemPoint.x,
+            )}`}
             key={item.value}
-            type="button"
             style={
               {
                 '--item-x': `${itemPoint.x}px`,
                 '--item-y': `${itemPoint.y}px`,
               } as CSSProperties
             }
-            onClick={() => selectItem(itemIndex)}
           >
-            <span className={styles.itemGlyph}>{item.icon}</span>
-          </button>
+            <button
+              className={`${styles.item} ${
+                isSelected ? styles.activeItem : ''
+              }`}
+              type="button"
+              onClick={() => selectItem(itemIndex)}
+            >
+              <span className={styles.itemContent}>{item.content}</span>
+            </button>
+          </div>
         )
       })}
 
-      <button
-        className={styles.knob}
-        type="button"
-        onClick={selectNextItem}
-      >
+      <button className={styles.knob} type="button" onClick={selectNextItem}>
         <span className={styles.pointer} />
       </button>
     </div>

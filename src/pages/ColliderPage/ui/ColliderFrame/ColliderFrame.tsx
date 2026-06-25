@@ -66,27 +66,27 @@ const DECORATION_TYPE_OPTIONS = [
 const ALBUM_OPTIONS = [
   {
     value: 'random',
-    icon: '?',
+    content: '?',
     label: 'Случайный',
   },
   {
     value: 'classic',
-    icon: '*',
+    content: '*',
     label: 'Новогодняя классика',
   },
   {
     value: 'fairytale',
-    icon: 'C',
+    content: 'C',
     label: 'Рождественская сказка',
   },
   {
     value: 'oriental',
-    icon: '福',
+    content: '福',
     label: 'Восточный календарь',
   },
   {
     value: 'magic',
-    icon: '+',
+    content: '+',
     label: 'Зимнее чудо',
   },
 ] satisfies AlbumOption[]
@@ -100,12 +100,12 @@ const ALBUM_ROTARY_ARC = {
 const ANTI_REPEAT_OPTIONS = [
   {
     value: 'off',
-    icon: 'Выкл',
+    content: 'Выкл',
     displayName: 'Выключен',
   },
   {
     value: 'useShards',
-    icon: 'Оск',
+    content: 'Осколки',
     displayName: 'За осколки',
   },
 ] satisfies AntiRepeatOption[]
