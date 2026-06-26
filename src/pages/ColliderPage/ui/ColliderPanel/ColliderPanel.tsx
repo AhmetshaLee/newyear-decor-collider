@@ -1,24 +1,29 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { ControlLabel } from '../ControlLabel'
 import { StatusMonitor } from '../StatusMonitor'
 import { DecorationTypeButton } from '../DecorationTypeButton'
 import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftButton } from '../CraftButton'
 import { CraftCost } from '../CraftCost'
-import {
-  RotarySwitch,
-  type RotarySwitchArc,
-  type RotarySwitchItem,
-} from '../RotarySwitch'
+import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
 
 import styles from './ColliderPanel.module.scss'
 
 type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
 type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'
+type SpecificDecorationTypeValue = Exclude<DecorationTypeValue, 'random'>
 type AntiRepeatMode = 'off' | 'useShards'
-type AlbumOption = RotarySwitchItem<AlbumValue> & {
-  label: string
+
+type ControlOption<TValue extends string> = {
+  value: TValue
+  content: ReactNode
+  displayName: string
 }
+
+type ControlOptions<TValue extends string> = [
+  ControlOption<TValue>,
+  ...ControlOption<TValue>[],
+]
 
 type MonitorState = {
   userShards: number
@@ -29,73 +34,57 @@ type MonitorState = {
   selectedAntiRepeatMode: AntiRepeatMode
 }
 
-type DecorationTypeOption = {
-  value: DecorationTypeValue
-  icon: string
-  label: string
-}
-
-type AntiRepeatOption = RotarySwitchItem<AntiRepeatMode> & {
-  displayName: string
-}
-
-const INITIAL_MONITOR_STATE: MonitorState = {
-  userShards: 10210,
-  decorationProject: 'Проект украшения',
-  selectedLevel: 'II',
-  selectedAlbum: 'classic',
-  selectedType: 'random',
-  selectedAntiRepeatMode: 'off',
-}
-
-const TYPE_DISPLAY_NAME: Record<DecorationTypeValue, string> = {
-  random: 'Случайный',
-  top: 'Верхушка',
-  lights: 'Гирлянды',
-  toys: 'Навесные игрушки',
-  floor: 'Нижние игрушки',
-}
-
-const DECORATION_TYPE_OPTIONS = [
-  { value: 'top', icon: '▲', label: 'Верхушка' },
-  { value: 'lights', icon: '✦', label: 'Гирлянды' },
-  { value: 'toys', icon: '◆', label: 'Навесные игрушки' },
-  { value: 'floor', icon: '▣', label: 'Нижние игрушки' },
-] satisfies DecorationTypeOption[]
-
 const ALBUM_OPTIONS = [
   {
     value: 'random',
     content: '?',
-    label: 'Случайный',
+    displayName: 'Случайный',
   },
   {
     value: 'classic',
     content: '*',
-    label: 'Новогодняя классика',
+    displayName: 'Новогодняя классика',
   },
   {
     value: 'fairytale',
     content: 'C',
-    label: 'Рождественская сказка',
+    displayName: 'Рождественская сказка',
   },
   {
     value: 'oriental',
     content: '福',
-    label: 'Восточный календарь',
+    displayName: 'Восточный календарь',
   },
   {
     value: 'magic',
     content: '+',
-    label: 'Зимнее чудо',
+    displayName: 'Зимнее чудо',
   },
-] satisfies AlbumOption[]
+] satisfies ControlOptions<AlbumValue>
 
 const ALBUM_ROTARY_ARC = {
   radius: 66,
   startAngle: -180,
   endAngle: 0,
 } satisfies RotarySwitchArc
+
+const RANDOM_DECORATION_TYPE_OPTION = {
+  value: 'random',
+  content: '?',
+  displayName: 'Случайный',
+} satisfies ControlOption<DecorationTypeValue>
+
+const SPECIFIC_DECORATION_TYPE_OPTIONS = [
+  { value: 'top', content: '▲', displayName: 'Верхушка' },
+  { value: 'lights', content: '✦', displayName: 'Гирлянды' },
+  { value: 'toys', content: '◆', displayName: 'Навесные игрушки' },
+  { value: 'floor', content: '▣', displayName: 'Нижние игрушки' },
+] satisfies ControlOptions<SpecificDecorationTypeValue>
+
+const DECORATION_TYPE_OPTIONS = [
+  RANDOM_DECORATION_TYPE_OPTION,
+  ...SPECIFIC_DECORATION_TYPE_OPTIONS,
+] satisfies ControlOptions<DecorationTypeValue>
 
 const ANTI_REPEAT_OPTIONS = [
   {
@@ -108,7 +97,7 @@ const ANTI_REPEAT_OPTIONS = [
     content: 'Осколки',
     displayName: 'За осколки',
   },
-] satisfies AntiRepeatOption[]
+] satisfies ControlOptions<AntiRepeatMode>
 
 const ANTI_REPEAT_ROTARY_ARC = {
   radius: 66,
@@ -116,21 +105,22 @@ const ANTI_REPEAT_ROTARY_ARC = {
   endAngle: 80,
 } satisfies RotarySwitchArc
 
-const displayedCraftCost = 120
+const DISPLAYED_CRAFT_COST = 120
 
-const getAlbumOption = (value: AlbumValue) => {
-  return (
-    ALBUM_OPTIONS.find((albumOption) => albumOption.value === value) ??
-    ALBUM_OPTIONS[0]
-  )
+const INITIAL_MONITOR_STATE: MonitorState = {
+  userShards: 10210,
+  decorationProject: 'Проект украшения',
+  selectedLevel: 'II',
+  selectedAlbum: 'classic',
+  selectedType: 'random',
+  selectedAntiRepeatMode: 'off',
 }
 
-const getAntiRepeatOption = (value: AntiRepeatMode) => {
-  return (
-    ANTI_REPEAT_OPTIONS.find(
-      (antiRepeatOption) => antiRepeatOption.value === value,
-    ) ?? ANTI_REPEAT_OPTIONS[0]
-  )
+const getSelectedOption = <TValue extends string>(
+  options: ControlOptions<TValue>,
+  value: TValue,
+) => {
+  return options.find((option) => option.value === value) ?? options[0]
 }
 
 export function ColliderPanel() {
@@ -138,8 +128,16 @@ export function ColliderPanel() {
     INITIAL_MONITOR_STATE,
   )
 
-  const selectedAlbumOption = getAlbumOption(monitorState.selectedAlbum)
-  const selectedAntiRepeatOption = getAntiRepeatOption(
+  const selectedAlbumOption = getSelectedOption(
+    ALBUM_OPTIONS,
+    monitorState.selectedAlbum,
+  )
+  const selectedDecorationTypeOption = getSelectedOption(
+    DECORATION_TYPE_OPTIONS,
+    monitorState.selectedType,
+  )
+  const selectedAntiRepeatOption = getSelectedOption(
+    ANTI_REPEAT_OPTIONS,
     monitorState.selectedAntiRepeatMode,
   )
 
@@ -172,8 +170,8 @@ export function ColliderPanel() {
             availableShards={monitorState.userShards}
             projectTitle={monitorState.decorationProject}
             levelName={monitorState.selectedLevel}
-            albumName={selectedAlbumOption.label}
-            decorationTypeName={TYPE_DISPLAY_NAME[monitorState.selectedType]}
+            albumName={selectedAlbumOption.displayName}
+            decorationTypeName={selectedDecorationTypeOption.displayName}
             antiRepeatModeName={selectedAntiRepeatOption.displayName}
           />
         </div>
@@ -195,10 +193,13 @@ export function ColliderPanel() {
               <ControlLabel>Случайный</ControlLabel>
               <DecorationTypeButtonGroup>
                 <DecorationTypeButton
-                  isSelected={monitorState.selectedType === 'random'}
-                  onClick={() => selectType('random')}
+                  isSelected={
+                    monitorState.selectedType ===
+                    RANDOM_DECORATION_TYPE_OPTION.value
+                  }
+                  onClick={() => selectType(RANDOM_DECORATION_TYPE_OPTION.value)}
                 >
-                  ?
+                  {RANDOM_DECORATION_TYPE_OPTION.content}
                 </DecorationTypeButton>
               </DecorationTypeButtonGroup>
             </div>
@@ -206,7 +207,7 @@ export function ColliderPanel() {
             <div className={styles.typeControl}>
               <ControlLabel>Тип украшения</ControlLabel>
               <DecorationTypeButtonGroup>
-                {DECORATION_TYPE_OPTIONS.map((typeOption) => {
+                {SPECIFIC_DECORATION_TYPE_OPTIONS.map((typeOption) => {
                   const isSelected =
                     monitorState.selectedType === typeOption.value
 
@@ -216,7 +217,7 @@ export function ColliderPanel() {
                       key={typeOption.value}
                       onClick={() => selectType(typeOption.value)}
                     >
-                      {typeOption.icon}
+                      {typeOption.content}
                     </DecorationTypeButton>
                   )
                 })}
@@ -240,7 +241,7 @@ export function ColliderPanel() {
         </section>
 
         <div className={styles.costSlot}>
-          <CraftCost value={displayedCraftCost} />
+          <CraftCost value={DISPLAYED_CRAFT_COST} />
         </div>
 
         <div className={styles.startSlot}>
