@@ -1,22 +1,22 @@
 import { useState } from 'react'
-import { ColliderMonitor } from '../ColliderMonitor'
-import { ColliderControlLabel } from '../ColliderControlLabel'
+import { ControlLabel } from '../ControlLabel'
+import { StatusMonitor } from '../StatusMonitor'
 import { DecorationTypeButton } from '../DecorationTypeButton'
 import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
-import { CraftStartButton } from '../CraftStartButton'
-import { ShardCostCounter } from '../ShardCostCounter'
+import { CraftButton } from '../CraftButton'
+import { CraftCost } from '../CraftCost'
 import {
-  RotorAnchorSwitch,
-  type RotorAnchorSwitchArc,
-  type RotorAnchorSwitchItem,
-} from '../RotorAnchorSwitch'
+  RotarySwitch,
+  type RotarySwitchArc,
+  type RotarySwitchItem,
+} from '../RotarySwitch'
 
-import styles from './ColliderFrame.module.scss'
+import styles from './ColliderPanel.module.scss'
 
 type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
 type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'
 type AntiRepeatMode = 'off' | 'useShards'
-type AlbumOption = RotorAnchorSwitchItem<AlbumValue> & {
+type AlbumOption = RotarySwitchItem<AlbumValue> & {
   label: string
 }
 
@@ -35,7 +35,7 @@ type DecorationTypeOption = {
   label: string
 }
 
-type AntiRepeatOption = RotorAnchorSwitchItem<AntiRepeatMode> & {
+type AntiRepeatOption = RotarySwitchItem<AntiRepeatMode> & {
   displayName: string
 }
 
@@ -95,7 +95,7 @@ const ALBUM_ROTARY_ARC = {
   radius: 66,
   startAngle: -180,
   endAngle: 0,
-} satisfies RotorAnchorSwitchArc
+} satisfies RotarySwitchArc
 
 const ANTI_REPEAT_OPTIONS = [
   {
@@ -114,7 +114,7 @@ const ANTI_REPEAT_ROTARY_ARC = {
   radius: 66,
   startAngle: 0,
   endAngle: 80,
-} satisfies RotorAnchorSwitchArc
+} satisfies RotarySwitchArc
 
 const displayedCraftCost = 120
 
@@ -133,7 +133,7 @@ const getAntiRepeatOption = (value: AntiRepeatMode) => {
   )
 }
 
-export function ColliderFrame() {
+export function ColliderPanel() {
   const [monitorState, setMonitorState] = useState<MonitorState>(
     INITIAL_MONITOR_STATE,
   )
@@ -165,10 +165,10 @@ export function ColliderFrame() {
   }
 
   return (
-    <section className={styles.frame}>
+    <section className={styles.panel}>
       <div className={styles.panelGrid}>
         <div className={styles.monitorSlot}>
-          <ColliderMonitor
+          <StatusMonitor
             availableShards={monitorState.userShards}
             projectTitle={monitorState.decorationProject}
             levelName={monitorState.selectedLevel}
@@ -178,11 +178,9 @@ export function ColliderFrame() {
           />
         </div>
         <section className={styles.rotorPanel}>
-          <ColliderControlLabel className={styles.rotorLabel}>
-            Альбом
-          </ColliderControlLabel>
+          <ControlLabel className={styles.rotorLabel}>Альбом</ControlLabel>
 
-          <RotorAnchorSwitch
+          <RotarySwitch
             arc={ALBUM_ROTARY_ARC}
             className={styles.albumRotorAnchor}
             items={ALBUM_OPTIONS}
@@ -194,7 +192,7 @@ export function ColliderFrame() {
         <div className={styles.typeSlot}>
           <section className={styles.typePanel}>
             <div className={styles.typeControl}>
-              <ColliderControlLabel>Случайный</ColliderControlLabel>
+              <ControlLabel>Случайный</ControlLabel>
               <DecorationTypeButtonGroup>
                 <DecorationTypeButton
                   isSelected={monitorState.selectedType === 'random'}
@@ -206,7 +204,7 @@ export function ColliderFrame() {
             </div>
 
             <div className={styles.typeControl}>
-              <ColliderControlLabel>Тип украшения</ColliderControlLabel>
+              <ControlLabel>Тип украшения</ControlLabel>
               <DecorationTypeButtonGroup>
                 {DECORATION_TYPE_OPTIONS.map((typeOption) => {
                   const isSelected =
@@ -228,11 +226,11 @@ export function ColliderFrame() {
         </div>
 
         <section className={`${styles.rotorPanel} ${styles.antiRepeatPanel}`}>
-          <ColliderControlLabel className={styles.rotorLabel}>
+          <ControlLabel className={styles.rotorLabel}>
             Антиповторитель
-          </ColliderControlLabel>
+          </ControlLabel>
 
-          <RotorAnchorSwitch
+          <RotarySwitch
             arc={ANTI_REPEAT_ROTARY_ARC}
             className={styles.antiRepeatRotorAnchor}
             items={ANTI_REPEAT_OPTIONS}
@@ -242,13 +240,13 @@ export function ColliderFrame() {
         </section>
 
         <div className={styles.costSlot}>
-          <ShardCostCounter value={displayedCraftCost} />
+          <CraftCost value={displayedCraftCost} />
         </div>
 
         <div className={styles.startSlot}>
           <div className={styles.startControl}>
-            <CraftStartButton />
-            <ColliderControlLabel>Создать украшение</ColliderControlLabel>
+            <CraftButton />
+            <ControlLabel>Создать украшение</ControlLabel>
           </div>
         </div>
       </div>

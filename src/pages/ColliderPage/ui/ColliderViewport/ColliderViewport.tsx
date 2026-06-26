@@ -7,12 +7,12 @@ import {
   type ReactNode,
 } from 'react'
 
-import { ColliderZoomToolbar } from '../ColliderZoomToolbar'
+import { ViewportZoomToolbar } from '../ViewportZoomToolbar'
 
 import styles from './ColliderViewport.module.scss'
 
-const FRAME_WIDTH = 1280
-const FRAME_HEIGHT = 720
+const PANEL_WIDTH = 1280
+const PANEL_HEIGHT = 720
 const FIT_PADDING = 0.92
 const MIN_SCALE = 0.5
 const MAX_SCALE = 2
@@ -35,11 +35,11 @@ function clampUserZoom(zoom: number) {
 }
 
 function getFitScale(width: number, height: number) {
-  const widthRatio = width / FRAME_WIDTH
-  const heightRatio = height / FRAME_HEIGHT
-  const scaleToFitFrame = Math.min(widthRatio, heightRatio)
+  const widthRatio = width / PANEL_WIDTH
+  const heightRatio = height / PANEL_HEIGHT
+  const scaleToFitPanel = Math.min(widthRatio, heightRatio)
 
-  return clampScale(scaleToFitFrame * FIT_PADDING)
+  return clampScale(scaleToFitPanel * FIT_PADDING)
 }
 
 export function ColliderViewport({ children }: ColliderViewportProps) {
@@ -84,14 +84,14 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
   return (
     <div className={styles.viewport} ref={viewportRef}>
       <div
-        className={styles.frameLayer}
+        className={styles.panelLayer}
         style={{ transform: `translate(-50%, -50%) scale(${scale})` }}
       >
         {children}
       </div>
 
       <div className={styles.overlay}>
-        <ColliderZoomToolbar
+        <ViewportZoomToolbar
           userZoomPercent={Math.round(userZoom * 100)}
           realScalePercent={Math.round(scale * 100)}
           canZoomOut={scale > MIN_SCALE}

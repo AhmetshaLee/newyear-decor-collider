@@ -1,10 +1,10 @@
-import { ColliderFrame } from './ui/ColliderFrame'
+import { ColliderPanel } from './ui/ColliderPanel'
 import { ColliderViewport } from './ui/ColliderViewport'
 
 export function ColliderPage() {
   return (
     <ColliderViewport>
-      <ColliderFrame />
+      <ColliderPanel />
     </ColliderViewport>
   )
 }

@@ -10,7 +10,7 @@ export function DecorationTypeButtonGroup({
   children,
 }: DecorationTypeButtonGroupProps) {
   return (
-    <div className={styles.frame}>
+    <div className={styles.group}>
       <div className={styles.buttons}>{children}</div>
     </div>
   )

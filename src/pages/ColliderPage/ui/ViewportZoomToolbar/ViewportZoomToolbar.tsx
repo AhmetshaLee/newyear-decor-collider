@@ -1,6 +1,6 @@
-import styles from './ColliderZoomToolbar.module.scss'
+import styles from './ViewportZoomToolbar.module.scss'
 
-type ColliderZoomToolbarProps = {
+type ViewportZoomToolbarProps = {
   userZoomPercent: number
   realScalePercent: number
   canZoomOut: boolean
@@ -10,7 +10,7 @@ type ColliderZoomToolbarProps = {
   onReset: () => void
 }
 
-export function ColliderZoomToolbar({
+export function ViewportZoomToolbar({
   userZoomPercent,
   realScalePercent,
   canZoomOut,
@@ -18,9 +18,9 @@ export function ColliderZoomToolbar({
   onZoomOut,
   onZoomIn,
   onReset,
-}: ColliderZoomToolbarProps) {
+}: ViewportZoomToolbarProps) {
   return (
-    <div className={styles.toolbar} aria-label="Collider viewport controls">
+    <div className={styles.toolbar} aria-label="Viewport zoom controls">
       <button
         className={styles.button}
         type="button"

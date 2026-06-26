@@ -1,1 +1,0 @@
-export { ColliderControlLabel } from './ColliderControlLabel'

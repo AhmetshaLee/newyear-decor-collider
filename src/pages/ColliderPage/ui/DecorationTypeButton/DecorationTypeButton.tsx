@@ -14,7 +14,7 @@ export function DecorationTypeButton({
   onClick,
 }: DecorationTypeButtonProps) {
   return (
-    <span className={styles.frame}>
+    <span className={styles.buttonFrame}>
       <button
         className={`${styles.button} ${isSelected ? styles.selected : ''}`}
         type="button"

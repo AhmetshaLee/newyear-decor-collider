@@ -1,16 +1,13 @@
 import type { ReactNode } from 'react'
 
-import styles from './ColliderControlLabel.module.scss'
+import styles from './ControlLabel.module.scss'
 
-type ColliderControlLabelProps = {
+type ControlLabelProps = {
   children: ReactNode
   className?: string
 }
 
-export function ColliderControlLabel({
-  children,
-  className,
-}: ColliderControlLabelProps) {
+export function ControlLabel({ children, className }: ControlLabelProps) {
   const labelClassName = className
     ? `${styles.label} ${className}`
     : styles.label

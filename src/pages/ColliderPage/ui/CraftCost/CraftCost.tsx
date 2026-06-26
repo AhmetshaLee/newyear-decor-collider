@@ -1,6 +1,6 @@
-import styles from './ShardCostCounter.module.scss'
+import styles from './CraftCost.module.scss'
 
-type ShardCostCounterProps = {
+type CraftCostProps = {
   value: number
 }
 
@@ -18,7 +18,7 @@ const getFirstActiveDigitIndex = (formattedValue: string) => {
     : firstNonZeroDigitIndex
 }
 
-export function ShardCostCounter({ value }: ShardCostCounterProps) {
+export function CraftCost({ value }: CraftCostProps) {
   const formattedValue = formatCostValue(value)
   const firstActiveDigitIndex = getFirstActiveDigitIndex(formattedValue)
 

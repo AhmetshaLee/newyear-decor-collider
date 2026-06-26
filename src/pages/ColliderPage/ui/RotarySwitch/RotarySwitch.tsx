@@ -1,22 +1,22 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
 
-import styles from './RotorAnchorSwitch.module.scss'
+import styles from './RotarySwitch.module.scss'
 
-export type RotorAnchorSwitchArc = {
+export type RotarySwitchArc = {
   radius: number
   startAngle: number
   endAngle: number
 }
 
-export type RotorAnchorSwitchItem<TValue extends string> = {
+export type RotarySwitchItem<TValue extends string> = {
   value: TValue
   content: ReactNode
 }
 
-type RotorAnchorSwitchProps<TValue extends string> = {
-  arc: RotorAnchorSwitchArc
+type RotarySwitchProps<TValue extends string> = {
+  arc: RotarySwitchArc
   className?: string
-  items: RotorAnchorSwitchItem<TValue>[]
+  items: RotarySwitchItem<TValue>[]
   value: TValue
   onValueChange: (value: TValue) => void
 }
@@ -49,7 +49,7 @@ function isFullCircle(startAngle: number, endAngle: number) {
   return span > 0 && Math.abs(span % FULL_CIRCLE) < FULL_CIRCLE_EPSILON
 }
 
-function getDirectedSpan(arc: RotorAnchorSwitchArc) {
+function getDirectedSpan(arc: RotarySwitchArc) {
   const span = arc.endAngle - arc.startAngle
 
   if (isFullCircle(arc.startAngle, arc.endAngle)) {
@@ -59,7 +59,7 @@ function getDirectedSpan(arc: RotorAnchorSwitchArc) {
   return span
 }
 
-function getStepAngle(index: number, count: number, arc: RotorAnchorSwitchArc) {
+function getStepAngle(index: number, count: number, arc: RotarySwitchArc) {
   if (count <= 1) {
     return arc.startAngle
   }
@@ -70,7 +70,7 @@ function getStepAngle(index: number, count: number, arc: RotorAnchorSwitchArc) {
   return arc.startAngle + (span / divisor) * index
 }
 
-function getArcPath(arc: RotorAnchorSwitchArc) {
+function getArcPath(arc: RotarySwitchArc) {
   const span = getDirectedSpan(arc)
   const startPoint = getPoint(arc.startAngle, arc.radius)
   const sweepFlag = span >= 0 ? 1 : 0
@@ -97,13 +97,13 @@ function getArcPath(arc: RotorAnchorSwitchArc) {
   ].join(' ')
 }
 
-export function RotorAnchorSwitch<TValue extends string>({
+export function RotarySwitch<TValue extends string>({
   arc,
   className,
   items,
   value,
   onValueChange,
-}: RotorAnchorSwitchProps<TValue>) {
+}: RotarySwitchProps<TValue>) {
   const [rotationOffset, setRotationOffset] = useState(0)
 
   const selectedIndex = items.findIndex((item) => item.value === value)

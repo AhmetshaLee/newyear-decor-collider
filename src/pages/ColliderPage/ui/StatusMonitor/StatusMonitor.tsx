@@ -1,6 +1,6 @@
-import styles from './ColliderMonitor.module.scss'
+import styles from './StatusMonitor.module.scss'
 
-type ColliderMonitorProps = {
+type StatusMonitorProps = {
   availableShards: number
   projectTitle: string
   levelName: string
@@ -9,14 +9,14 @@ type ColliderMonitorProps = {
   antiRepeatModeName: string
 }
 
-export function ColliderMonitor({
+export function StatusMonitor({
   availableShards,
   projectTitle,
   levelName,
   albumName,
   decorationTypeName,
   antiRepeatModeName,
-}: ColliderMonitorProps) {
+}: StatusMonitorProps) {
   return (
     <div className={styles.panel}>
       <div className={styles.bezel}>
@@ -27,9 +27,7 @@ export function ColliderMonitor({
           <p className={styles.line}>Уровень: {levelName}</p>
           <p className={styles.line}>Альбом: {albumName}</p>
           <p className={styles.line}>Тип украшения: {decorationTypeName}</p>
-          <p className={styles.line}>
-            Антиповторитель: {antiRepeatModeName}
-          </p>
+          <p className={styles.line}>Антиповторитель: {antiRepeatModeName}</p>
         </div>
       </div>
     </div>
