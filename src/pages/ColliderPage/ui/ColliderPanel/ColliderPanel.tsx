@@ -6,6 +6,7 @@ import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftButton } from '../CraftButton'
 import { CraftCost } from '../CraftCost'
 import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
+import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
 
 import styles from './ColliderPanel.module.scss'
 
@@ -19,6 +20,7 @@ type ControlOption<TValue extends string> = {
   value: TValue
   content: ReactNode
   displayName: string
+  priceModifier: number
 }
 
 type ControlOptions<TValue extends string> = [
@@ -35,31 +37,38 @@ type MonitorState = {
   selectedAntiRepeatMode: AntiRepeatMode
 }
 
+const ANTI_REPEAT_SHARDS_SURCHARGE = 1000
+
 const ALBUM_OPTIONS = [
   {
     value: 'random',
     content: '?',
     displayName: 'Случайный',
+    priceModifier: 0,
   },
   {
     value: 'classic',
     content: '*',
     displayName: 'Новогодняя классика',
+    priceModifier: 150,
   },
   {
     value: 'fairytale',
     content: 'C',
     displayName: 'Рождественская сказка',
+    priceModifier: 150,
   },
   {
     value: 'oriental',
     content: '福',
     displayName: 'Восточный календарь',
+    priceModifier: 150,
   },
   {
     value: 'magic',
     content: '+',
     displayName: 'Зимнее чудо',
+    priceModifier: 150,
   },
 ] satisfies ControlOptions<AlbumValue>
 
@@ -74,31 +83,37 @@ const LEVEL_OPTIONS = [
     value: 'random',
     content: '?',
     displayName: 'Случайный',
+    priceModifier: 0,
   },
   {
     value: 'lvl_1',
     content: 'I',
     displayName: 'I',
+    priceModifier: 50,
   },
   {
     value: 'lvl_2',
     content: 'II',
     displayName: 'II',
+    priceModifier: 100,
   },
   {
     value: 'lvl_3',
     content: 'III',
     displayName: 'III',
+    priceModifier: 200,
   },
   {
     value: 'lvl_4',
     content: 'IV',
     displayName: 'IV',
+    priceModifier: 400,
   },
   {
     value: 'lvl_5',
     content: 'V',
     displayName: 'V',
+    priceModifier: 800,
   },
 ] satisfies ControlOptions<LevelValue>
 
@@ -112,13 +127,29 @@ const RANDOM_DECORATION_TYPE_OPTION = {
   value: 'random',
   content: '?',
   displayName: 'Случайный',
+  priceModifier: 0,
 } satisfies ControlOption<DecorationTypeValue>
 
 const SPECIFIC_DECORATION_TYPE_OPTIONS = [
-  { value: 'top', content: '▲', displayName: 'Верхушка' },
-  { value: 'lights', content: '✦', displayName: 'Гирлянды' },
-  { value: 'toys', content: '◆', displayName: 'Навесные игрушки' },
-  { value: 'floor', content: '▣', displayName: 'Нижние игрушки' },
+  { value: 'top', content: '▲', displayName: 'Верхушка', priceModifier: 250 },
+  {
+    value: 'lights',
+    content: '✦',
+    displayName: 'Гирлянды',
+    priceModifier: 250,
+  },
+  {
+    value: 'toys',
+    content: '◆',
+    displayName: 'Навесные игрушки',
+    priceModifier: 250,
+  },
+  {
+    value: 'floor',
+    content: '▣',
+    displayName: 'Нижние игрушки',
+    priceModifier: 250,
+  },
 ] satisfies ControlOptions<SpecificDecorationTypeValue>
 
 const DECORATION_TYPE_OPTIONS = [
@@ -131,11 +162,13 @@ const ANTI_REPEAT_OPTIONS = [
     value: 'off',
     content: 'Выкл',
     displayName: 'Выключен',
+    priceModifier: 0,
   },
   {
     value: 'useShards',
     content: 'Осколки',
-    displayName: 'За осколки',
+    displayName: `За ${ANTI_REPEAT_SHARDS_SURCHARGE} осколков`,
+    priceModifier: ANTI_REPEAT_SHARDS_SURCHARGE,
   },
 ] satisfies ControlOptions<AntiRepeatMode>
 
@@ -144,8 +177,6 @@ const ANTI_REPEAT_ROTARY_ARC = {
   startAngle: 0,
   endAngle: 80,
 } satisfies RotarySwitchArc
-
-const DISPLAYED_CRAFT_COST = 120
 
 const INITIAL_MONITOR_STATE: MonitorState = {
   userShards: 10210,
@@ -184,6 +215,13 @@ export function ColliderPanel() {
     ANTI_REPEAT_OPTIONS,
     monitorState.selectedAntiRepeatMode,
   )
+
+  const displayedCraftCost = calculateCraftCost({
+    albumModifier: selectedAlbumOption.priceModifier,
+    levelModifier: selectedLevelOption.priceModifier,
+    typeModifier: selectedDecorationTypeOption.priceModifier,
+    antiRepeatModifier: selectedAntiRepeatOption.priceModifier,
+  })
 
   const selectAlbum = (albumValue: AlbumValue) => {
     setMonitorState((currentState) => ({
@@ -306,7 +344,10 @@ export function ColliderPanel() {
         </div>
 
         <div className={styles.costSlot}>
-          <CraftCost value={DISPLAYED_CRAFT_COST} />
+          <div className={styles.costControl}>
+            <CraftCost value={displayedCraftCost} />
+            <ControlLabel>Стоимость</ControlLabel>
+          </div>
         </div>
 
         <div className={styles.startSlot}>

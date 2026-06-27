@@ -112,6 +112,14 @@
   justify-self: center;
 }
 
+.costControl {
+  width: 158px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 // ==== START BUTTON ====
 
 .startSlot {
