@@ -20,26 +20,41 @@
   height: 100%;
   display: grid;
   grid-template-areas:
-    'albumRotor monitorPanel decorationType'
-    'levelRotor antiRepeat decorationType'
-    'craftCost startButton decorationType';
-  grid-template-columns: 290px 560px 290px;
-  grid-template-rows: 222px 98px 1fr;
+    'albumRotor levelRotor antiRepeat decorationType'
+    'monitorPanel monitorPanel craftCost decorationType'
+    'monitorPanel monitorPanel startButton decorationType';
+  grid-template-columns: 286px 286px 342px 200px;
+  grid-template-rows: 222px 210px 148px;
   align-items: center;
   justify-content: space-between;
-  column-gap: 14px;
-  row-gap: 26px;
+  column-gap: 18px;
+  row-gap: 14px;
 }
 
 .monitorSlot {
   grid-area: monitorPanel;
+  justify-self: center;
 }
 
-// ==== ALBUM ROTOR ====
+// ==== ROTORS ====
 
-.rotorPanel {
+.albumSlot {
   grid-area: albumRotor;
-  width: 290px;
+  justify-self: center;
+}
+
+.levelSlot {
+  grid-area: levelRotor;
+  justify-self: center;
+}
+
+.antiRepeatSlot {
+  grid-area: antiRepeat;
+  justify-self: center;
+}
+
+.rotaryPanel {
+  width: 286px;
   padding: 14px 16px 10px;
   border: 1px solid rgba(12, 16, 15, 0.72);
   border-radius: 24px;
@@ -59,18 +74,8 @@
   margin: 103px auto 27px;
 }
 
-// ==== ANTI-REPEAT ROTOR ====
-
-.levelPanel {
-  grid-area: levelRotor;
-}
-
 .levelRotorAnchor {
   margin: 103px auto 27px;
-}
-
-.antiRepeatPanel {
-  grid-area: antiRepeat;
 }
 
 .antiRepeatRotorAnchor {
@@ -111,6 +116,7 @@
 
 .startSlot {
   grid-area: startButton;
+  align-self: end;
   justify-self: center;
 }
 

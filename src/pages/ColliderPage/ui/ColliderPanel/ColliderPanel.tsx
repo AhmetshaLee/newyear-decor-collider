@@ -226,7 +226,7 @@ export function ColliderPanel() {
             antiRepeatModeName={selectedAntiRepeatOption.displayName}
           />
         </div>
-        <section className={styles.rotorPanel}>
+        <section className={`${styles.rotaryPanel} ${styles.albumSlot}`}>
           <ControlLabel className={styles.rotorLabel}>Альбом</ControlLabel>
 
           <RotarySwitch
@@ -238,7 +238,7 @@ export function ColliderPanel() {
           />
         </section>
 
-        <section className={`${styles.rotorPanel} ${styles.levelPanel}`}>
+        <section className={`${styles.rotaryPanel} ${styles.levelSlot}`}>
           <ControlLabel className={styles.rotorLabel}>Уровень</ControlLabel>
 
           <RotarySwitch
@@ -247,6 +247,20 @@ export function ColliderPanel() {
             items={LEVEL_OPTIONS}
             value={monitorState.selectedLevel}
             onValueChange={selectLevel}
+          />
+        </section>
+
+        <section className={`${styles.rotaryPanel} ${styles.antiRepeatSlot}`}>
+          <ControlLabel className={styles.rotorLabel}>
+            Антиповторитель
+          </ControlLabel>
+
+          <RotarySwitch
+            arc={ANTI_REPEAT_ROTARY_ARC}
+            className={styles.antiRepeatRotorAnchor}
+            items={ANTI_REPEAT_OPTIONS}
+            value={monitorState.selectedAntiRepeatMode}
+            onValueChange={selectAntiRepeatMode}
           />
         </section>
 
@@ -260,7 +274,9 @@ export function ColliderPanel() {
                     monitorState.selectedType ===
                     RANDOM_DECORATION_TYPE_OPTION.value
                   }
-                  onClick={() => selectType(RANDOM_DECORATION_TYPE_OPTION.value)}
+                  onClick={() =>
+                    selectType(RANDOM_DECORATION_TYPE_OPTION.value)
+                  }
                 >
                   {RANDOM_DECORATION_TYPE_OPTION.content}
                 </DecorationTypeButton>
@@ -288,20 +304,6 @@ export function ColliderPanel() {
             </div>
           </section>
         </div>
-
-        <section className={`${styles.rotorPanel} ${styles.antiRepeatPanel}`}>
-          <ControlLabel className={styles.rotorLabel}>
-            Антиповторитель
-          </ControlLabel>
-
-          <RotarySwitch
-            arc={ANTI_REPEAT_ROTARY_ARC}
-            className={styles.antiRepeatRotorAnchor}
-            items={ANTI_REPEAT_OPTIONS}
-            value={monitorState.selectedAntiRepeatMode}
-            onValueChange={selectAntiRepeatMode}
-          />
-        </section>
 
         <div className={styles.costSlot}>
           <CraftCost value={DISPLAYED_CRAFT_COST} />
