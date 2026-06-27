@@ -10,6 +10,7 @@ import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
 import styles from './ColliderPanel.module.scss'
 
 type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
+type LevelValue = 'random' | 'lvl_1' | 'lvl_2' | 'lvl_3' | 'lvl_4' | 'lvl_5'
 type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'
 type SpecificDecorationTypeValue = Exclude<DecorationTypeValue, 'random'>
 type AntiRepeatMode = 'off' | 'useShards'
@@ -28,8 +29,8 @@ type ControlOptions<TValue extends string> = [
 type MonitorState = {
   userShards: number
   decorationProject: string
-  selectedLevel: string
   selectedAlbum: AlbumValue
+  selectedLevel: LevelValue
   selectedType: DecorationTypeValue
   selectedAntiRepeatMode: AntiRepeatMode
 }
@@ -63,6 +64,45 @@ const ALBUM_OPTIONS = [
 ] satisfies ControlOptions<AlbumValue>
 
 const ALBUM_ROTARY_ARC = {
+  radius: 66,
+  startAngle: -180,
+  endAngle: 0,
+} satisfies RotarySwitchArc
+
+const LEVEL_OPTIONS = [
+  {
+    value: 'random',
+    content: '?',
+    displayName: 'Случайный',
+  },
+  {
+    value: 'lvl_1',
+    content: 'I',
+    displayName: 'I',
+  },
+  {
+    value: 'lvl_2',
+    content: 'II',
+    displayName: 'II',
+  },
+  {
+    value: 'lvl_3',
+    content: 'III',
+    displayName: 'III',
+  },
+  {
+    value: 'lvl_4',
+    content: 'IV',
+    displayName: 'IV',
+  },
+  {
+    value: 'lvl_5',
+    content: 'V',
+    displayName: 'V',
+  },
+] satisfies ControlOptions<LevelValue>
+
+const LEVEL_ROTARY_ARC = {
   radius: 66,
   startAngle: -180,
   endAngle: 0,
@@ -110,8 +150,8 @@ const DISPLAYED_CRAFT_COST = 120
 const INITIAL_MONITOR_STATE: MonitorState = {
   userShards: 10210,
   decorationProject: 'Проект украшения',
-  selectedLevel: 'II',
   selectedAlbum: 'classic',
+  selectedLevel: 'lvl_2',
   selectedType: 'random',
   selectedAntiRepeatMode: 'off',
 }
@@ -132,6 +172,10 @@ export function ColliderPanel() {
     ALBUM_OPTIONS,
     monitorState.selectedAlbum,
   )
+  const selectedLevelOption = getSelectedOption(
+    LEVEL_OPTIONS,
+    monitorState.selectedLevel,
+  )
   const selectedDecorationTypeOption = getSelectedOption(
     DECORATION_TYPE_OPTIONS,
     monitorState.selectedType,
@@ -145,6 +189,13 @@ export function ColliderPanel() {
     setMonitorState((currentState) => ({
       ...currentState,
       selectedAlbum: albumValue,
+    }))
+  }
+
+  const selectLevel = (levelValue: LevelValue) => {
+    setMonitorState((currentState) => ({
+      ...currentState,
+      selectedLevel: levelValue,
     }))
   }
 
@@ -169,7 +220,7 @@ export function ColliderPanel() {
           <StatusMonitor
             availableShards={monitorState.userShards}
             projectTitle={monitorState.decorationProject}
-            levelName={monitorState.selectedLevel}
+            levelName={selectedLevelOption.displayName}
             albumName={selectedAlbumOption.displayName}
             decorationTypeName={selectedDecorationTypeOption.displayName}
             antiRepeatModeName={selectedAntiRepeatOption.displayName}
@@ -184,6 +235,18 @@ export function ColliderPanel() {
             items={ALBUM_OPTIONS}
             value={monitorState.selectedAlbum}
             onValueChange={selectAlbum}
+          />
+        </section>
+
+        <section className={`${styles.rotorPanel} ${styles.levelPanel}`}>
+          <ControlLabel className={styles.rotorLabel}>Уровень</ControlLabel>
+
+          <RotarySwitch
+            arc={LEVEL_ROTARY_ARC}
+            className={styles.levelRotorAnchor}
+            items={LEVEL_OPTIONS}
+            value={monitorState.selectedLevel}
+            onValueChange={selectLevel}
           />
         </section>
 
