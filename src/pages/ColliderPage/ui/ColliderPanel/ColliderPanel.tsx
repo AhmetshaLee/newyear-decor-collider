@@ -28,7 +28,7 @@ type ControlOptions<TValue extends string> = [
   ...ControlOption<TValue>[],
 ]
 
-type MonitorState = {
+type ColliderPanelState = {
   userShards: number
   decorationProject: string
   selectedAlbum: AlbumValue
@@ -178,7 +178,7 @@ const ANTI_REPEAT_ROTARY_ARC = {
   endAngle: 80,
 } satisfies RotarySwitchArc
 
-const INITIAL_MONITOR_STATE: MonitorState = {
+const INITIAL_COLLIDER_PANEL_STATE: ColliderPanelState = {
   userShards: 150,
   decorationProject: 'Проект украшения',
   selectedAlbum: 'classic',
@@ -195,59 +195,99 @@ const getSelectedOption = <TValue extends string>(
 }
 
 export function ColliderPanel() {
-  const [monitorState, setMonitorState] = useState<MonitorState>(
-    INITIAL_MONITOR_STATE,
+  const [panelState, setPanelState] = useState<ColliderPanelState>(
+    INITIAL_COLLIDER_PANEL_STATE,
   )
 
   const selectedAlbumOption = getSelectedOption(
     ALBUM_OPTIONS,
-    monitorState.selectedAlbum,
-  )
-  const selectedLevelOption = getSelectedOption(
-    LEVEL_OPTIONS,
-    monitorState.selectedLevel,
-  )
-  const selectedDecorationTypeOption = getSelectedOption(
-    DECORATION_TYPE_OPTIONS,
-    monitorState.selectedType,
-  )
-  const selectedAntiRepeatOption = getSelectedOption(
-    ANTI_REPEAT_OPTIONS,
-    monitorState.selectedAntiRepeatMode,
+    panelState.selectedAlbum,
   )
 
-  const displayedCraftCost = calculateCraftCost({
+  const selectedLevelOption = getSelectedOption(
+    LEVEL_OPTIONS,
+    panelState.selectedLevel,
+  )
+
+  const selectedDecorationTypeOption = getSelectedOption(
+    DECORATION_TYPE_OPTIONS,
+    panelState.selectedType,
+  )
+
+  const selectedAntiRepeatOption = getSelectedOption(
+    ANTI_REPEAT_OPTIONS,
+    panelState.selectedAntiRepeatMode,
+  )
+
+  const craftPrice = calculateCraftCost({
     albumModifier: selectedAlbumOption.priceModifier,
     levelModifier: selectedLevelOption.priceModifier,
     typeModifier: selectedDecorationTypeOption.priceModifier,
     antiRepeatModifier: selectedAntiRepeatOption.priceModifier,
   })
 
-  const isCraftDisabled = monitorState.userShards < displayedCraftCost
+  const canCreateDecoration = panelState.userShards >= craftPrice
+
+  const createDecoration = () => {
+    setPanelState((currentState) => {
+      const currentAlbumOption = getSelectedOption(
+        ALBUM_OPTIONS,
+        currentState.selectedAlbum,
+      )
+      const currentLevelOption = getSelectedOption(
+        LEVEL_OPTIONS,
+        currentState.selectedLevel,
+      )
+      const currentDecorationTypeOption = getSelectedOption(
+        DECORATION_TYPE_OPTIONS,
+        currentState.selectedType,
+      )
+      const currentAntiRepeatOption = getSelectedOption(
+        ANTI_REPEAT_OPTIONS,
+        currentState.selectedAntiRepeatMode,
+      )
+
+      const currentCraftPrice = calculateCraftCost({
+        albumModifier: currentAlbumOption.priceModifier,
+        levelModifier: currentLevelOption.priceModifier,
+        typeModifier: currentDecorationTypeOption.priceModifier,
+        antiRepeatModifier: currentAntiRepeatOption.priceModifier,
+      })
+
+      if (currentState.userShards < currentCraftPrice) {
+        return currentState
+      }
+
+      return {
+        ...currentState,
+        userShards: currentState.userShards - currentCraftPrice,
+      }
+    })
+  }
 
   const selectAlbum = (albumValue: AlbumValue) => {
-    setMonitorState((currentState) => ({
+    setPanelState((currentState) => ({
       ...currentState,
       selectedAlbum: albumValue,
     }))
   }
 
   const selectLevel = (levelValue: LevelValue) => {
-    setMonitorState((currentState) => ({
+    setPanelState((currentState) => ({
       ...currentState,
       selectedLevel: levelValue,
     }))
   }
 
   const selectType = (decorationType: DecorationTypeValue) => {
-    setMonitorState((currentState) => ({
+    setPanelState((currentState) => ({
       ...currentState,
       selectedType: decorationType,
     }))
   }
 
   const selectAntiRepeatMode = (antiRepeatMode: AntiRepeatMode) => {
-    setMonitorState((currentState) => ({
+    setPanelState((currentState) => ({
       ...currentState,
       selectedAntiRepeatMode: antiRepeatMode,
     }))
@@ -258,8 +298,8 @@ export function ColliderPanel() {
       <div className={styles.panelGrid}>
         <div className={styles.monitorSlot}>
           <StatusMonitor
-            availableShards={monitorState.userShards}
-            projectTitle={monitorState.decorationProject}
+            availableShards={panelState.userShards}
+            projectTitle={panelState.decorationProject}
             levelName={selectedLevelOption.displayName}
             albumName={selectedAlbumOption.displayName}
             decorationTypeName={selectedDecorationTypeOption.displayName}
@@ -273,7 +313,7 @@ export function ColliderPanel() {
             arc={ALBUM_ROTARY_ARC}
             className={styles.albumRotorAnchor}
             items={ALBUM_OPTIONS}
-            value={monitorState.selectedAlbum}
+            value={panelState.selectedAlbum}
             onValueChange={selectAlbum}
           />
         </section>
@@ -285,7 +325,7 @@ export function ColliderPanel() {
             arc={LEVEL_ROTARY_ARC}
             className={styles.levelRotorAnchor}
             items={LEVEL_OPTIONS}
-            value={monitorState.selectedLevel}
+            value={panelState.selectedLevel}
             onValueChange={selectLevel}
           />
         </section>
@@ -299,7 +339,7 @@ export function ColliderPanel() {
             arc={ANTI_REPEAT_ROTARY_ARC}
             className={styles.antiRepeatRotorAnchor}
             items={ANTI_REPEAT_OPTIONS}
-            value={monitorState.selectedAntiRepeatMode}
+            value={panelState.selectedAntiRepeatMode}
             onValueChange={selectAntiRepeatMode}
           />
         </section>
@@ -311,7 +351,7 @@ export function ColliderPanel() {
               <DecorationTypeButtonGroup>
                 <DecorationTypeButton
                   isSelected={
-                    monitorState.selectedType ===
+                    panelState.selectedType ===
                     RANDOM_DECORATION_TYPE_OPTION.value
                   }
                   onClick={() =>
@@ -328,7 +368,7 @@ export function ColliderPanel() {
               <DecorationTypeButtonGroup>
                 {SPECIFIC_DECORATION_TYPE_OPTIONS.map((typeOption) => {
                   const isSelected =
-                    monitorState.selectedType === typeOption.value
+                    panelState.selectedType === typeOption.value
 
                   return (
                     <DecorationTypeButton
@@ -347,14 +387,17 @@ export function ColliderPanel() {
 
         <div className={styles.costSlot}>
           <div className={styles.costControl}>
-            <CraftCost value={displayedCraftCost} />
+            <CraftCost value={craftPrice} />
             <ControlLabel>Стоимость</ControlLabel>
           </div>
         </div>
 
         <div className={styles.startSlot}>
           <div className={styles.startControl}>
-            <CraftButton isDisabled={isCraftDisabled} />
+            <CraftButton
+              isDisabled={!canCreateDecoration}
+              onClick={createDecoration}
+            />
             <ControlLabel>Создать украшение</ControlLabel>
           </div>
         </div>
