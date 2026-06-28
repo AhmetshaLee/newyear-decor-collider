@@ -179,7 +179,7 @@ const ANTI_REPEAT_ROTARY_ARC = {
 } satisfies RotarySwitchArc
 
 const INITIAL_MONITOR_STATE: MonitorState = {
-  userShards: 10210,
+  userShards: 150,
   decorationProject: 'Проект украшения',
   selectedAlbum: 'classic',
   selectedLevel: 'lvl_2',
@@ -222,6 +222,8 @@ export function ColliderPanel() {
     typeModifier: selectedDecorationTypeOption.priceModifier,
     antiRepeatModifier: selectedAntiRepeatOption.priceModifier,
   })
+
+  const isCraftDisabled = monitorState.userShards < displayedCraftCost
 
   const selectAlbum = (albumValue: AlbumValue) => {
     setMonitorState((currentState) => ({
@@ -352,7 +354,7 @@ export function ColliderPanel() {
 
         <div className={styles.startSlot}>
           <div className={styles.startControl}>
-            <CraftButton />
+            <CraftButton isDisabled={isCraftDisabled} />
             <ControlLabel>Создать украшение</ControlLabel>
           </div>
         </div>

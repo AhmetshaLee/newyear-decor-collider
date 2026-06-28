@@ -9,6 +9,11 @@
     inset 0 0 0 1px rgba(83, 18, 18, 0.34),
     inset 0 4px 0 rgba(238, 117, 69, 0.24),
     inset 0 -7px 10px rgba(65, 15, 17, 0.2);
+  --socket-center-color: #7e221d;
+  --socket-edge-color: #571719;
+  --socket-inner-shadow:
+    inset 0 7px 8px rgba(205, 82, 43, 0.18),
+    inset 0 -10px 12px rgba(39, 9, 10, 0.32);
   --rim-inner-shadow: inset 0 -8px 14px rgba(0, 0, 0, 0.26);
 
   position: relative;
@@ -51,10 +56,12 @@
 
   &::before {
     z-index: 1;
-    background: radial-gradient(circle at center, #7e221d 0%, #571719 100%);
-    box-shadow:
-      inset 0 7px 8px rgba(205, 82, 43, 0.18),
-      inset 0 -10px 12px rgba(39, 9, 10, 0.32);
+    background: radial-gradient(
+      circle at center,
+      var(--socket-center-color) 0%,
+      var(--socket-edge-color) 100%
+    );
+    box-shadow: var(--socket-inner-shadow);
     transform: translate(-50%, -50%);
   }
 
@@ -73,7 +80,7 @@
       transform 140ms ease;
   }
 
-  &:hover {
+  &:not(.disabled):hover {
     --cap-offset-y: 4px;
     --cap-center-color: #c24218;
     --cap-mid-color: #9c2d18;
@@ -88,8 +95,8 @@
     filter: brightness(1.02);
   }
 
-  &:active {
-    --cap-offset-y: 0px;
+  &:not(.disabled):active {
+    --cap-offset-y: 1px;
     --cap-center-color: #d14d20;
     --cap-mid-color: #a93218;
     --cap-edge-color: #7b2020;
@@ -100,5 +107,39 @@
       inset 0 3px 0 rgba(235, 111, 64, 0.3),
       inset 0 -5px 8px rgba(65, 15, 17, 0.24);
     --rim-inner-shadow: inset 0 -10px 16px rgba(0, 0, 0, 0.34);
+  }
+
+  &.disabled {
+    --cap-center-color: #4b3836;
+    --cap-mid-color: #41312f;
+    --cap-edge-color: #372823;
+    --cap-shadow:
+      0 13px 15px rgba(15, 5, 5, 0.44), 0 0 9px rgba(76, 56, 52, 0.16);
+    --cap-inner-shadow:
+      inset 0 0 0 1px rgba(52, 37, 35, 0.34),
+      inset 0 4px 0 rgba(124, 99, 101, 0.52),
+      inset 0 -7px 10px rgba(30, 22, 21, 0.28);
+    --socket-center-color: #463432;
+    --socket-edge-color: #33241f;
+    --socket-inner-shadow:
+      inset 0 7px 8px rgba(111, 80, 73, 0.12),
+      inset 0 -10px 12px rgba(24, 17, 15, 0.36);
+
+    cursor: not-allowed;
+  }
+
+  &.disabled:active {
+    --cap-offset-y: 4px;
+    --cap-center-color: #5a433f;
+    --cap-mid-color: #4b3835;
+    --cap-edge-color: #3f2d26;
+    --cap-shadow:
+      0 9px 11px rgba(15, 5, 5, 0.4), 0 0 12px rgba(84, 63, 58, 0.18);
+    --cap-inner-shadow:
+      inset 0 0 0 1px rgba(52, 37, 35, 0.42),
+      inset 0 4px 0 rgba(124, 99, 101, 0.62),
+      inset 0 -5px 8px rgba(30, 22, 21, 0.26);
+    --socket-center-color: #533d38;
+    --socket-edge-color: #3a2921;
   }
 }
