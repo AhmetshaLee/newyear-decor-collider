@@ -6,21 +6,24 @@ import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftButton } from '../CraftButton'
 import { CraftCost } from '../CraftCost'
 import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
-import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
+import {
+  ANTI_REPEAT_SHARDS_SURCHARGE,
+  calculateCraftCost,
+  type AlbumValue,
+  type AntiRepeatMode,
+  type CraftConfig,
+  type DecorationTypeValue,
+  type LevelValue,
+} from '@/shared/lib/collider/calculateCraftCost'
 
 import styles from './ColliderPanel.module.scss'
 
-type AlbumValue = 'random' | 'classic' | 'fairytale' | 'oriental' | 'magic'
-type LevelValue = 'random' | 'lvl_1' | 'lvl_2' | 'lvl_3' | 'lvl_4' | 'lvl_5'
-type DecorationTypeValue = 'random' | 'top' | 'lights' | 'toys' | 'floor'
 type SpecificDecorationTypeValue = Exclude<DecorationTypeValue, 'random'>
-type AntiRepeatMode = 'off' | 'useShards'
 
 type ControlOption<TValue extends string> = {
   value: TValue
   content: ReactNode
   displayName: string
-  priceModifier: number
 }
 
 type ControlOptions<TValue extends string> = [
@@ -28,47 +31,31 @@ type ControlOptions<TValue extends string> = [
   ...ControlOption<TValue>[],
 ]
 
-type ColliderPanelState = {
-  userShards: number
-  decorationProject: string
-  selectedAlbum: AlbumValue
-  selectedLevel: LevelValue
-  selectedType: DecorationTypeValue
-  selectedAntiRepeatMode: AntiRepeatMode
-}
-
-const ANTI_REPEAT_SHARDS_SURCHARGE = 1000
-
 const ALBUM_OPTIONS = [
   {
     value: 'random',
     content: '?',
     displayName: 'Случайный',
-    priceModifier: 0,
   },
   {
     value: 'classic',
     content: '*',
     displayName: 'Новогодняя классика',
-    priceModifier: 150,
   },
   {
     value: 'fairytale',
     content: 'C',
     displayName: 'Рождественская сказка',
-    priceModifier: 150,
   },
   {
     value: 'oriental',
     content: '福',
     displayName: 'Восточный календарь',
-    priceModifier: 150,
   },
   {
     value: 'magic',
     content: '+',
     displayName: 'Зимнее чудо',
-    priceModifier: 150,
   },
 ] satisfies ControlOptions<AlbumValue>
 
@@ -83,37 +70,31 @@ const LEVEL_OPTIONS = [
     value: 'random',
     content: '?',
     displayName: 'Случайный',
-    priceModifier: 0,
   },
   {
     value: 'lvl_1',
     content: 'I',
     displayName: 'I',
-    priceModifier: 50,
   },
   {
     value: 'lvl_2',
     content: 'II',
     displayName: 'II',
-    priceModifier: 100,
   },
   {
     value: 'lvl_3',
     content: 'III',
     displayName: 'III',
-    priceModifier: 200,
   },
   {
     value: 'lvl_4',
     content: 'IV',
     displayName: 'IV',
-    priceModifier: 400,
   },
   {
     value: 'lvl_5',
     content: 'V',
     displayName: 'V',
-    priceModifier: 800,
   },
 ] satisfies ControlOptions<LevelValue>
 
@@ -127,28 +108,24 @@ const RANDOM_DECORATION_TYPE_OPTION = {
   value: 'random',
   content: '?',
   displayName: 'Случайный',
-  priceModifier: 0,
 } satisfies ControlOption<DecorationTypeValue>
 
 const SPECIFIC_DECORATION_TYPE_OPTIONS = [
-  { value: 'top', content: '▲', displayName: 'Верхушка', priceModifier: 250 },
+  { value: 'top', content: '▲', displayName: 'Верхушка' },
   {
     value: 'lights',
     content: '✦',
     displayName: 'Гирлянды',
-    priceModifier: 250,
   },
   {
     value: 'toys',
     content: '◆',
     displayName: 'Навесные игрушки',
-    priceModifier: 250,
   },
   {
     value: 'floor',
     content: '▣',
     displayName: 'Нижние игрушки',
-    priceModifier: 250,
   },
 ] satisfies ControlOptions<SpecificDecorationTypeValue>
 
@@ -162,13 +139,11 @@ const ANTI_REPEAT_OPTIONS = [
     value: 'off',
     content: 'Выкл',
     displayName: 'Выключен',
-    priceModifier: 0,
   },
   {
     value: 'useShards',
     content: 'Осколки',
     displayName: `За ${ANTI_REPEAT_SHARDS_SURCHARGE} осколков`,
-    priceModifier: ANTI_REPEAT_SHARDS_SURCHARGE,
   },
 ] satisfies ControlOptions<AntiRepeatMode>
 
@@ -178,13 +153,14 @@ const ANTI_REPEAT_ROTARY_ARC = {
   endAngle: 80,
 } satisfies RotarySwitchArc
 
-const INITIAL_COLLIDER_PANEL_STATE: ColliderPanelState = {
-  userShards: 150,
-  decorationProject: 'Проект украшения',
-  selectedAlbum: 'classic',
-  selectedLevel: 'lvl_2',
-  selectedType: 'random',
-  selectedAntiRepeatMode: 'off',
+const DECORATION_PROJECT_TITLE = 'Проект украшения'
+const INITIAL_USER_SHARDS = 150
+
+const INITIAL_CRAFT_CONFIG: CraftConfig = {
+  album: 'classic',
+  level: 'lvl_2',
+  decorationType: 'random',
+  antiRepeatMode: 'off',
 }
 
 const getSelectedOption = <TValue extends string>(
@@ -195,101 +171,68 @@ const getSelectedOption = <TValue extends string>(
 }
 
 export function ColliderPanel() {
-  const [panelState, setPanelState] = useState<ColliderPanelState>(
-    INITIAL_COLLIDER_PANEL_STATE,
-  )
+  const [config, setConfig] = useState<CraftConfig>(INITIAL_CRAFT_CONFIG)
+  const [userShards, setUserShards] = useState(INITIAL_USER_SHARDS)
 
   const selectedAlbumOption = getSelectedOption(
     ALBUM_OPTIONS,
-    panelState.selectedAlbum,
+    config.album,
   )
 
   const selectedLevelOption = getSelectedOption(
     LEVEL_OPTIONS,
-    panelState.selectedLevel,
+    config.level,
   )
 
   const selectedDecorationTypeOption = getSelectedOption(
     DECORATION_TYPE_OPTIONS,
-    panelState.selectedType,
+    config.decorationType,
   )
 
   const selectedAntiRepeatOption = getSelectedOption(
     ANTI_REPEAT_OPTIONS,
-    panelState.selectedAntiRepeatMode,
+    config.antiRepeatMode,
   )
 
-  const craftPrice = calculateCraftCost({
-    albumModifier: selectedAlbumOption.priceModifier,
-    levelModifier: selectedLevelOption.priceModifier,
-    typeModifier: selectedDecorationTypeOption.priceModifier,
-    antiRepeatModifier: selectedAntiRepeatOption.priceModifier,
-  })
+  const craftPrice = calculateCraftCost(config)
 
-  const canCreateDecoration = panelState.userShards >= craftPrice
+  const canCreateDecoration = userShards >= craftPrice
 
   const createDecoration = () => {
-    setPanelState((currentState) => {
-      const currentAlbumOption = getSelectedOption(
-        ALBUM_OPTIONS,
-        currentState.selectedAlbum,
-      )
-      const currentLevelOption = getSelectedOption(
-        LEVEL_OPTIONS,
-        currentState.selectedLevel,
-      )
-      const currentDecorationTypeOption = getSelectedOption(
-        DECORATION_TYPE_OPTIONS,
-        currentState.selectedType,
-      )
-      const currentAntiRepeatOption = getSelectedOption(
-        ANTI_REPEAT_OPTIONS,
-        currentState.selectedAntiRepeatMode,
-      )
-
-      const currentCraftPrice = calculateCraftCost({
-        albumModifier: currentAlbumOption.priceModifier,
-        levelModifier: currentLevelOption.priceModifier,
-        typeModifier: currentDecorationTypeOption.priceModifier,
-        antiRepeatModifier: currentAntiRepeatOption.priceModifier,
-      })
-
-      if (currentState.userShards < currentCraftPrice) {
-        return currentState
+    setUserShards((currentShards) => {
+      if (currentShards < craftPrice) {
+        return currentShards
       }
 
-      return {
-        ...currentState,
-        userShards: currentState.userShards - currentCraftPrice,
-      }
+      return currentShards - craftPrice
     })
   }
 
   const selectAlbum = (albumValue: AlbumValue) => {
-    setPanelState((currentState) => ({
-      ...currentState,
-      selectedAlbum: albumValue,
+    setConfig((currentConfig) => ({
+      ...currentConfig,
+      album: albumValue,
     }))
   }
 
   const selectLevel = (levelValue: LevelValue) => {
-    setPanelState((currentState) => ({
-      ...currentState,
-      selectedLevel: levelValue,
+    setConfig((currentConfig) => ({
+      ...currentConfig,
+      level: levelValue,
     }))
   }
 
   const selectType = (decorationType: DecorationTypeValue) => {
-    setPanelState((currentState) => ({
-      ...currentState,
-      selectedType: decorationType,
+    setConfig((currentConfig) => ({
+      ...currentConfig,
+      decorationType,
     }))
   }
 
   const selectAntiRepeatMode = (antiRepeatMode: AntiRepeatMode) => {
-    setPanelState((currentState) => ({
-      ...currentState,
-      selectedAntiRepeatMode: antiRepeatMode,
+    setConfig((currentConfig) => ({
+      ...currentConfig,
+      antiRepeatMode,
     }))
   }
 
@@ -298,8 +241,8 @@ export function ColliderPanel() {
       <div className={styles.panelGrid}>
         <div className={styles.monitorSlot}>
           <StatusMonitor
-            availableShards={panelState.userShards}
-            projectTitle={panelState.decorationProject}
+            availableShards={userShards}
+            projectTitle={DECORATION_PROJECT_TITLE}
             levelName={selectedLevelOption.displayName}
             albumName={selectedAlbumOption.displayName}
             decorationTypeName={selectedDecorationTypeOption.displayName}
@@ -313,7 +256,7 @@ export function ColliderPanel() {
             arc={ALBUM_ROTARY_ARC}
             className={styles.albumRotorAnchor}
             items={ALBUM_OPTIONS}
-            value={panelState.selectedAlbum}
+            value={config.album}
             onValueChange={selectAlbum}
           />
         </section>
@@ -325,7 +268,7 @@ export function ColliderPanel() {
             arc={LEVEL_ROTARY_ARC}
             className={styles.levelRotorAnchor}
             items={LEVEL_OPTIONS}
-            value={panelState.selectedLevel}
+            value={config.level}
             onValueChange={selectLevel}
           />
         </section>
@@ -339,7 +282,7 @@ export function ColliderPanel() {
             arc={ANTI_REPEAT_ROTARY_ARC}
             className={styles.antiRepeatRotorAnchor}
             items={ANTI_REPEAT_OPTIONS}
-            value={panelState.selectedAntiRepeatMode}
+            value={config.antiRepeatMode}
             onValueChange={selectAntiRepeatMode}
           />
         </section>
@@ -351,7 +294,7 @@ export function ColliderPanel() {
               <DecorationTypeButtonGroup>
                 <DecorationTypeButton
                   isSelected={
-                    panelState.selectedType ===
+                    config.decorationType ===
                     RANDOM_DECORATION_TYPE_OPTION.value
                   }
                   onClick={() =>
@@ -367,8 +310,7 @@ export function ColliderPanel() {
               <ControlLabel>Тип украшения</ControlLabel>
               <DecorationTypeButtonGroup>
                 {SPECIFIC_DECORATION_TYPE_OPTIONS.map((typeOption) => {
-                  const isSelected =
-                    panelState.selectedType === typeOption.value
+                  const isSelected = config.decorationType === typeOption.value
 
                   return (
                     <DecorationTypeButton
