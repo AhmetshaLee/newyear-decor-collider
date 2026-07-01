@@ -8,17 +8,13 @@ export type RotarySwitchArc = {
   endAngle: number
 }
 
-export type RotarySwitchItem<TValue extends string> = {
-  value: TValue
-  content: ReactNode
-}
-
 type RotarySwitchProps<TValue extends string> = {
   arc: RotarySwitchArc
   className?: string
-  items: RotarySwitchItem<TValue>[]
+  values: readonly TValue[]
   value: TValue
   onValueChange: (value: TValue) => void
+  renderValue: (value: TValue) => ReactNode
 }
 
 const ITEM_RADIUS_OFFSET = 32
@@ -100,27 +96,28 @@ function getArcPath(arc: RotarySwitchArc) {
 export function RotarySwitch<TValue extends string>({
   arc,
   className,
-  items,
+  values,
   value,
   onValueChange,
+  renderValue,
 }: RotarySwitchProps<TValue>) {
   const [rotationOffset, setRotationOffset] = useState(0)
 
-  const selectedIndex = items.findIndex((item) => item.value === value)
+  const selectedIndex = values.findIndex((itemValue) => itemValue === value)
   const safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : 0
-  const selectedAngle = getStepAngle(safeSelectedIndex, items.length, arc)
+  const selectedAngle = getStepAngle(safeSelectedIndex, values.length, arc)
   const isClosedArc = isFullCircle(arc.startAngle, arc.endAngle)
   const itemRadius = arc.radius + ITEM_RADIUS_OFFSET
   const knobAngle = selectedAngle + (isClosedArc ? rotationOffset : 0)
 
   const selectItem = (itemIndex: number) => {
-    const item = items[itemIndex]
+    const itemValue = values[itemIndex]
 
-    if (!item) {
+    if (itemValue === undefined) {
       return
     }
 
-    if (isClosedArc && items.length > 1) {
+    if (isClosedArc && values.length > 1) {
       if (itemIndex < safeSelectedIndex) {
         setRotationOffset(
           (currentOffset) => currentOffset + getDirectedSpan(arc),
@@ -128,15 +125,15 @@ export function RotarySwitch<TValue extends string>({
       }
     }
 
-    onValueChange(item.value)
+    onValueChange(itemValue)
   }
 
   const selectNextItem = () => {
-    if (items.length === 0) {
+    if (values.length === 0) {
       return
     }
 
-    selectItem((safeSelectedIndex + 1) % items.length)
+    selectItem((safeSelectedIndex + 1) % values.length)
   }
 
   return (
@@ -158,14 +155,14 @@ export function RotarySwitch<TValue extends string>({
         <path className={styles.arc} d={getArcPath(arc)} />
       </svg>
 
-      {items.map((item, itemIndex) => {
-        const tickAngle = getStepAngle(itemIndex, items.length, arc)
+      {values.map((itemValue, itemIndex) => {
+        const tickAngle = getStepAngle(itemIndex, values.length, arc)
         const tickPoint = getPoint(tickAngle, arc.radius)
 
         return (
           <span
             className={styles.tick}
-            key={item.value}
+            key={itemValue}
             style={
               {
                 '--tick-angle': `${tickAngle}deg`,
@@ -177,17 +174,17 @@ export function RotarySwitch<TValue extends string>({
         )
       })}
 
-      {items.map((item, itemIndex) => {
-        const itemAngle = getStepAngle(itemIndex, items.length, arc)
+      {values.map((itemValue, itemIndex) => {
+        const itemAngle = getStepAngle(itemIndex, values.length, arc)
         const itemPoint = getPoint(itemAngle, itemRadius)
-        const isSelected = item.value === value
+        const isSelected = itemValue === value
 
         return (
           <div
             className={`${styles.itemAnchor} ${getItemGrowthClass(
               itemPoint.x,
             )}`}
-            key={item.value}
+            key={itemValue}
             style={
               {
                 '--item-x': `${itemPoint.x}px`,
@@ -202,7 +199,9 @@ export function RotarySwitch<TValue extends string>({
               type="button"
               onClick={() => selectItem(itemIndex)}
             >
-              <span className={styles.itemContent}>{item.content}</span>
+              <span className={styles.itemContent}>
+                {renderValue(itemValue)}
+              </span>
             </button>
           </div>
         )
