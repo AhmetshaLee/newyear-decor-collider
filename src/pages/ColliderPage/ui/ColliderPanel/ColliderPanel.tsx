@@ -14,7 +14,6 @@ import {
   DECORATION_TYPE_OPTIONS,
   LEVEL_OPTIONS,
   LEVEL_VALUES,
-  SPECIFIC_DECORATION_TYPE_VALUES,
   type AlbumValue,
   type AntiRepeatMode,
   type CraftConfig,
@@ -22,6 +21,7 @@ import {
   type LevelValue,
 } from '@/shared/lib/collider/colliderConfig'
 import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
+import { DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES } from '@/shared/lib/decorations'
 
 import styles from './ColliderPanel.module.scss'
 

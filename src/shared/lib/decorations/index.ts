@@ -1,17 +1,21 @@
 export {
   DECORATION_ALBUM_LABELS,
-  DECORATION_ALBUM_VALUES,
-  DECORATION_LEVEL_VALUES,
-  DECORATION_TYPE_VALUES,
   DECORATIONS_REGISTRY,
 } from './decorationsRegistry'
 
+export {
+  DECORATION_ALBUM_VALUES,
+  DECORATION_LEVEL_VALUES,
+  DECORATION_TYPE_VALUES,
+} from './decorationValues'
+
+export type { Decoration } from './decorationsRegistry'
+
 export type {
-  Decoration,
   DecorationAlbum,
   DecorationLevel,
   DecorationType,
-} from './decorationsRegistry'
+} from './decorationValues'
 
 export { filterRewardPool } from './filterRewardPool'
 export type { FilterRewardPoolInput } from './filterRewardPool'

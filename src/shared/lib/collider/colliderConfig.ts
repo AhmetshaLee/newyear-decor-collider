@@ -1,3 +1,12 @@
+import {
+  DECORATION_ALBUM_VALUES,
+  DECORATION_LEVEL_VALUES,
+  DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES,
+  type DecorationAlbum,
+  type DecorationLevel,
+  type DecorationType as SpecificDecorationTypeValue,
+} from '@/shared/lib/decorations/decorationValues'
+
 type CraftOptionConfig = {
   readonly content: string
   readonly displayName: string
@@ -6,15 +15,9 @@ type CraftOptionConfig = {
 
 export const ANTI_REPEAT_SHARDS_SURCHARGE = 1000
 
-export const ALBUM_VALUES = [
-  'random',
-  'classic',
-  'fairytale',
-  'oriental',
-  'magic',
-] as const
+export const ALBUM_VALUES = ['random', ...DECORATION_ALBUM_VALUES] as const
 
-export type AlbumValue = (typeof ALBUM_VALUES)[number]
+export type AlbumValue = 'random' | DecorationAlbum
 
 export const ALBUM_OPTIONS = {
   random: {
@@ -44,16 +47,9 @@ export const ALBUM_OPTIONS = {
   },
 } satisfies Record<AlbumValue, CraftOptionConfig>
 
-export const LEVEL_VALUES = [
-  'random',
-  'lvl_1',
-  'lvl_2',
-  'lvl_3',
-  'lvl_4',
-  'lvl_5',
-] as const
+export const LEVEL_VALUES = ['random', ...DECORATION_LEVEL_VALUES] as const
 
-export type LevelValue = (typeof LEVEL_VALUES)[number]
+export type LevelValue = 'random' | DecorationLevel
 
 export const LEVEL_OPTIONS = {
   random: {
@@ -88,22 +84,12 @@ export const LEVEL_OPTIONS = {
   },
 } satisfies Record<LevelValue, CraftOptionConfig>
 
-export const SPECIFIC_DECORATION_TYPE_VALUES = [
-  'top',
-  'lights',
-  'toys',
-  'floor',
-] as const
-
-export type SpecificDecorationTypeValue =
-  (typeof SPECIFIC_DECORATION_TYPE_VALUES)[number]
-
 export const DECORATION_TYPE_VALUES = [
   'random',
   ...SPECIFIC_DECORATION_TYPE_VALUES,
 ] as const
 
-export type DecorationTypeValue = (typeof DECORATION_TYPE_VALUES)[number]
+export type DecorationTypeValue = 'random' | SpecificDecorationTypeValue
 
 export const DECORATION_TYPE_OPTIONS = {
   random: {
