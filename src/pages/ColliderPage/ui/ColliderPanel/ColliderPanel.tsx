@@ -21,7 +21,12 @@ import {
   type LevelValue,
 } from '@/shared/lib/collider/colliderConfig'
 import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
-import { DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES } from '@/shared/lib/decorations'
+import {
+  DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES,
+  DECORATIONS_REGISTRY,
+} from '@/shared/lib/decorations'
+import { craftDecoration } from '@/features/craft-decoration'
+import { usePlayerProgress } from '@/entities/player-progress'
 
 import styles from './ColliderPanel.module.scss'
 
@@ -44,7 +49,6 @@ const ANTI_REPEAT_ROTARY_ARC = {
 } satisfies RotarySwitchArc
 
 const DECORATION_PROJECT_TITLE = 'Проект украшения'
-const INITIAL_USER_SHARDS = 150
 
 const INITIAL_CRAFT_CONFIG: CraftConfig = {
   album: 'classic',
@@ -54,19 +58,33 @@ const INITIAL_CRAFT_CONFIG: CraftConfig = {
 }
 
 export function ColliderPanel() {
+  const { progress, setProgress } = usePlayerProgress()
   const [config, setConfig] = useState<CraftConfig>(INITIAL_CRAFT_CONFIG)
-  const [userShards, setUserShards] = useState(INITIAL_USER_SHARDS)
 
+  const userShards = progress.userShards
   const craftPrice = calculateCraftCost(config)
-
   const canCreateDecoration = userShards >= craftPrice
 
+  // TODO: заменить console.log на будущий компонент уведомлений
   const createDecoration = () => {
-    setUserShards((currentShards) => {
-      return currentShards < craftPrice
-        ? currentShards
-        : currentShards - craftPrice
+    const result = craftDecoration({
+      progress,
+      config,
+      decorations: DECORATIONS_REGISTRY,
     })
+
+    if (result.status === 'success') {
+      setProgress(result.progress)
+      console.log(`Создано украшение: ${result.decoration.name}`)
+      return
+    }
+
+    if (result.status === 'notEnoughShards') {
+      console.log('Недостаточно осколков')
+      return
+    }
+
+    console.log('Нет подходящих украшений для текущего рецепта')
   }
 
   const selectAlbum = (albumValue: AlbumValue) => {
