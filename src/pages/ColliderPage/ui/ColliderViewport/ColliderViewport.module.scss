@@ -19,3 +19,26 @@
   inset: 0;
   pointer-events: none;
 }
+
+.overlayControls {
+  --toolbar-offset: clamp(16px, 2vw, 36px);
+
+  position: absolute;
+  right: var(--toolbar-offset);
+  bottom: var(--toolbar-offset);
+  left: var(--toolbar-offset);
+  pointer-events: none;
+}
+
+.routeNavigationToolbar {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.zoomToolbar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}

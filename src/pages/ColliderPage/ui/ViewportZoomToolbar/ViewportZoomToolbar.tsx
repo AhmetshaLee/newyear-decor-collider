@@ -1,6 +1,7 @@
 import styles from './ViewportZoomToolbar.module.scss'
 
 type ViewportZoomToolbarProps = {
+  className?: string
   userZoomPercent: number
   realScalePercent: number
   canZoomOut: boolean
@@ -11,6 +12,7 @@ type ViewportZoomToolbarProps = {
 }
 
 export function ViewportZoomToolbar({
+  className,
   userZoomPercent,
   realScalePercent,
   canZoomOut,
@@ -19,15 +21,18 @@ export function ViewportZoomToolbar({
   onZoomIn,
   onReset,
 }: ViewportZoomToolbarProps) {
+  const toolbarClassName =
+    className === undefined ? styles.toolbar : `${styles.toolbar} ${className}`
+
   return (
-    <div className={styles.toolbar} aria-label="Viewport zoom controls">
+    <div className={toolbarClassName} aria-label="Управление масштабом">
       <button
         className={styles.button}
         type="button"
         onClick={onZoomOut}
         disabled={!canZoomOut}
-        title="Zoom out"
-        aria-label="Zoom out"
+        title="Уменьшить масштаб"
+        aria-label="Уменьшить масштаб"
       >
         -
       </button>
@@ -35,8 +40,8 @@ export function ViewportZoomToolbar({
         className={styles.button}
         type="button"
         onClick={onReset}
-        title="Reset zoom"
-        aria-label="Reset zoom"
+        title="Сбросить масштаб"
+        aria-label="Сбросить масштаб"
       >
         R
       </button>
@@ -45,8 +50,8 @@ export function ViewportZoomToolbar({
         type="button"
         onClick={onZoomIn}
         disabled={!canZoomIn}
-        title="Zoom in"
-        aria-label="Zoom in"
+        title="Увеличить масштаб"
+        aria-label="Увеличить масштаб"
       >
         +
       </button>

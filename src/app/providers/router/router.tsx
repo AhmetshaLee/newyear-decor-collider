@@ -1,5 +1,4 @@
 import { Navigate, createBrowserRouter } from 'react-router'
-
 import { BasePageLayout } from '@/app/layouts/BasePageLayout'
 import { ImmersivePageLayout } from '@/app/layouts/ImmersivePageLayout'
 import { CalendarPage } from '@/pages/CalendarPage'

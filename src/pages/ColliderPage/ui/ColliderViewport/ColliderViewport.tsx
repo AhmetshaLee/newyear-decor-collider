@@ -6,8 +6,8 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-
 import { ViewportZoomToolbar } from '../ViewportZoomToolbar'
+import { RouteNavigationToolbar } from '@/shared/ui/RouteNavigationToolbar'
 
 import styles from './ColliderViewport.module.scss'
 
@@ -91,15 +91,19 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
       </div>
 
       <div className={styles.overlay}>
-        <ViewportZoomToolbar
-          userZoomPercent={Math.round(userZoom * 100)}
-          realScalePercent={Math.round(scale * 100)}
-          canZoomOut={scale > MIN_SCALE}
-          canZoomIn={scale < MAX_SCALE}
-          onZoomOut={zoomOut}
-          onZoomIn={zoomIn}
-          onReset={resetZoom}
-        />
+        <div className={styles.overlayControls}>
+          <RouteNavigationToolbar className={styles.routeNavigationToolbar} />
+          <ViewportZoomToolbar
+            className={styles.zoomToolbar}
+            userZoomPercent={Math.round(userZoom * 100)}
+            realScalePercent={Math.round(scale * 100)}
+            canZoomOut={scale > MIN_SCALE}
+            canZoomIn={scale < MAX_SCALE}
+            onZoomOut={zoomOut}
+            onZoomIn={zoomIn}
+            onReset={resetZoom}
+          />
+        </div>
       </div>
     </div>
   )

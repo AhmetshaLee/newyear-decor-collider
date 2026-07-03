@@ -1,6 +1,6 @@
+import { useMemo } from 'react'
 import { usePlayerProgress } from '@/entities/player-progress'
 import { DECORATIONS_REGISTRY } from '@/shared/lib/decorations'
-import { useMemo } from 'react'
 
 export function InventoryPage() {
   const { progress } = usePlayerProgress()
@@ -12,7 +12,7 @@ export function InventoryPage() {
   }, [])
 
   return (
-    <main>
+    <>
       <h1>Инвентарь</h1>
       {progress.inventory.length === 0 ? (
         <p>В инвентаре пока нет созданных украшений.</p>
@@ -45,6 +45,6 @@ export function InventoryPage() {
           })}
         </ul>
       )}
-    </main>
+    </>
   )
 }

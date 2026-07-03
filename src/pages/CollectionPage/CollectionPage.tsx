@@ -34,7 +34,7 @@ export function CollectionPage() {
         )
 
   return (
-    <main>
+    <>
       <nav aria-label="Альбомы коллекции">
         {DECORATION_ALBUM_VALUES.map((album) => (
           <button
@@ -89,6 +89,6 @@ export function CollectionPage() {
           })}
         </ul>
       )}
-    </main>
+    </>
   )
 }
