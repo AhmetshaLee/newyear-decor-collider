@@ -5,7 +5,7 @@ import {
   type DecorationAlbum,
   type DecorationLevel,
   type DecorationType as SpecificDecorationTypeValue,
-} from '@/shared/lib/decorations/decorationValues'
+} from '@/shared/lib/decorations'
 
 type CraftOptionConfig = {
   readonly content: string

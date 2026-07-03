@@ -51,8 +51,8 @@ const ANTI_REPEAT_ROTARY_ARC = {
 const DECORATION_PROJECT_TITLE = 'Проект украшения'
 
 const INITIAL_CRAFT_CONFIG: CraftConfig = {
-  album: 'classic',
-  level: 'lvl_2',
+  album: 'random',
+  level: 'random',
   decorationType: 'random',
   antiRepeatMode: 'off',
 }
