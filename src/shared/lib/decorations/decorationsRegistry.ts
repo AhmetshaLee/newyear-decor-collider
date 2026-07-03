@@ -21,5 +21,20 @@ export const DECORATION_ALBUM_LABELS = {
 } satisfies Record<DecorationAlbum, string>
 
 export const DECORATIONS_REGISTRY = [
-  // TODO: заполнить реальными украшениями после утверждения списка
+  {
+    id: 'classic-lvl-1-glass-snowflake',
+    album: 'classic',
+    level: 'lvl_1',
+    type: 'toys',
+    name: 'Стеклянная снежинка',
+    description: 'Легкая прозрачная игрушка с тонкими серебристыми гранями.',
+  },
+  {
+    id: 'classic-lvl-2-candy-cane-top',
+    album: 'classic',
+    level: 'lvl_2',
+    type: 'top',
+    name: 'Карамельная верхушка',
+    description: 'Полосатая елочная верхушка в форме праздничного леденца.',
+  },
 ] satisfies readonly Decoration[]
