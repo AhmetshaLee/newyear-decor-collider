@@ -19,20 +19,14 @@ export function useCraftDecoration(): UseCraftDecorationResult {
     (config: CraftConfig) => {
       const attempt = createCraftDecorationAttempt()
 
-      return commitProgress((currentProgress) => {
-        const result = craftDecoration({
+      return commitProgress((currentProgress) =>
+        craftDecoration({
           progress: currentProgress,
           config,
           decorations: DECORATIONS_REGISTRY,
           attempt,
-        })
-
-        return {
-          progress:
-            result.status === 'success' ? result.progress : currentProgress,
-          result,
-        }
-      })
+        }),
+      )
     },
     [commitProgress],
   )

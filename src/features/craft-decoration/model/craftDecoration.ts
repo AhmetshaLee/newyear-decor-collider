@@ -1,4 +1,8 @@
-import type { PlayerProgress, InventoryItem } from '@/entities/player-progress'
+import type {
+  PlayerProgress,
+  InventoryItem,
+  PlayerProgressTransactionResult,
+} from '@/entities/player-progress'
 import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
 import type { CraftConfig } from '@/shared/lib/collider/colliderConfig'
 import { filterRewardPool, type Decoration } from '@/shared/lib/decorations'
@@ -6,19 +10,16 @@ import { filterRewardPool, type Decoration } from '@/shared/lib/decorations'
 export type CraftDecorationResult =
   | {
       status: 'success'
-      progress: PlayerProgress
       item: InventoryItem
       decoration: Decoration
       cost: number
     }
   | {
       status: 'notEnoughShards'
-      progress: PlayerProgress
       cost: number
     }
   | {
       status: 'emptyRewardPool'
-      progress: PlayerProgress
       cost: number
     }
 
@@ -74,14 +75,16 @@ export function craftDecoration({
   config,
   decorations,
   attempt,
-}: CraftDecorationInput): CraftDecorationResult {
+}: CraftDecorationInput): PlayerProgressTransactionResult<CraftDecorationResult> {
   const cost = calculateCraftCost(config)
 
   if (progress.userShards < cost) {
     return {
-      status: 'notEnoughShards',
       progress,
-      cost,
+      result: {
+        status: 'notEnoughShards',
+        cost,
+      },
     }
   }
 
@@ -93,9 +96,11 @@ export function craftDecoration({
 
   if (rewardPool.length === 0) {
     return {
-      status: 'emptyRewardPool',
       progress,
-      cost,
+      result: {
+        status: 'emptyRewardPool',
+        cost,
+      },
     }
   }
 
@@ -122,10 +127,12 @@ export function craftDecoration({
   }
 
   return {
-    status: 'success',
     progress: nextProgress,
-    item,
-    decoration,
-    cost,
+    result: {
+      status: 'success',
+      item,
+      decoration,
+      cost,
+    },
   }
 }
