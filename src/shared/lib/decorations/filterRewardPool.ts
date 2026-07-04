@@ -1,4 +1,4 @@
-import type { CraftConfig } from '@/shared/lib/collider/colliderConfig'
+import type { CraftConfig } from '@/shared/lib/collider'
 import type { Decoration } from './decorationsRegistry'
 
 export type FilterRewardPoolInput = {

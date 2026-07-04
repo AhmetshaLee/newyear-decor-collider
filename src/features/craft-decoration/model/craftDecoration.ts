@@ -3,8 +3,7 @@ import type {
   InventoryItem,
   PlayerProgressTransactionResult,
 } from '@/entities/player-progress'
-import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
-import type { CraftConfig } from '@/shared/lib/collider/colliderConfig'
+import { calculateCraftCost, type CraftConfig } from '@/shared/lib/collider'
 import { filterRewardPool, type Decoration } from '@/shared/lib/decorations'
 
 export type CraftDecorationResult =

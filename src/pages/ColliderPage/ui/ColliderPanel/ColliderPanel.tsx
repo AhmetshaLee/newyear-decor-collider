@@ -19,8 +19,8 @@ import {
   type CraftConfig,
   type DecorationTypeValue,
   type LevelValue,
-} from '@/shared/lib/collider/colliderConfig'
-import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
+  calculateCraftCost,
+} from '@/shared/lib/collider'
 import { DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES } from '@/shared/lib/decorations'
 import { useCraftDecoration } from '@/features/craft-decoration'
 import { usePlayerProgress } from '@/entities/player-progress'
