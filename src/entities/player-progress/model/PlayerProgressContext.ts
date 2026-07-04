@@ -1,9 +1,20 @@
-import { createContext, type Dispatch, type SetStateAction } from 'react'
+import { createContext } from 'react'
 import type { PlayerProgress } from './types'
 
-type PlayerProgressContextValue = {
+export type PlayerProgressTransactionResult<TResult> = {
   progress: PlayerProgress
-  setProgress: Dispatch<SetStateAction<PlayerProgress>>
+  result: TResult
+}
+
+export type PlayerProgressTransaction<TResult> = (
+  currentProgress: PlayerProgress,
+) => PlayerProgressTransactionResult<TResult>
+
+export type PlayerProgressContextValue = {
+  progress: PlayerProgress
+  commitProgress: <TResult>(
+    transaction: PlayerProgressTransaction<TResult>,
+  ) => TResult
 }
 
 export const PlayerProgressContext =

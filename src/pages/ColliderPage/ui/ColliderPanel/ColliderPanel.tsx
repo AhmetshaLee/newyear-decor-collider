@@ -21,11 +21,8 @@ import {
   type LevelValue,
 } from '@/shared/lib/collider/colliderConfig'
 import { calculateCraftCost } from '@/shared/lib/collider/calculateCraftCost'
-import {
-  DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES,
-  DECORATIONS_REGISTRY,
-} from '@/shared/lib/decorations'
-import { craftDecoration } from '@/features/craft-decoration'
+import { DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES } from '@/shared/lib/decorations'
+import { useCraftDecoration } from '@/features/craft-decoration'
 import { usePlayerProgress } from '@/entities/player-progress'
 
 import styles from './ColliderPanel.module.scss'
@@ -58,7 +55,8 @@ const INITIAL_CRAFT_CONFIG: CraftConfig = {
 }
 
 export function ColliderPanel() {
-  const { progress, setProgress } = usePlayerProgress()
+  const { progress } = usePlayerProgress()
+  const { createDecoration } = useCraftDecoration()
   const [config, setConfig] = useState<CraftConfig>(INITIAL_CRAFT_CONFIG)
 
   const userShards = progress.userShards
@@ -66,15 +64,10 @@ export function ColliderPanel() {
   const canCreateDecoration = userShards >= craftPrice
 
   // TODO: заменить console.log на будущий компонент уведомлений
-  const createDecoration = () => {
-    const result = craftDecoration({
-      progress,
-      config,
-      decorations: DECORATIONS_REGISTRY,
-    })
+  const handleCreateDecoration = () => {
+    const result = createDecoration(config)
 
     if (result.status === 'success') {
-      setProgress(result.progress)
       console.log(`Создано украшение: ${result.decoration.name}`)
       return
     }
@@ -221,7 +214,7 @@ export function ColliderPanel() {
           <div className={styles.startControl}>
             <CraftButton
               isDisabled={!canCreateDecoration}
-              onClick={createDecoration}
+              onClick={handleCreateDecoration}
             />
             <ControlLabel>Создать украшение</ControlLabel>
           </div>
