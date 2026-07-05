@@ -4,29 +4,42 @@
   align-items: center;
   justify-items: center;
   aspect-ratio: 1;
-  min-width: 0;
-  padding: 8px;
+  width: 100%;
+  padding: 16px 8px;
   overflow: hidden;
-  border: 1px solid rgba(190, 228, 238, 0.38);
+  border: 1px solid rgba(190, 228, 238, 0.42);
   border-radius: 6px;
   color: #eaf8ff;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.15;
-  text-align: center;
-  text-overflow: ellipsis;
-  background:
-    radial-gradient(
-      circle at 50% 38%,
-      rgba(122, 204, 220, 0.25),
-      transparent 46%
-    ),
-    linear-gradient(145deg, rgba(28, 44, 50, 0.94), rgba(12, 17, 22, 0.94));
+  font: inherit;
+  background: rgba(13, 24, 34, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .selected {
-  border-color: rgba(134, 217, 255, 0.9);
-  box-shadow:
-    inset 0 0 0 1px rgba(134, 217, 255, 0.28),
-    0 0 18px rgba(56, 160, 214, 0.28);
+  border-color: rgba(146, 221, 255, 0.88);
+}
+
+.level {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  color: #8fe6ff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.checkmark {
+  position: absolute;
+  right: 7px;
+  bottom: 5px;
+  color: #8fe6ff;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0;
+}
+
+.selected .checkmark {
+  opacity: 1;
 }
