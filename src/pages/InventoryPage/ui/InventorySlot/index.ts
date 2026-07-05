@@ -1,0 +1,1 @@
+export { InventorySlot } from './InventorySlot'

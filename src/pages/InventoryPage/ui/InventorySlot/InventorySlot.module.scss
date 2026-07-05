@@ -1,0 +1,32 @@
+.slot {
+  position: relative;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(190, 228, 238, 0.38);
+  border-radius: 6px;
+  color: #eaf8ff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  text-overflow: ellipsis;
+  background:
+    radial-gradient(
+      circle at 50% 38%,
+      rgba(122, 204, 220, 0.25),
+      transparent 46%
+    ),
+    linear-gradient(145deg, rgba(28, 44, 50, 0.94), rgba(12, 17, 22, 0.94));
+}
+
+.selected {
+  border-color: rgba(134, 217, 255, 0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(134, 217, 255, 0.28),
+    0 0 18px rgba(56, 160, 214, 0.28);
+}
