@@ -5,25 +5,26 @@
   justify-items: center;
   aspect-ratio: 1;
   width: 100%;
-  padding: 16px 8px;
+  padding: 16px 8px 9px;
   overflow: hidden;
-  border: 1px solid rgba(190, 228, 238, 0.42);
-  border-radius: 6px;
-  color: #eaf8ff;
+  border: 1px solid rgba(126, 18, 18, 0.62);
+  border-radius: 4px;
+  color: #f6dede;
   font: inherit;
-  background: rgba(13, 24, 34, 0.5);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background: rgba(78, 26, 26, 0.82);
+  box-shadow: 0 1px 0 rgba(8, 2, 2, 0.18);
 }
 
 .selected {
-  border-color: rgba(146, 221, 255, 0.88);
+  border-color: rgba(105, 178, 255, 0.74);
+  background: rgba(50, 60, 85, 0.86);
 }
 
 .level {
   position: absolute;
   top: 6px;
   left: 6px;
-  color: #8fe6ff;
+  color: rgba(255, 222, 222, 0.9);
   font-size: 12px;
   font-weight: 800;
   line-height: 1;
@@ -33,7 +34,7 @@
   position: absolute;
   right: 7px;
   bottom: 5px;
-  color: #8fe6ff;
+  color: #7bbcff;
   font-size: 13px;
   font-weight: 900;
   line-height: 1;

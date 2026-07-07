@@ -79,68 +79,72 @@ export function InventoryPanel() {
     <section className={styles.panel}>
       <div className={styles.shell}>
         <header className={styles.topBar}>
-          <div className={styles.shardsCounter}>
-            Осколков в наличии: {userShards}
+          <div className={styles.summary}>
+            <div className={styles.shardsCounter}>
+              Осколков в наличии: {userShards}
+            </div>
+
+            <p className={styles.hint}>
+              Вам хватает осколков на создание нового украшения.
+            </p>
           </div>
 
-          <div className={styles.itemsCounter}>
-            <button type="button" className={styles.filterButton} disabled>
-              ▾
+          <div className={styles.actionBar}>
+            <button
+              type="button"
+              className={selectAllButtonClassName}
+              onClick={toggleAllSelection}
+              disabled={inventoryItems.length === 0}
+            >
+              Выбрать все украшения
             </button>
-            <span>
-              Показано: {visibleItemsCount} / {totalItemsCount}
-            </span>
+
+            <button
+              type="button"
+              className={styles.recycleButton}
+              onClick={handleRecycleSelectedItems}
+              disabled={selectedItems.length === 0}
+            >
+              + Осколков: {recycleShardsPreview}
+            </button>
+
+            <div className={styles.itemsCounter}>
+              <button type="button" className={styles.filterButton} disabled>
+                ▾
+              </button>
+              <span>
+                Показано: {visibleItemsCount} / {totalItemsCount}
+              </span>
+            </div>
           </div>
         </header>
 
-        <div className={styles.gridScroller}>
-          {inventoryItems.length === 0 ? (
-            <p className={styles.emptyState}>
-              В инвентаре пока нет созданных украшений.
-            </p>
-          ) : (
-            <div className={styles.grid}>
-              {inventoryItems.map((item) => {
-                const decoration = decorationsById.get(item.decorationId)
+        <div className={styles.box}>
+          <div className={styles.gridScroller}>
+            {inventoryItems.length === 0 ? (
+              <p className={styles.emptyState}>
+                В инвентаре пока нет созданных украшений.
+              </p>
+            ) : (
+              <div className={styles.grid}>
+                {inventoryItems.map((item) => {
+                  const decoration = decorationsById.get(item.decorationId)
 
-                return (
-                  <InventorySlot
-                    key={item.id}
-                    decoration={decoration}
-                    isSelected={selectedItemIds.has(item.id)}
-                    onToggle={() => toggleItemSelection(item.id)}
-                  >
-                    <InventoryDecoration decoration={decoration} />
-                  </InventorySlot>
-                )
-              })}
-            </div>
-          )}
+                  return (
+                    <InventorySlot
+                      key={item.id}
+                      decoration={decoration}
+                      isSelected={selectedItemIds.has(item.id)}
+                      onToggle={() => toggleItemSelection(item.id)}
+                    >
+                      <InventoryDecoration decoration={decoration} />
+                    </InventorySlot>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </div>
-
-        <footer className={styles.actionBar}>
-          <p className={styles.hint}>
-            Вам хватает осколков на создание нового украшения.
-          </p>
-
-          <button
-            type="button"
-            className={selectAllButtonClassName}
-            onClick={toggleAllSelection}
-            disabled={inventoryItems.length === 0}
-          >
-            Выбрать все украшения
-          </button>
-
-          <button
-            type="button"
-            className={styles.recycleButton}
-            onClick={handleRecycleSelectedItems}
-            disabled={selectedItems.length === 0}
-          >
-            + Осколков: {recycleShardsPreview}
-          </button>
-        </footer>
       </div>
     </section>
   )
