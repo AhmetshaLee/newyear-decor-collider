@@ -11,6 +11,7 @@ export type RotarySwitchArc = {
 type RotarySwitchProps<TValue extends string> = {
   arc: RotarySwitchArc
   className?: string
+  isDisabled?: boolean
   values: readonly TValue[]
   value: TValue
   onValueChange: (value: TValue) => void
@@ -96,6 +97,7 @@ function getArcPath(arc: RotarySwitchArc) {
 export function RotarySwitch<TValue extends string>({
   arc,
   className,
+  isDisabled = false,
   values,
   value,
   onValueChange,
@@ -111,6 +113,10 @@ export function RotarySwitch<TValue extends string>({
   const knobAngle = selectedAngle + (isClosedArc ? rotationOffset : 0)
 
   const selectItem = (itemIndex: number) => {
+    if (isDisabled) {
+      return
+    }
+
     const itemValue = values[itemIndex]
 
     if (itemValue === undefined) {
@@ -129,6 +135,10 @@ export function RotarySwitch<TValue extends string>({
   }
 
   const selectNextItem = () => {
+    if (isDisabled) {
+      return
+    }
+
     if (values.length === 0) {
       return
     }
@@ -138,7 +148,9 @@ export function RotarySwitch<TValue extends string>({
 
   return (
     <div
-      className={`${styles.root} ${className ?? ''}`}
+      className={`${styles.root} ${isDisabled ? styles.disabledRoot : ''} ${
+        className ?? ''
+      }`}
       style={
         {
           '--arc-size': `${arc.radius * 2}px`,
@@ -196,6 +208,7 @@ export function RotarySwitch<TValue extends string>({
               className={`${styles.item} ${
                 isSelected ? styles.activeItem : ''
               }`}
+              disabled={isDisabled}
               type="button"
               onClick={() => selectItem(itemIndex)}
             >
@@ -207,7 +220,12 @@ export function RotarySwitch<TValue extends string>({
         )
       })}
 
-      <button className={styles.knob} type="button" onClick={selectNextItem}>
+      <button
+        className={styles.knob}
+        disabled={isDisabled}
+        type="button"
+        onClick={selectNextItem}
+      >
         <span className={styles.pointer} />
       </button>
     </div>

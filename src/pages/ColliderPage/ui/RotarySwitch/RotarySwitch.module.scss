@@ -104,11 +104,22 @@
   object-fit: contain;
 }
 
-.item:hover {
+.item:not(:disabled):hover {
   color: rgba(255, 216, 182, 0.86);
   text-shadow:
     0 0 6px rgba(255, 137, 72, 0.55),
     0 0 14px rgba(255, 107, 54, 0.34);
+}
+
+.disabledRoot .item,
+.disabledRoot .knob {
+  cursor: not-allowed;
+}
+
+.disabledRoot .item,
+.disabledRoot .arc,
+.disabledRoot .tick {
+  opacity: 0.48;
 }
 
 .activeItem {
