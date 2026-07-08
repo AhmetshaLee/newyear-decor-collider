@@ -1,0 +1,23 @@
+.overlay {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  padding: clamp(16px, 4vw, 48px);
+  border: 0;
+  background: transparent;
+}
+
+.overlay[open] {
+  display: grid;
+  place-items: center;
+}
+
+.overlay::backdrop {
+  background: rgba(4, 8, 14, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.content {
+  width: min(100%, 560px);
+}
