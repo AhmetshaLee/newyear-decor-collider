@@ -5,14 +5,24 @@ import { DECORATIONS_REGISTRY } from '@/shared/lib/decorations'
 import { calculateRecycleShards } from '@/shared/lib/inventory'
 import { InventoryDecoration } from '../InventoryDecoration'
 import { InventorySlot } from '../InventorySlot'
+import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 
 import styles from './InventoryPanel.module.scss'
+
+type PendingRecycle = {
+  itemIds: readonly string[]
+  itemsCount: number
+  gainedShards: number
+}
 
 export function InventoryPanel() {
   const { progress } = usePlayerProgress()
   const { recycleItems } = useRecycleInventoryItems()
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(
     () => new Set<string>(),
+  )
+  const [pendingRecycle, setPendingRecycle] = useState<PendingRecycle | null>(
+    null,
   )
 
   const decorationsById = useMemo(() => {
@@ -31,6 +41,7 @@ export function InventoryPanel() {
   )
   const isAllSelected =
     inventoryItems.length > 0 && selectedItems.length === inventoryItems.length
+
   const selectAllButtonClassName = isAllSelected
     ? `${styles.selectAllButton} ${styles.selectAllActive}`
     : styles.selectAllButton
@@ -65,14 +76,30 @@ export function InventoryPanel() {
     })
   }
 
-  const handleRecycleSelectedItems = () => {
+  const openRecycleConfirmation = () => {
     if (selectedItems.length === 0) return
 
-    const result = recycleItems(selectedItems.map((item) => item.id))
+    setPendingRecycle({
+      itemIds: selectedItems.map((item) => item.id),
+      itemsCount: selectedItems.length,
+      gainedShards: recycleShardsPreview,
+    })
+  }
+
+  const closeRecycleConfirmation = () => {
+    setPendingRecycle(null)
+  }
+
+  const confirmRecycleSelectedItems = () => {
+    if (pendingRecycle === null) return
+
+    const result = recycleItems(pendingRecycle.itemIds)
 
     if (result.status === 'success') {
       setSelectedItemIds(new Set<string>())
     }
+
+    setPendingRecycle(null)
   }
 
   return (
@@ -102,7 +129,7 @@ export function InventoryPanel() {
             <button
               type="button"
               className={styles.recycleButton}
-              onClick={handleRecycleSelectedItems}
+              onClick={openRecycleConfirmation}
               disabled={selectedItems.length === 0}
             >
               + Осколков: {recycleShardsPreview}
@@ -146,6 +173,20 @@ export function InventoryPanel() {
           </div>
         </div>
       </div>
+
+      {pendingRecycle !== null && (
+        <ConfirmDialog
+          confirmLabel="Разбить"
+          isOpen={true}
+          onCancel={closeRecycleConfirmation}
+          onConfirm={confirmRecycleSelectedItems}
+          title="Разбить выбранные украшения?"
+        >
+          <p>Выбрано украшений: {pendingRecycle.itemsCount}</p>
+          <p>Будет начислено осколков: {pendingRecycle.gainedShards}</p>
+          <p>Это действие нельзя отменить.</p>
+        </ConfirmDialog>
+      )}
     </section>
   )
 }
