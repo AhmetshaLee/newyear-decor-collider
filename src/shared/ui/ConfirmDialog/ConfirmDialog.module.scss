@@ -1,0 +1,68 @@
+.content {
+  width: min(100%, 440px);
+}
+
+.panel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid rgba(190, 232, 255, 0.28);
+  border-radius: 8px;
+  color: #f4fbff;
+  background: #111b24;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.body {
+  color: rgba(244, 251, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.body > :first-child {
+  margin-top: 0;
+}
+
+.body > :last-child {
+  margin-bottom: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancelButton,
+.confirmButton {
+  min-width: 104px;
+  height: 34px;
+  border-radius: 5px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cancelButton {
+  border: 1px solid rgba(190, 232, 255, 0.28);
+  color: #f4fbff;
+  background: rgba(244, 251, 255, 0.08);
+}
+
+.confirmButton {
+  border: 1px solid rgba(255, 126, 126, 0.62);
+  color: #ffffff;
+  background: #b3262e;
+}
+
+.confirmButton:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
