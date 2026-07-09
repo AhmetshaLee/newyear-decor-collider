@@ -5,6 +5,7 @@ import { DecorationTypeButton } from '../DecorationTypeButton'
 import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftButton } from '../CraftButton'
 import { CraftCost } from '../CraftCost'
+import { CraftRewardDialog } from '../CraftRewardDialog'
 import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
 import {
   ALBUM_OPTIONS,
@@ -21,7 +22,10 @@ import {
   type LevelValue,
   calculateCraftCost,
 } from '@/shared/lib/collider'
-import { DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES } from '@/shared/lib/decorations'
+import {
+  DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES,
+  type Decoration,
+} from '@/shared/lib/decorations'
 import { useCraftDecoration } from '@/features/craft-decoration'
 import { usePlayerProgress } from '@/entities/player-progress'
 
@@ -58,17 +62,21 @@ export function ColliderPanel() {
   const { progress } = usePlayerProgress()
   const { createDecoration } = useCraftDecoration()
   const [config, setConfig] = useState<CraftConfig>(INITIAL_CRAFT_CONFIG)
+  const [craftedDecoration, setCraftedDecoration] = useState<Decoration | null>(
+    null,
+  )
 
   const userShards = progress.userShards
   const craftPrice = calculateCraftCost(config)
   const canCreateDecoration = userShards >= craftPrice
+  const isCraftResultVisible = craftedDecoration !== null
 
   // TODO: заменить console.log на будущий компонент уведомлений
   const handleCreateDecoration = () => {
     const result = createDecoration(config)
 
     if (result.status === 'success') {
-      console.log(`Создано украшение: ${result.decoration.name}`)
+      setCraftedDecoration(result.decoration)
       return
     }
 
@@ -78,6 +86,10 @@ export function ColliderPanel() {
     }
 
     console.log('Нет подходящих украшений для текущего рецепта')
+  }
+
+  const closeCraftRewardDialog = () => {
+    setCraftedDecoration(null)
   }
 
   const selectAlbum = (albumValue: AlbumValue) => {
@@ -131,6 +143,7 @@ export function ColliderPanel() {
           <RotarySwitch
             arc={ALBUM_ROTARY_ARC}
             className={styles.albumRotorAnchor}
+            isDisabled={isCraftResultVisible}
             values={ALBUM_VALUES}
             value={config.album}
             onValueChange={selectAlbum}
@@ -144,6 +157,7 @@ export function ColliderPanel() {
           <RotarySwitch
             arc={LEVEL_ROTARY_ARC}
             className={styles.levelRotorAnchor}
+            isDisabled={isCraftResultVisible}
             values={LEVEL_VALUES}
             value={config.level}
             onValueChange={selectLevel}
@@ -159,6 +173,7 @@ export function ColliderPanel() {
           <RotarySwitch
             arc={ANTI_REPEAT_ROTARY_ARC}
             className={styles.antiRepeatRotorAnchor}
+            isDisabled={isCraftResultVisible}
             values={ANTI_REPEAT_MODE_VALUES}
             value={config.antiRepeatMode}
             onValueChange={selectAntiRepeatMode}
@@ -174,6 +189,7 @@ export function ColliderPanel() {
               <ControlLabel>Случайный</ControlLabel>
               <DecorationTypeButtonGroup>
                 <DecorationTypeButton
+                  isDisabled={isCraftResultVisible}
                   isSelected={config.decorationType === 'random'}
                   onClick={() => selectType('random')}
                 >
@@ -190,6 +206,7 @@ export function ColliderPanel() {
 
                   return (
                     <DecorationTypeButton
+                      isDisabled={isCraftResultVisible}
                       isSelected={isSelected}
                       key={decorationType}
                       onClick={() => selectType(decorationType)}
@@ -213,13 +230,20 @@ export function ColliderPanel() {
         <div className={styles.startSlot}>
           <div className={styles.startControl}>
             <CraftButton
-              isDisabled={!canCreateDecoration}
+              isDisabled={!canCreateDecoration || isCraftResultVisible}
               onClick={handleCreateDecoration}
             />
             <ControlLabel>Создать украшение</ControlLabel>
           </div>
         </div>
       </div>
+
+      {craftedDecoration !== null && (
+        <CraftRewardDialog
+          decoration={craftedDecoration}
+          onClose={closeCraftRewardDialog}
+        />
+      )}
     </section>
   )
 }
