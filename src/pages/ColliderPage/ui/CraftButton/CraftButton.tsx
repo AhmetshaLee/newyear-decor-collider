@@ -2,11 +2,18 @@ import styles from './CraftButton.module.scss'
 
 type CraftButtonProps = {
   isDisabled?: boolean
+  isUnavailable?: boolean
   onClick?: () => void
 }
 
-export function CraftButton({ isDisabled = false, onClick }: CraftButtonProps) {
-  const buttonClassName = isDisabled
+export function CraftButton({
+  isDisabled = false,
+  isUnavailable,
+  onClick,
+}: CraftButtonProps) {
+  const isVisuallyDisabled = isDisabled || isUnavailable
+
+  const buttonClassName = isVisuallyDisabled
     ? `${styles.button} ${styles.disabled}`
     : styles.button
 
@@ -20,7 +27,7 @@ export function CraftButton({ isDisabled = false, onClick }: CraftButtonProps) {
     <button
       className={buttonClassName}
       type="button"
-      aria-disabled={isDisabled}
+      aria-disabled={isVisuallyDisabled}
       onClick={handleClick}
     />
   )
