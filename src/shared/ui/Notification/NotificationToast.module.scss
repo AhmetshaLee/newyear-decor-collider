@@ -1,0 +1,55 @@
+.toast {
+  --notification-accent: #7aa7c7;
+
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 24px;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid rgba(3, 5, 5, 0.78);
+  border-radius: 4px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 42%),
+    radial-gradient(circle at center, #151918 0 42%, #0b0e0d 100%);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
+  pointer-events: auto;
+}
+
+.success {
+  --notification-accent: #68d391;
+}
+
+.error {
+  --notification-accent: #ff7b7b;
+}
+
+.warning {
+  --notification-accent: #f6c85f;
+}
+
+.info {
+  --notification-accent: #72b7e5;
+}
+
+.symbol,
+.title {
+  color: var(--notification-accent);
+}
+
+.message {
+  margin: 2px 0 0;
+  color: rgba(244, 251, 255, 0.82);
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.closeButton {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  color: rgba(244, 251, 255, 0.72);
+  font: inherit;
+  background: transparent;
+  cursor: pointer;
+}
