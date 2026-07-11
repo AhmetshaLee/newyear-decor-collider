@@ -7,11 +7,13 @@ import styles from './NotificationViewport.module.scss'
 type NotificationViewportProps = {
   notifications: readonly NotificationItem[]
   onDismiss: (id: string) => void
+  onRemove: (id: string) => void
 }
 
 export function NotificationViewport({
   notifications,
   onDismiss,
+  onRemove,
 }: NotificationViewportProps) {
   if (notifications.length === 0) return null
 
@@ -22,6 +24,7 @@ export function NotificationViewport({
           key={notification.id}
           notification={notification}
           onDismiss={onDismiss}
+          onExited={onRemove}
         />
       ))}
     </section>,

@@ -12,6 +12,8 @@
     radial-gradient(circle at center, #151918 0 42%, #0b0e0d 100%);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
   pointer-events: auto;
+  will-change: opacity, transform;
+  animation: notification-enter 180ms ease-out both;
 }
 
 .success {
@@ -28,6 +30,10 @@
 
 .info {
   --notification-accent: #72b7e5;
+}
+
+.symbol {
+  text-align: center;
 }
 
 .symbol,
@@ -52,4 +58,37 @@
   font: inherit;
   background: transparent;
   cursor: pointer;
+}
+
+.leaving {
+  pointer-events: none;
+  animation: notification-exit 160ms ease-in both;
+}
+
+@keyframes notification-enter {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes notification-exit {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation-duration: 1ms;
+  }
 }
