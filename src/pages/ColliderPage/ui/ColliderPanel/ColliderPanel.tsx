@@ -28,6 +28,7 @@ import {
 } from '@/shared/lib/decorations'
 import { useCraftDecoration } from '@/features/craft-decoration'
 import { usePlayerProgress } from '@/entities/player-progress'
+import { useNotification } from '@/shared/ui/Notification'
 
 import styles from './ColliderPanel.module.scss'
 
@@ -61,6 +62,7 @@ const INITIAL_CRAFT_CONFIG: CraftConfig = {
 export function ColliderPanel() {
   const { progress } = usePlayerProgress()
   const { createDecoration } = useCraftDecoration()
+  const { notify } = useNotification()
   const [config, setConfig] = useState<CraftConfig>(INITIAL_CRAFT_CONFIG)
   const [craftedDecoration, setCraftedDecoration] = useState<Decoration | null>(
     null,
@@ -71,7 +73,6 @@ export function ColliderPanel() {
   const canCreateDecoration = userShards >= craftPrice
   const isCraftResultVisible = craftedDecoration !== null
 
-  // TODO: заменить console.log на будущий компонент уведомлений
   const handleCreateDecoration = () => {
     const result = createDecoration(config)
 
@@ -81,11 +82,17 @@ export function ColliderPanel() {
     }
 
     if (result.status === 'notEnoughShards') {
-      console.log('Недостаточно осколков')
+      notify({
+        type: 'warning',
+        message: 'Недостаточно осколков',
+      })
       return
     }
 
-    console.log('Нет подходящих украшений для текущего рецепта')
+    notify({
+      type: 'error',
+      message: 'Нет подходящих украшений для текущего рецепта',
+    })
   }
 
   const closeCraftRewardDialog = () => {
@@ -230,7 +237,8 @@ export function ColliderPanel() {
         <div className={styles.startSlot}>
           <div className={styles.startControl}>
             <CraftButton
-              isDisabled={!canCreateDecoration || isCraftResultVisible}
+              isDisabled={isCraftResultVisible}
+              isUnavailable={!canCreateDecoration}
               onClick={handleCreateDecoration}
             />
             <ControlLabel>Создать украшение</ControlLabel>
