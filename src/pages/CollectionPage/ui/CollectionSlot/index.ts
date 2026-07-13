@@ -1,0 +1,1 @@
+export { CollectionSlot } from './CollectionSlot'
