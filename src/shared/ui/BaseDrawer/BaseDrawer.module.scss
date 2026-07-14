@@ -1,0 +1,87 @@
+.drawer {
+  position: relative;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.drawer::backdrop {
+  background: rgba(4, 8, 14, 0.58);
+  backdrop-filter: blur(2px);
+}
+
+.content {
+  position: absolute;
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.22, 0.8, 0.25, 1);
+  animation-fill-mode: both;
+}
+
+.bottom .content {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--drawer-height, 88dvh);
+  animation-name: drawer-enter-bottom;
+}
+
+.right .content {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--drawer-width, 88vw);
+  animation-name: drawer-enter-right;
+}
+
+.closing.bottom .content {
+  animation-name: drawer-exit-bottom;
+}
+
+.closing.right .content {
+  animation-name: drawer-exit-right;
+}
+
+@keyframes drawer-enter-bottom {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes drawer-exit-bottom {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes drawer-enter-right {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drawer-exit-right {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
