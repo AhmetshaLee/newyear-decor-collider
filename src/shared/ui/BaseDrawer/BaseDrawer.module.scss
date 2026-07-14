@@ -1,5 +1,4 @@
 .drawer {
-  position: relative;
   width: 100vw;
   max-width: none;
   height: 100dvh;
@@ -7,33 +6,40 @@
   padding: 0;
   border: 0;
   background: transparent;
-  overflow: hidden;
+  overflow: clip;
+}
+
+.drawer[open] {
+  display: grid;
 }
 
 .drawer::backdrop {
   background: rgba(4, 8, 14, 0.58);
-  backdrop-filter: blur(2px);
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
+  animation-name: drawer-backdrop-enter;
 }
 
 .content {
-  position: absolute;
-  animation-duration: 220ms;
-  animation-timing-function: cubic-bezier(0.22, 0.8, 0.25, 1);
-  animation-fill-mode: both;
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
+}
+
+.bottom {
+  place-items: end center;
 }
 
 .bottom .content {
-  right: 0;
-  bottom: 0;
-  left: 0;
+  width: var(--drawer-width, 100%);
   height: var(--drawer-height, 88dvh);
   animation-name: drawer-enter-bottom;
 }
 
+.right {
+  place-items: stretch end;
+}
+
 .right .content {
-  top: 0;
-  right: 0;
-  bottom: 0;
   width: var(--drawer-width, 88vw);
   animation-name: drawer-enter-right;
 }
@@ -44,6 +50,30 @@
 
 .closing.right .content {
   animation-name: drawer-exit-right;
+}
+
+.closing::backdrop {
+  animation-name: drawer-backdrop-exit;
+}
+
+@keyframes drawer-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drawer-backdrop-exit {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes drawer-enter-bottom {
