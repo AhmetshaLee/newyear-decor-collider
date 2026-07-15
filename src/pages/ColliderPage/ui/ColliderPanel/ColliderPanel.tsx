@@ -32,6 +32,11 @@ import { useNotification } from '@/shared/ui/Notification'
 
 import styles from './ColliderPanel.module.scss'
 
+type ColliderPanelProps = {
+  onOpenInventory: () => void
+  onOpenCollection: () => void
+}
+
 const ALBUM_ROTARY_ARC = {
   radius: 66,
   startAngle: -180,
@@ -59,7 +64,10 @@ const INITIAL_CRAFT_CONFIG: CraftConfig = {
   antiRepeatMode: 'off',
 }
 
-export function ColliderPanel() {
+export function ColliderPanel({
+  onOpenCollection,
+  onOpenInventory,
+}: ColliderPanelProps) {
   const { progress } = usePlayerProgress()
   const { createDecoration } = useCraftDecoration()
   const { notify } = useNotification()
@@ -143,6 +151,16 @@ export function ColliderPanel() {
               ANTI_REPEAT_MODE_OPTIONS[config.antiRepeatMode].displayName
             }
           />
+
+          <div className={styles.serviceButtons}>
+            <DecorationTypeButton isSelected={false} onClick={onOpenInventory}>
+              [ I ]
+            </DecorationTypeButton>
+
+            <DecorationTypeButton isSelected={false} onClick={onOpenCollection}>
+              [ C ]
+            </DecorationTypeButton>
+          </div>
         </div>
         <section className={`${styles.rotaryPanel} ${styles.albumSlot}`}>
           <ControlLabel className={styles.rotorLabel}>Альбом</ControlLabel>

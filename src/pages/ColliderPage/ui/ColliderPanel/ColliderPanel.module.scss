@@ -33,7 +33,14 @@
 
 .monitorSlot {
   grid-area: monitorPanel;
+  display: grid;
   justify-self: center;
+  gap: 14px;
+}
+
+.serviceButtons {
+  display: flex;
+  gap: 14px;
 }
 
 // ==== ROTORS ====
