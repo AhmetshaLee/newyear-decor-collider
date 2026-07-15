@@ -5,36 +5,34 @@
   justify-items: center;
   aspect-ratio: 1;
   width: 100%;
-  padding: 16px 8px 9px;
+  min-width: 0;
   overflow: hidden;
-  border: 1px solid rgba(126, 18, 18, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 4px;
-  color: #f6dede;
-  font: inherit;
-  background: rgba(78, 26, 26, 0.82);
-  box-shadow: 0 1px 0 rgba(8, 2, 2, 0.18);
+  padding: 16px 7px 8px;
+  background: #383e3a;
 }
 
 .selected {
-  border-color: rgba(105, 178, 255, 0.74);
-  background: rgba(50, 60, 85, 0.86);
+  border-color: #b95c52;
+  background: #503532;
 }
 
 .level {
   position: absolute;
   top: 6px;
   left: 6px;
-  color: rgba(255, 222, 222, 0.9);
-  font-size: 12px;
+  color: rgba(237, 244, 237, 0.68);
+  font-size: 11px;
   font-weight: 800;
   line-height: 1;
 }
 
 .checkmark {
   position: absolute;
-  right: 7px;
+  right: 6px;
   bottom: 5px;
-  color: #7bbcff;
+  color: #ff8b7f;
   font-size: 13px;
   font-weight: 900;
   line-height: 1;

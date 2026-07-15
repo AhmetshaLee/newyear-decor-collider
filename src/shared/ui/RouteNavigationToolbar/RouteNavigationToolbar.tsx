@@ -13,16 +13,6 @@ const ROUTE_NAVIGATION_ITEMS = [
     label: 'Коллайдер',
     icon: '⚛️',
   },
-  {
-    to: '/inventory',
-    label: 'Инвентарь',
-    icon: '📦',
-  },
-  {
-    to: '/collection',
-    label: 'Коллекция',
-    icon: '📖',
-  },
 ] as const
 
 type RouteNavigationToolbarProps = {

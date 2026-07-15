@@ -4,7 +4,6 @@ import { ImmersivePageLayout } from '@/app/layouts/ImmersivePageLayout'
 import { CalendarPage } from '@/pages/CalendarPage'
 import { ColliderPage } from '@/pages/ColliderPage'
 import { CollectionPage } from '@/pages/CollectionPage'
-import { InventoryPage } from '@/pages/InventoryPage'
 
 export const router = createBrowserRouter([
   {
@@ -17,10 +16,6 @@ export const router = createBrowserRouter([
       {
         path: '/calendar',
         element: <CalendarPage />,
-      },
-      {
-        path: '/inventory',
-        element: <InventoryPage />,
       },
       {
         path: '/collection',

@@ -3,11 +3,15 @@ import { usePlayerProgress } from '@/entities/player-progress'
 import { useRecycleInventoryItems } from '@/features/recycle-inventory'
 import { DECORATIONS_REGISTRY } from '@/shared/lib/decorations'
 import { calculateRecycleShards } from '@/shared/lib/inventory'
+import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 import { InventoryDecoration } from '../InventoryDecoration'
 import { InventorySlot } from '../InventorySlot'
-import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 
 import styles from './InventoryPanel.module.scss'
+
+type InventoryPanelProps = {
+  onClose: () => void
+}
 
 type PendingRecycle = {
   itemIds: readonly string[]
@@ -15,7 +19,7 @@ type PendingRecycle = {
   gainedShards: number
 }
 
-export function InventoryPanel() {
+export function InventoryPanel({ onClose }: InventoryPanelProps) {
   const { progress } = usePlayerProgress()
   const { recycleItems } = useRecycleInventoryItems()
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(
@@ -32,19 +36,12 @@ export function InventoryPanel() {
   }, [])
 
   const inventoryItems = progress.inventory
-  const totalItemsCount = inventoryItems.length
-  const visibleItemsCount = inventoryItems.length
-  const userShards = progress.userShards
-
   const selectedItems = inventoryItems.filter((item) =>
     selectedItemIds.has(item.id),
   )
+
   const isAllSelected =
     inventoryItems.length > 0 && selectedItems.length === inventoryItems.length
-
-  const selectAllButtonClassName = isAllSelected
-    ? `${styles.selectAllButton} ${styles.selectAllActive}`
-    : styles.selectAllButton
 
   const recycleShardsPreview = selectedItems.reduce(
     (sum, item) => sum + calculateRecycleShards(item.craftCost),
@@ -68,9 +65,7 @@ export function InventoryPanel() {
         inventoryItems.length > 0 &&
         inventoryItems.every((item) => currentIds.has(item.id))
 
-      if (isEveryItemSelected) {
-        return new Set<string>()
-      }
+      if (isEveryItemSelected) return new Set<string>()
 
       return new Set(inventoryItems.map((item) => item.id))
     })
@@ -104,75 +99,68 @@ export function InventoryPanel() {
 
   return (
     <section className={styles.panel}>
-      <div className={styles.shell}>
-        <header className={styles.topBar}>
-          <div className={styles.summary}>
-            <div className={styles.shardsCounter}>
-              Осколков в наличии: {userShards}
-            </div>
-
-            <p className={styles.hint}>
-              Вам хватает осколков на создание нового украшения.
-            </p>
-          </div>
-
-          <div className={styles.actionBar}>
-            <button
-              type="button"
-              className={selectAllButtonClassName}
-              onClick={toggleAllSelection}
-              disabled={inventoryItems.length === 0}
-            >
-              Выбрать все украшения
-            </button>
-
-            <button
-              type="button"
-              className={styles.recycleButton}
-              onClick={openRecycleConfirmation}
-              disabled={selectedItems.length === 0}
-            >
-              + Осколков: {recycleShardsPreview}
-            </button>
-
-            <div className={styles.itemsCounter}>
-              <button type="button" className={styles.filterButton} disabled>
-                ▾
-              </button>
-              <span>
-                Показано: {visibleItemsCount} / {totalItemsCount}
-              </span>
-            </div>
-          </div>
-        </header>
-
-        <div className={styles.box}>
-          <div className={styles.gridScroller}>
-            {inventoryItems.length === 0 ? (
-              <p className={styles.emptyState}>
-                В инвентаре пока нет созданных украшений.
-              </p>
-            ) : (
-              <div className={styles.grid}>
-                {inventoryItems.map((item) => {
-                  const decoration = decorationsById.get(item.decorationId)
-
-                  return (
-                    <InventorySlot
-                      key={item.id}
-                      decoration={decoration}
-                      isSelected={selectedItemIds.has(item.id)}
-                      onToggle={() => toggleItemSelection(item.id)}
-                    >
-                      <InventoryDecoration decoration={decoration} />
-                    </InventorySlot>
-                  )
-                })}
-              </div>
-            )}
-          </div>
+      <header className={styles.header}>
+        <div className={styles.info}>
+          <h2 className={styles.title}>Инвентарь</h2>
+          <span>Осколки: {progress.userShards}</span>
+          <span>Украшений: {inventoryItems.length}</span>
         </div>
+
+        <div className={styles.actions}>
+          <button
+            className={styles.actionButton}
+            type="button"
+            disabled={inventoryItems.length === 0}
+            onClick={toggleAllSelection}
+          >
+            {isAllSelected ? 'Снять выбор' : 'Выбрать всё'}
+          </button>
+
+          <button
+            className={`${styles.actionButton} ${styles.recycleButton}`}
+            type="button"
+            disabled={selectedItems.length === 0}
+            onClick={openRecycleConfirmation}
+          >
+            Разбить: +{recycleShardsPreview}
+          </button>
+
+          <button
+            className={styles.actionButton}
+            type="button"
+            onClick={onClose}
+          >
+            Закрыть
+          </button>
+        </div>
+      </header>
+
+      <div className={styles.body}>
+        {inventoryItems.length === 0 ? (
+          <p className={styles.emptyState}>
+            В инвентаре пока нет созданных украшений.
+          </p>
+        ) : (
+          <div className={styles.grid}>
+            {inventoryItems.map((item) => {
+              const decoration = decorationsById.get(item.decorationId)
+
+              return (
+                <InventorySlot
+                  key={item.id}
+                  decoration={decoration}
+                  isSelected={selectedItemIds.has(item.id)}
+                  onToggle={() => toggleItemSelection(item.id)}
+                >
+                  <InventoryDecoration decoration={decoration} />
+                </InventorySlot>
+              )
+            })}
+          </div>
+        )}
       </div>
+
+      <footer className={styles.footer} />
 
       {pendingRecycle !== null && (
         <ConfirmDialog
