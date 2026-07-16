@@ -5,7 +5,7 @@
   height: 720px;
   display: grid;
   place-items: center;
-  padding: 56px;
+  padding: 32px;
   border: 1px solid rgba(7, 13, 11, 0.4);
   border-radius: 10px;
   background: #4c4b48;
@@ -20,22 +20,28 @@
   height: 100%;
   display: grid;
   grid-template-areas:
-    'albumRotor levelRotor antiRepeat decorationType'
-    'monitorPanel monitorPanel craftCost decorationType'
-    'monitorPanel monitorPanel startButton decorationType';
-  grid-template-columns: 286px 286px 342px 200px;
-  grid-template-rows: 222px 210px 148px;
+    'monitorPanel monitorPanel antiRepeat utility'
+    'monitorPanel monitorPanel decorationType craft'
+    'albumRotor levelRotor decorationType craft';
+  grid-template-columns: repeat(4, 286px);
+  grid-template-rows: 220px 48px 356px;
   align-items: center;
-  justify-content: space-between;
-  column-gap: 18px;
-  row-gap: 14px;
+  column-gap: 24px;
+  row-gap: 16px;
 }
 
 .monitorSlot {
   grid-area: monitorPanel;
-  display: grid;
   justify-self: center;
-  gap: 14px;
+}
+
+.utilitySlot {
+  grid-area: utility;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
 }
 
 .serviceButtons {
@@ -57,6 +63,7 @@
 
 .antiRepeatSlot {
   grid-area: antiRepeat;
+  align-self: start;
   justify-self: center;
 }
 
@@ -78,11 +85,11 @@
 }
 
 .albumRotorAnchor {
-  margin: 103px auto 27px;
+  margin: 103px auto 4px;
 }
 
 .levelRotorAnchor {
-  margin: 103px auto 27px;
+  margin: 103px auto 4px;
 }
 
 .antiRepeatRotorAnchor {
@@ -93,15 +100,14 @@
 
 .typeSlot {
   grid-area: decorationType;
-  justify-self: center;
-}
-
-.typePanel {
-  width: max-content;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  align-items: stretch;
+  align-self: start;
+  justify-self: start;
   gap: 18px;
+  margin-inline-start: 28px;
 }
 
 .typeControl {
@@ -112,11 +118,18 @@
   gap: 12px;
 }
 
-// ==== CRAFT COST ====
+.randomTypeControl {
+  justify-content: center;
+}
 
-.costSlot {
-  grid-area: craftCost;
-  justify-self: center;
+// ==== CRAFT CONTROLS ====
+
+.craftSlot {
+  grid-area: craft;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
 .costControl {
@@ -125,14 +138,6 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-}
-
-// ==== START BUTTON ====
-
-.startSlot {
-  grid-area: startButton;
-  align-self: end;
-  justify-self: center;
 }
 
 .startControl {

@@ -6,6 +6,7 @@ import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftButton } from '../CraftButton'
 import { CraftCost } from '../CraftCost'
 import { CraftRewardDialog } from '../CraftRewardDialog'
+import { CalendarLink } from '../CalendarLink'
 import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
 import {
   ALBUM_OPTIONS,
@@ -151,17 +152,8 @@ export function ColliderPanel({
               ANTI_REPEAT_MODE_OPTIONS[config.antiRepeatMode].displayName
             }
           />
-
-          <div className={styles.serviceButtons}>
-            <DecorationTypeButton isSelected={false} onClick={onOpenInventory}>
-              [ I ]
-            </DecorationTypeButton>
-
-            <DecorationTypeButton isSelected={false} onClick={onOpenCollection}>
-              [ C ]
-            </DecorationTypeButton>
-          </div>
         </div>
+
         <section className={`${styles.rotaryPanel} ${styles.albumSlot}`}>
           <ControlLabel className={styles.rotorLabel}>Альбом</ControlLabel>
 
@@ -208,51 +200,61 @@ export function ColliderPanel({
           />
         </section>
 
-        <div className={styles.typeSlot}>
-          <section className={styles.typePanel}>
-            <div className={styles.typeControl}>
-              <ControlLabel>Случайный</ControlLabel>
-              <DecorationTypeButtonGroup>
-                <DecorationTypeButton
-                  isDisabled={isCraftResultVisible}
-                  isSelected={config.decorationType === 'random'}
-                  onClick={() => selectType('random')}
-                >
-                  {DECORATION_TYPE_OPTIONS.random.content}
-                </DecorationTypeButton>
-              </DecorationTypeButtonGroup>
-            </div>
+        <div className={styles.utilitySlot}>
+          <CalendarLink />
 
-            <div className={styles.typeControl}>
-              <ControlLabel>Тип украшения</ControlLabel>
-              <DecorationTypeButtonGroup>
-                {SPECIFIC_DECORATION_TYPE_VALUES.map((decorationType) => {
-                  const isSelected = config.decorationType === decorationType
+          <div className={styles.serviceButtons}>
+            <DecorationTypeButton isSelected={false} onClick={onOpenInventory}>
+              [ I ]
+            </DecorationTypeButton>
 
-                  return (
-                    <DecorationTypeButton
-                      isDisabled={isCraftResultVisible}
-                      isSelected={isSelected}
-                      key={decorationType}
-                      onClick={() => selectType(decorationType)}
-                    >
-                      {DECORATION_TYPE_OPTIONS[decorationType].content}
-                    </DecorationTypeButton>
-                  )
-                })}
-              </DecorationTypeButtonGroup>
-            </div>
-          </section>
+            <DecorationTypeButton isSelected={false} onClick={onOpenCollection}>
+              [ C ]
+            </DecorationTypeButton>
+          </div>
         </div>
 
-        <div className={styles.costSlot}>
+        <div className={styles.typeSlot}>
+          <div className={`${styles.typeControl} ${styles.randomTypeControl}`}>
+            <ControlLabel>Случайный</ControlLabel>
+            <DecorationTypeButtonGroup>
+              <DecorationTypeButton
+                isDisabled={isCraftResultVisible}
+                isSelected={config.decorationType === 'random'}
+                onClick={() => selectType('random')}
+              >
+                {DECORATION_TYPE_OPTIONS.random.content}
+              </DecorationTypeButton>
+            </DecorationTypeButtonGroup>
+          </div>
+
+          <div className={styles.typeControl}>
+            <ControlLabel>Тип украшения</ControlLabel>
+            <DecorationTypeButtonGroup>
+              {SPECIFIC_DECORATION_TYPE_VALUES.map((decorationType) => {
+                const isSelected = config.decorationType === decorationType
+
+                return (
+                  <DecorationTypeButton
+                    isDisabled={isCraftResultVisible}
+                    isSelected={isSelected}
+                    key={decorationType}
+                    onClick={() => selectType(decorationType)}
+                  >
+                    {DECORATION_TYPE_OPTIONS[decorationType].content}
+                  </DecorationTypeButton>
+                )
+              })}
+            </DecorationTypeButtonGroup>
+          </div>
+        </div>
+
+        <div className={styles.craftSlot}>
           <div className={styles.costControl}>
             <CraftCost value={craftPrice} />
             <ControlLabel>Стоимость</ControlLabel>
           </div>
-        </div>
 
-        <div className={styles.startSlot}>
           <div className={styles.startControl}>
             <CraftButton
               isDisabled={isCraftResultVisible}
