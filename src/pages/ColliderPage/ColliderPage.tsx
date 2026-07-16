@@ -1,28 +1,30 @@
-import { useNavigate } from 'react-router'
 import { ColliderPanel } from './ui/ColliderPanel'
 import { ColliderViewport } from './ui/ColliderViewport'
 import { useColliderPanel } from './model/useColliderPanel'
 import { InventoryDrawer } from '@/widgets/inventory-drawer'
+import { CollectionDrawer } from '@/widgets/collection-drawer'
 
 export function ColliderPage() {
-  const navigate = useNavigate()
-  const { closePanel, isInventoryOpen, openInventory } = useColliderPanel()
-
-  // TODO: убрать после добавления панели коллекций
-  const openLegacyCollection = () => {
-    navigate('/collection')
-  }
+  const { activePanel, closePanel, openPanel } = useColliderPanel()
 
   return (
     <>
       <ColliderViewport>
         <ColliderPanel
-          onOpenCollection={openLegacyCollection}
-          onOpenInventory={openInventory}
+          onOpenCollection={() => openPanel('collection')}
+          onOpenInventory={() => openPanel('inventory')}
         />
       </ColliderViewport>
 
-      <InventoryDrawer isOpen={isInventoryOpen} onClose={closePanel} />
+      <InventoryDrawer
+        isOpen={activePanel === 'inventory'}
+        onClose={closePanel}
+      />
+
+      <CollectionDrawer
+        isOpen={activePanel === 'collection'}
+        onClose={closePanel}
+      />
     </>
   )
 }

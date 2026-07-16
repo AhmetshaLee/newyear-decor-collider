@@ -1,15 +1,23 @@
 import { useSearchParams } from 'react-router'
 
-const INVENTORY_PANEL = 'inventory'
+export type ColliderPanelName = 'inventory' | 'collection'
+
+function getColliderPanelName(value: string | null): ColliderPanelName | null {
+  if (value === 'inventory' || value === 'collection') {
+    return value
+  }
+
+  return null
+}
 
 export function useColliderPanel() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const isInventoryOpen = searchParams.get('panel') === INVENTORY_PANEL
+  const activePanel = getColliderPanelName(searchParams.get('panel'))
 
-  const openInventory = () => {
+  const openPanel = (panel: ColliderPanelName) => {
     const nextSearchParams = new URLSearchParams(searchParams)
 
-    nextSearchParams.set('panel', INVENTORY_PANEL)
+    nextSearchParams.set('panel', panel)
     setSearchParams(nextSearchParams)
   }
 
@@ -21,8 +29,8 @@ export function useColliderPanel() {
   }
 
   return {
+    activePanel,
     closePanel,
-    isInventoryOpen,
-    openInventory,
+    openPanel,
   }
 }
