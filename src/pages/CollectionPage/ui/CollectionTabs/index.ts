@@ -1,1 +1,0 @@
-export { CollectionTabs } from './CollectionTabs'

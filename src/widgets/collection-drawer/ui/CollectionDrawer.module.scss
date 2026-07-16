@@ -1,0 +1,15 @@
+.drawerContent {
+  --drawer-width: 70vw;
+}
+
+@media (max-width: 899.98px) {
+  .drawerContent {
+    --drawer-width: calc(100vw - 24px);
+  }
+}
+
+@media (max-width: 599.98px) {
+  .drawerContent {
+    --drawer-width: 100vw;
+  }
+}

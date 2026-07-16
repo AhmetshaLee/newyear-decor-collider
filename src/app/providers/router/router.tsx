@@ -3,7 +3,6 @@ import { BasePageLayout } from '@/app/layouts/BasePageLayout'
 import { ImmersivePageLayout } from '@/app/layouts/ImmersivePageLayout'
 import { CalendarPage } from '@/pages/CalendarPage'
 import { ColliderPage } from '@/pages/ColliderPage'
-import { CollectionPage } from '@/pages/CollectionPage'
 
 export const router = createBrowserRouter([
   {
@@ -16,10 +15,6 @@ export const router = createBrowserRouter([
       {
         path: '/calendar',
         element: <CalendarPage />,
-      },
-      {
-        path: '/collection',
-        element: <CollectionPage />,
       },
     ],
   },

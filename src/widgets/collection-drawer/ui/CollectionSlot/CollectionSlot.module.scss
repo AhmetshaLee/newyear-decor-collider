@@ -1,0 +1,18 @@
+.slot {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  aspect-ratio: 1;
+}
+
+.locked {
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: #2a2e2b;
+}
+
+.unlocked {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #383e3a;
+}
