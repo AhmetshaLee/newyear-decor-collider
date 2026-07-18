@@ -1,4 +1,8 @@
-import type { Decoration } from '@/shared/lib/decorations'
+import {
+  DecorationSlot,
+  DecorationVisual,
+  type Decoration,
+} from '@/entities/decoration'
 import { RewardDialog } from '@/shared/ui/RewardDialog'
 
 import styles from './CraftRewardDialog.module.scss'
@@ -18,11 +22,9 @@ export function CraftRewardDialog({
       onClose={onClose}
       title="Украшение создано"
       visualSlot={
-        <div className={styles.preview} data-decoration-type={decoration.type}>
-          <span className={styles.previewSymbol}>
-            {decoration.name.slice(0, 1)}
-          </span>
-        </div>
+        <DecorationSlot className={styles.preview} level={decoration.level}>
+          <DecorationVisual decoration={decoration} />
+        </DecorationSlot>
       }
       actionsSlot={
         <button type="button" className={styles.takeButton} onClick={onClose}>

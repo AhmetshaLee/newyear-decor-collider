@@ -1,20 +1,19 @@
 .preview {
-  display: grid;
-  width: 112px;
-  aspect-ratio: 1;
-  place-items: center;
-  border: 1px solid rgba(190, 232, 255, 0.54);
-  border-radius: 50%;
-  background: #3c97ce;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
-}
+  --decoration-level-offset-block: 9px;
+  --decoration-level-offset-inline: 9px;
+  --decoration-visual-font-size: 58px;
+  --decoration-visual-size: 72px;
 
-.previewSymbol {
-  color: #ffffff;
-  font-size: 54px;
-  font-weight: 800;
-  line-height: 1;
-  text-transform: uppercase;
+  width: 128px;
+  place-items: center;
+  border: 1px solid rgba(207, 116, 106, 0.72);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(88, 54, 50, 0.7), transparent 48%), #2d3531;
+  box-shadow:
+    inset 0 0 0 4px rgba(255, 255, 255, 0.025),
+    inset 0 -16px 32px rgba(4, 8, 6, 0.22),
+    0 10px 24px rgba(0, 0, 0, 0.34);
 }
 
 .name {
