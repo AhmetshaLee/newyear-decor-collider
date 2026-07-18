@@ -1,1 +1,0 @@
-export { InventorySlot } from './InventorySlot'

@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react'
 import { usePlayerProgress } from '@/entities/player-progress'
+import {
+  DECORATIONS_REGISTRY,
+  DecorationSlot,
+  DecorationVisual,
+} from '@/entities/decoration'
 import { useRecycleInventoryItems } from '@/features/recycle-inventory'
-import { DECORATIONS_REGISTRY } from '@/shared/lib/decorations'
 import { calculateRecycleShards } from '@/shared/lib/inventory'
 import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
-import { InventoryDecoration } from '../InventoryDecoration'
-import { InventorySlot } from '../InventorySlot'
 
 import styles from './InventoryPanel.module.scss'
 
@@ -144,16 +146,33 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
           <div className={styles.grid}>
             {inventoryItems.map((item) => {
               const decoration = decorationsById.get(item.decorationId)
+              const isSelected = selectedItemIds.has(item.id)
+              const itemName = decoration?.name ?? 'Неизвестное украшение'
+              const itemSlotClassName = isSelected
+                ? `${styles.itemSlot} ${styles.selectedItemSlot}`
+                : styles.itemSlot
+              const itemNameClassName =
+                decoration === undefined
+                  ? `${styles.itemName} ${styles.unknownItemName}`
+                  : styles.itemName
 
               return (
-                <InventorySlot
+                <button
+                  className={styles.itemControl}
                   key={item.id}
-                  decoration={decoration}
-                  isSelected={selectedItemIds.has(item.id)}
-                  onToggle={() => toggleItemSelection(item.id)}
+                  onClick={() => toggleItemSelection(item.id)}
+                  title={itemName}
+                  type="button"
                 >
-                  <InventoryDecoration decoration={decoration} />
-                </InventorySlot>
+                  <DecorationSlot
+                    className={itemSlotClassName}
+                    level={decoration?.level}
+                  >
+                    <DecorationVisual decoration={decoration} />
+                    <span className={itemNameClassName}>{itemName}</span>
+                    <span className={styles.checkmark}>✓</span>
+                  </DecorationSlot>
+                </button>
               )
             })}
           </div>

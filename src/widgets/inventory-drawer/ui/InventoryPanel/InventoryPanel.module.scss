@@ -86,6 +86,73 @@
   gap: 8px;
 }
 
+.itemControl {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  background: transparent;
+}
+
+.itemSlot {
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 2px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 8px 7px 7px;
+  background: #383e3a;
+}
+
+.itemControl:focus-visible {
+  outline: none;
+}
+
+.itemControl:focus-visible .itemSlot {
+  outline: 2px solid rgba(255, 139, 127, 0.78);
+  outline-offset: 2px;
+}
+
+.selectedItemSlot {
+  border-color: #b95c52;
+  background: #503532;
+}
+
+.itemName {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  color: rgba(237, 244, 237, 0.88);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unknownItemName {
+  color: rgba(237, 244, 237, 0.46);
+}
+
+.checkmark {
+  position: absolute;
+  right: 6px;
+  bottom: 5px;
+  color: #ff8b7f;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0;
+}
+
+.selectedItemSlot .checkmark {
+  opacity: 1;
+}
+
 .emptyState {
   display: grid;
   min-height: 100%;

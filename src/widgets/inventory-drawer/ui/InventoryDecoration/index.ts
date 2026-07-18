@@ -1,1 +1,0 @@
-export { InventoryDecoration } from './InventoryDecoration'
