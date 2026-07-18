@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react'
 import { usePlayerProgress } from '@/entities/player-progress'
-import { ALBUM_OPTIONS } from '@/shared/lib/collider'
 import {
   DECORATION_ALBUM_VALUES,
   DECORATION_ALBUM_LABELS,
+  DECORATION_ALBUM_SYMBOLS,
   DECORATIONS_REGISTRY,
+  DecorationSlot,
+  DecorationVisual,
   type DecorationAlbum,
-} from '@/shared/lib/decorations'
-import { CollectionDecoration } from '../CollectionDecoration'
-import { CollectionSlot } from '../CollectionSlot'
+} from '@/entities/decoration'
 
 import styles from './CollectionPanel.module.scss'
 
@@ -75,7 +75,7 @@ export function CollectionPanel({ onClose }: CollectionPanelProps) {
                   type="button"
                   onClick={() => setSelectedAlbum(album)}
                 >
-                  {ALBUM_OPTIONS[album].content}
+                  {DECORATION_ALBUM_SYMBOLS[album]}
                 </button>
               )
             })}
@@ -100,18 +100,25 @@ export function CollectionPanel({ onClose }: CollectionPanelProps) {
           <div className={styles.grid}>
             {selectedDecorations.map((decoration) => {
               const isUnlocked = unlockedDecorationIds.has(decoration.id)
+              const slotClassName = isUnlocked
+                ? `${styles.decorationSlot} ${styles.unlockedDecorationSlot}`
+                : `${styles.decorationSlot} ${styles.lockedDecorationSlot}`
 
               return (
-                <CollectionSlot
-                  isUnlocked={isUnlocked}
+                <DecorationSlot
+                  className={slotClassName}
                   key={decoration.id}
+                  level={decoration.level}
                   title={decoration.name}
                 >
-                  <CollectionDecoration
+                  <DecorationVisual
+                    className={styles.decorationVisual}
                     decoration={decoration}
-                    isUnlocked={isUnlocked}
                   />
-                </CollectionSlot>
+                  <span className={styles.decorationName}>
+                    {decoration.name}
+                  </span>
+                </DecorationSlot>
               )
             })}
           </div>

@@ -102,6 +102,42 @@
   gap: 8px;
 }
 
+.decorationSlot {
+  grid-template-rows: minmax(0, 1fr) auto;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.lockedDecorationSlot {
+  --decoration-level-opacity: 0.34;
+
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  color: rgba(237, 244, 237, 0.34);
+  background: #2a2e2b;
+}
+
+.lockedDecorationSlot .decorationVisual {
+  opacity: 0.34;
+  filter: grayscale(1);
+}
+
+.unlockedDecorationSlot {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #edf4ed;
+  background: #383e3a;
+}
+
+.decorationName {
+  width: 100%;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .emptyState {
   display: grid;
   min-height: 100%;
