@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { usePlayerProgress } from '@/entities/player-progress'
+import { DECORATIONS_REGISTRY } from '@/entities/decoration'
 import type { CraftConfig } from '@/shared/lib/collider'
-import { DECORATIONS_REGISTRY } from '@/shared/lib/decorations'
 import {
   craftDecoration,
   createCraftDecorationAttempt,

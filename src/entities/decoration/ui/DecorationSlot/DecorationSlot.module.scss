@@ -1,0 +1,61 @@
+.slot {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: 1;
+  container-type: inline-size;
+}
+
+.level {
+  --decoration-level-color: #a8b0b8;
+
+  position: absolute;
+  z-index: 2;
+  top: var(--decoration-level-offset-block, 5px);
+  left: var(--decoration-level-offset-inline, 5px);
+  display: grid;
+  min-width: 1.5em;
+  min-height: 1.5em;
+  place-items: center;
+  color: #f7fbf8;
+  font-size: clamp(10px, 12cqi, 14px);
+  font-weight: 900;
+  line-height: 1;
+  opacity: var(--decoration-level-opacity, 1);
+  isolation: isolate;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.level::before {
+  position: absolute;
+  z-index: -1;
+  width: 2.4em;
+  height: 2.4em;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--decoration-level-color) 72%, transparent) 0%,
+    color-mix(in srgb, var(--decoration-level-color) 28%, transparent) 42%,
+    transparent 72%
+  );
+  content: '';
+  filter: blur(2px);
+}
+
+.level[data-decoration-level='lvl_2'] {
+  --decoration-level-color: #62c779;
+}
+
+.level[data-decoration-level='lvl_3'] {
+  --decoration-level-color: #4e9ef8;
+}
+
+.level[data-decoration-level='lvl_4'] {
+  --decoration-level-color: #e7b94d;
+}
+
+.level[data-decoration-level='lvl_5'] {
+  --decoration-level-color: #a86bff;
+}

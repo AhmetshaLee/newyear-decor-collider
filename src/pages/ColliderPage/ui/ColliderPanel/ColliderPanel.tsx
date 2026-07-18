@@ -26,7 +26,7 @@ import {
 import {
   DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES,
   type Decoration,
-} from '@/shared/lib/decorations'
+} from '@/entities/decoration'
 import { useCraftDecoration } from '@/features/craft-decoration'
 import { usePlayerProgress } from '@/entities/player-progress'
 import { useNotification } from '@/shared/ui/Notification'

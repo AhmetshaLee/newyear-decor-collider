@@ -1,0 +1,17 @@
+.visual {
+  display: grid;
+  width: var(--decoration-visual-size, 40px);
+  height: var(--decoration-visual-size, 40px);
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  place-self: center;
+  place-items: center;
+  color: var(--decoration-visual-color, #cf746a);
+  font-size: var(--decoration-visual-font-size, 32px);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}

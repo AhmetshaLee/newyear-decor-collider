@@ -1,5 +1,7 @@
 import {
+  DECORATION_ALBUM_SYMBOLS,
   DECORATION_ALBUM_VALUES,
+  DECORATION_LEVEL_LABELS,
   DECORATION_LEVEL_VALUES,
   DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES,
   type DecorationAlbum,
@@ -26,22 +28,22 @@ export const ALBUM_OPTIONS = {
     costModifier: 0,
   },
   classic: {
-    content: '*',
+    content: DECORATION_ALBUM_SYMBOLS.classic,
     displayName: 'Новогодняя классика',
     costModifier: 150,
   },
   fairytale: {
-    content: 'C',
+    content: DECORATION_ALBUM_SYMBOLS.fairytale,
     displayName: 'Рождественская сказка',
     costModifier: 150,
   },
   oriental: {
-    content: '福',
+    content: DECORATION_ALBUM_SYMBOLS.oriental,
     displayName: 'Восточный календарь',
     costModifier: 150,
   },
   magic: {
-    content: '+',
+    content: DECORATION_ALBUM_SYMBOLS.magic,
     displayName: 'Зимнее чудо',
     costModifier: 150,
   },
@@ -58,27 +60,27 @@ export const LEVEL_OPTIONS = {
     costModifier: 0,
   },
   lvl_1: {
-    content: 'I',
+    content: DECORATION_LEVEL_LABELS.lvl_1,
     displayName: 'I',
     costModifier: 50,
   },
   lvl_2: {
-    content: 'II',
+    content: DECORATION_LEVEL_LABELS.lvl_2,
     displayName: 'II',
     costModifier: 100,
   },
   lvl_3: {
-    content: 'III',
+    content: DECORATION_LEVEL_LABELS.lvl_3,
     displayName: 'III',
     costModifier: 200,
   },
   lvl_4: {
-    content: 'IV',
+    content: DECORATION_LEVEL_LABELS.lvl_4,
     displayName: 'IV',
     costModifier: 400,
   },
   lvl_5: {
-    content: 'V',
+    content: DECORATION_LEVEL_LABELS.lvl_5,
     displayName: 'V',
     costModifier: 800,
   },

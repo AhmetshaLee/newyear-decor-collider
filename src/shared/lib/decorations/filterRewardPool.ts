@@ -1,17 +1,28 @@
 import type { CraftConfig } from '@/shared/lib/collider'
-import type { Decoration } from './decorationsRegistry'
+import type {
+  DecorationAlbum,
+  DecorationLevel,
+  DecorationType,
+} from './decorationValues'
 
-export type FilterRewardPoolInput = {
+export type RewardPoolDecoration = {
+  id: string
+  album: DecorationAlbum
+  level: DecorationLevel
+  type: DecorationType
+}
+
+export type FilterRewardPoolInput<Decoration extends RewardPoolDecoration> = {
   decorations: readonly Decoration[]
   config: CraftConfig
   unlockedCollectionIds: readonly string[]
 }
 
-export function filterRewardPool({
+export function filterRewardPool<Decoration extends RewardPoolDecoration>({
   decorations,
   config,
   unlockedCollectionIds,
-}: FilterRewardPoolInput) {
+}: FilterRewardPoolInput<Decoration>) {
   const unlockedCollectionIdSet = new Set(unlockedCollectionIds)
 
   return decorations.filter((decoration) => {

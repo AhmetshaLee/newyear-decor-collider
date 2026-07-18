@@ -2,7 +2,7 @@ import type {
   DecorationAlbum,
   DecorationLevel,
   DecorationType,
-} from './decorationValues'
+} from '@/shared/lib/decorations'
 
 export type Decoration = {
   id: string
