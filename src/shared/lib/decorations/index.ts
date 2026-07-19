@@ -11,9 +11,3 @@ export type {
   DecorationLevel,
   DecorationType,
 } from './decorationValues'
-
-export { filterRewardPool } from './filterRewardPool'
-export type {
-  FilterRewardPoolInput,
-  RewardPoolDecoration,
-} from './filterRewardPool'
