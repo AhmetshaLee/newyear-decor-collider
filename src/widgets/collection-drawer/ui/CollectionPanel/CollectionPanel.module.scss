@@ -1,3 +1,5 @@
+// ==== PANEL LAYOUT ====
+
 .panel {
   container: collection-panel / inline-size;
   display: grid;
@@ -9,6 +11,8 @@
   background: #2f3330;
   box-shadow: -12px 0 30px rgba(0, 0, 0, 0.28);
 }
+
+// ==== HEADER AND ALBUM CONTROLS ====
 
 .header {
   display: flex;
@@ -89,6 +93,8 @@
   filter: brightness(1.12);
 }
 
+// ==== COLLECTION CONTENT ====
+
 .body {
   min-height: 0;
   overflow-y: auto;
@@ -147,11 +153,15 @@
   text-align: center;
 }
 
+// ==== PANEL FOOTER ====
+
 .footer {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background: #2f3330;
   box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.24);
 }
+
+// ==== RESPONSIVE LAYOUT ====
 
 @container collection-panel (max-width: 767.98px) {
   .header {

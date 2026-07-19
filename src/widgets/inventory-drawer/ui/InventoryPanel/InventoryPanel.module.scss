@@ -1,3 +1,5 @@
+// ==== PANEL LAYOUT ====
+
 .panel {
   container: inventory-panel / inline-size;
   display: grid;
@@ -9,6 +11,8 @@
   background: #2f3330;
   box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.28);
 }
+
+// ==== HEADER AND ACTIONS ====
 
 .header {
   display: flex;
@@ -67,6 +71,8 @@
   opacity: 0.42;
 }
 
+// ==== INVENTORY CONTENT ====
+
 .body {
   min-height: 0;
   overflow-y: auto;
@@ -74,11 +80,15 @@
   background: #242825;
 }
 
+// ==== PANEL FOOTER ====
+
 .footer {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background: #2f3330;
   box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.24);
 }
+
+// ==== INVENTORY ITEMS ====
 
 .grid {
   display: grid;
@@ -160,6 +170,8 @@
   color: rgba(237, 244, 237, 0.58);
   text-align: center;
 }
+
+// ==== RESPONSIVE LAYOUT ====
 
 @container inventory-panel (max-width: 767.98px) {
   .header {
