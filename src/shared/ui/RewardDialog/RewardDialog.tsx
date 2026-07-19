@@ -26,7 +26,6 @@ export function RewardDialog({
 }: RewardDialogProps) {
   return (
     <BaseDialog
-      ariaLabel={title}
       closeOnEscape={closeOnEscape}
       closeOnOverlayClick={closeOnOverlayClick}
       contentClassName={styles.content}

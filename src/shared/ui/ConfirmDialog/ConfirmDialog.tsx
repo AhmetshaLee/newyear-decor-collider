@@ -30,7 +30,6 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <BaseDialog
-      ariaLabel={title}
       closeOnEscape={closeOnEscape}
       closeOnOverlayClick={closeOnOverlayClick}
       contentClassName={styles.content}

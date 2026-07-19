@@ -10,7 +10,6 @@ import styles from './BaseDialog.module.scss'
 
 type BaseDialogProps = {
   isOpen: boolean
-  ariaLabel: string
   onClose: () => void
   children: ReactNode
   overlayClassName?: string
@@ -21,7 +20,6 @@ type BaseDialogProps = {
 
 export function BaseDialog({
   isOpen,
-  ariaLabel,
   onClose,
   children,
   overlayClassName,
@@ -72,8 +70,6 @@ export function BaseDialog({
 
   return (
     <dialog
-      aria-label={ariaLabel}
-      aria-modal="true"
       className={overlayClassNameValue}
       onCancel={handleCancel}
       onClick={handleOverlayClick}

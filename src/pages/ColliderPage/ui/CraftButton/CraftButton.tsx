@@ -24,11 +24,6 @@ export function CraftButton({
   }
 
   return (
-    <button
-      className={buttonClassName}
-      type="button"
-      aria-disabled={isVisuallyDisabled}
-      onClick={handleClick}
-    />
+    <button className={buttonClassName} type="button" onClick={handleClick} />
   )
 }

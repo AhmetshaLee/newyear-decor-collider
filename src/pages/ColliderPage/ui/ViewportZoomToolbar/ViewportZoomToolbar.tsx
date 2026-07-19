@@ -25,14 +25,13 @@ export function ViewportZoomToolbar({
     className === undefined ? styles.toolbar : `${styles.toolbar} ${className}`
 
   return (
-    <div className={toolbarClassName} aria-label="Управление масштабом">
+    <div className={toolbarClassName}>
       <button
         className={styles.button}
         type="button"
         onClick={onZoomOut}
         disabled={!canZoomOut}
         title="Уменьшить масштаб"
-        aria-label="Уменьшить масштаб"
       >
         -
       </button>
@@ -41,7 +40,6 @@ export function ViewportZoomToolbar({
         type="button"
         onClick={onReset}
         title="Сбросить масштаб"
-        aria-label="Сбросить масштаб"
       >
         R
       </button>
@@ -51,7 +49,6 @@ export function ViewportZoomToolbar({
         onClick={onZoomIn}
         disabled={!canZoomIn}
         title="Увеличить масштаб"
-        aria-label="Увеличить масштаб"
       >
         +
       </button>
