@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 import {
   DECORATION_LEVEL_LABELS,
   type DecorationLevel,
-} from '@/shared/lib/decorations'
+} from '../../model/decorationValues'
 
 import styles from './DecorationSlot.module.scss'
 

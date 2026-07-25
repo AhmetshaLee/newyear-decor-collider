@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { usePlayerProgress } from '@/entities/player-progress'
 import { DECORATIONS_REGISTRY } from '@/entities/decoration'
-import type { CraftConfig } from '@/shared/lib/collider'
+import type { CraftRecipe } from './craftRecipe'
 import {
   craftDecoration,
   createCraftDecorationAttempt,
@@ -9,20 +9,20 @@ import {
 } from './craftDecoration'
 
 type UseCraftDecorationResult = {
-  createDecoration: (config: CraftConfig) => CraftDecorationResult
+  createDecoration: (recipe: CraftRecipe) => CraftDecorationResult
 }
 
 export function useCraftDecoration(): UseCraftDecorationResult {
   const { commitProgress } = usePlayerProgress()
 
   const createDecoration = useCallback(
-    (config: CraftConfig) => {
+    (recipe: CraftRecipe) => {
       const attempt = createCraftDecorationAttempt()
 
       return commitProgress((currentProgress) =>
         craftDecoration({
           progress: currentProgress,
-          config,
+          recipe,
           decorations: DECORATIONS_REGISTRY,
           attempt,
         }),

@@ -1,32 +1,32 @@
 import type { Decoration } from '@/entities/decoration'
-import type { CraftConfig } from '@/shared/lib/collider'
+import type { CraftRecipe } from './craftRecipe'
 
 export type FilterRewardPoolInput = {
   decorations: readonly Decoration[]
-  config: CraftConfig
+  recipe: CraftRecipe
   unlockedCollectionIds: readonly string[]
 }
 
 export function filterRewardPool({
   decorations,
-  config,
+  recipe,
   unlockedCollectionIds,
 }: FilterRewardPoolInput): Decoration[] {
   const unlockedCollectionIdSet = new Set(unlockedCollectionIds)
 
   return decorations.filter((decoration) => {
     const matchesAlbum =
-      config.album === 'random' || decoration.album === config.album
+      recipe.album === 'random' || decoration.album === recipe.album
 
     const matchesLevel =
-      config.level === 'random' || decoration.level === config.level
+      recipe.level === 'random' || decoration.level === recipe.level
 
     const matchesType =
-      config.decorationType === 'random' ||
-      decoration.type === config.decorationType
+      recipe.decorationType === 'random' ||
+      decoration.type === recipe.decorationType
 
     const matchesAntiRepeat =
-      config.antiRepeatMode === 'off' ||
+      recipe.antiRepeatMode === 'off' ||
       !unlockedCollectionIdSet.has(decoration.id)
 
     return matchesAlbum && matchesLevel && matchesType && matchesAntiRepeat

@@ -9,27 +9,26 @@ import { CraftRewardDialog } from '../CraftRewardDialog'
 import { CalendarLink } from '../CalendarLink'
 import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
 import {
-  ALBUM_OPTIONS,
-  ALBUM_VALUES,
-  ANTI_REPEAT_MODE_OPTIONS,
   ANTI_REPEAT_MODE_VALUES,
-  DECORATION_TYPE_OPTIONS,
-  LEVEL_OPTIONS,
-  LEVEL_VALUES,
-  type AlbumValue,
-  type AntiRepeatMode,
-  type CraftConfig,
-  type DecorationTypeValue,
-  type LevelValue,
+  CRAFT_ALBUM_VALUES,
+  CRAFT_LEVEL_VALUES,
   calculateCraftCost,
-} from '@/shared/lib/collider'
-import {
-  DECORATION_TYPE_VALUES as SPECIFIC_DECORATION_TYPE_VALUES,
-  type Decoration,
-} from '@/entities/decoration'
-import { useCraftDecoration } from '@/features/craft-decoration'
+  type AntiRepeatMode,
+  type CraftAlbum,
+  type CraftDecorationType,
+  type CraftLevel,
+  type CraftRecipe,
+  useCraftDecoration,
+} from '@/features/craft-decoration'
+import { DECORATION_TYPE_VALUES, type Decoration } from '@/entities/decoration'
 import { usePlayerProgress } from '@/entities/player-progress'
 import { useNotification } from '@/shared/ui/Notification'
+import {
+  ALBUM_CONTROL_OPTIONS,
+  ANTI_REPEAT_CONTROL_OPTIONS,
+  DECORATION_TYPE_CONTROL_OPTIONS,
+  LEVEL_CONTROL_OPTIONS,
+} from './colliderControlOptions'
 
 import styles from './ColliderPanel.module.scss'
 
@@ -58,7 +57,7 @@ const ANTI_REPEAT_ROTARY_ARC = {
 
 const DECORATION_PROJECT_TITLE = 'Проект украшения'
 
-const INITIAL_CRAFT_CONFIG: CraftConfig = {
+const INITIAL_CRAFT_RECIPE: CraftRecipe = {
   album: 'random',
   level: 'random',
   decorationType: 'random',
@@ -72,18 +71,18 @@ export function ColliderPanel({
   const { progress } = usePlayerProgress()
   const { createDecoration } = useCraftDecoration()
   const { notify } = useNotification()
-  const [config, setConfig] = useState<CraftConfig>(INITIAL_CRAFT_CONFIG)
+  const [recipe, setRecipe] = useState<CraftRecipe>(INITIAL_CRAFT_RECIPE)
   const [craftedDecoration, setCraftedDecoration] = useState<Decoration | null>(
     null,
   )
 
   const userShards = progress.userShards
-  const craftPrice = calculateCraftCost(config)
+  const craftPrice = calculateCraftCost(recipe)
   const canCreateDecoration = userShards >= craftPrice
   const isCraftResultVisible = craftedDecoration !== null
 
   const handleCreateDecoration = () => {
-    const result = createDecoration(config)
+    const result = createDecoration(recipe)
 
     if (result.status === 'success') {
       setCraftedDecoration(result.decoration)
@@ -108,30 +107,30 @@ export function ColliderPanel({
     setCraftedDecoration(null)
   }
 
-  const selectAlbum = (albumValue: AlbumValue) => {
-    setConfig((currentConfig) => ({
-      ...currentConfig,
-      album: albumValue,
+  const selectAlbum = (album: CraftAlbum) => {
+    setRecipe((currentRecipe) => ({
+      ...currentRecipe,
+      album,
     }))
   }
 
-  const selectLevel = (levelValue: LevelValue) => {
-    setConfig((currentConfig) => ({
-      ...currentConfig,
-      level: levelValue,
+  const selectLevel = (level: CraftLevel) => {
+    setRecipe((currentRecipe) => ({
+      ...currentRecipe,
+      level,
     }))
   }
 
-  const selectType = (decorationType: DecorationTypeValue) => {
-    setConfig((currentConfig) => ({
-      ...currentConfig,
+  const selectType = (decorationType: CraftDecorationType) => {
+    setRecipe((currentRecipe) => ({
+      ...currentRecipe,
       decorationType,
     }))
   }
 
   const selectAntiRepeatMode = (antiRepeatMode: AntiRepeatMode) => {
-    setConfig((currentConfig) => ({
-      ...currentConfig,
+    setRecipe((currentRecipe) => ({
+      ...currentRecipe,
       antiRepeatMode,
     }))
   }
@@ -143,13 +142,13 @@ export function ColliderPanel({
           <StatusMonitor
             availableShards={userShards}
             projectTitle={DECORATION_PROJECT_TITLE}
-            levelName={LEVEL_OPTIONS[config.level].displayName}
-            albumName={ALBUM_OPTIONS[config.album].displayName}
-            decorationTypeName={
-              DECORATION_TYPE_OPTIONS[config.decorationType].displayName
+            levelLabel={LEVEL_CONTROL_OPTIONS[recipe.level].label}
+            albumLabel={ALBUM_CONTROL_OPTIONS[recipe.album].label}
+            decorationTypeLabel={
+              DECORATION_TYPE_CONTROL_OPTIONS[recipe.decorationType].label
             }
-            antiRepeatModeName={
-              ANTI_REPEAT_MODE_OPTIONS[config.antiRepeatMode].displayName
+            antiRepeatModeLabel={
+              ANTI_REPEAT_CONTROL_OPTIONS[recipe.antiRepeatMode].label
             }
           />
         </div>
@@ -161,10 +160,10 @@ export function ColliderPanel({
             arc={ALBUM_ROTARY_ARC}
             className={styles.albumRotorAnchor}
             isDisabled={isCraftResultVisible}
-            values={ALBUM_VALUES}
-            value={config.album}
+            values={CRAFT_ALBUM_VALUES}
+            value={recipe.album}
             onValueChange={selectAlbum}
-            renderValue={(albumValue) => ALBUM_OPTIONS[albumValue].content}
+            renderValue={(album) => ALBUM_CONTROL_OPTIONS[album].indicator}
           />
         </section>
 
@@ -175,10 +174,10 @@ export function ColliderPanel({
             arc={LEVEL_ROTARY_ARC}
             className={styles.levelRotorAnchor}
             isDisabled={isCraftResultVisible}
-            values={LEVEL_VALUES}
-            value={config.level}
+            values={CRAFT_LEVEL_VALUES}
+            value={recipe.level}
             onValueChange={selectLevel}
-            renderValue={(levelValue) => LEVEL_OPTIONS[levelValue].content}
+            renderValue={(level) => LEVEL_CONTROL_OPTIONS[level].indicator}
           />
         </section>
 
@@ -192,10 +191,10 @@ export function ColliderPanel({
             className={styles.antiRepeatRotorAnchor}
             isDisabled={isCraftResultVisible}
             values={ANTI_REPEAT_MODE_VALUES}
-            value={config.antiRepeatMode}
+            value={recipe.antiRepeatMode}
             onValueChange={selectAntiRepeatMode}
             renderValue={(antiRepeatMode) =>
-              ANTI_REPEAT_MODE_OPTIONS[antiRepeatMode].content
+              ANTI_REPEAT_CONTROL_OPTIONS[antiRepeatMode].indicator
             }
           />
         </section>
@@ -220,10 +219,10 @@ export function ColliderPanel({
             <DecorationTypeButtonGroup>
               <DecorationTypeButton
                 isDisabled={isCraftResultVisible}
-                isSelected={config.decorationType === 'random'}
+                isSelected={recipe.decorationType === 'random'}
                 onClick={() => selectType('random')}
               >
-                {DECORATION_TYPE_OPTIONS.random.content}
+                {DECORATION_TYPE_CONTROL_OPTIONS.random.indicator}
               </DecorationTypeButton>
             </DecorationTypeButtonGroup>
           </div>
@@ -231,8 +230,8 @@ export function ColliderPanel({
           <div className={styles.typeControl}>
             <ControlLabel>Тип украшения</ControlLabel>
             <DecorationTypeButtonGroup>
-              {SPECIFIC_DECORATION_TYPE_VALUES.map((decorationType) => {
-                const isSelected = config.decorationType === decorationType
+              {DECORATION_TYPE_VALUES.map((decorationType) => {
+                const isSelected = recipe.decorationType === decorationType
 
                 return (
                   <DecorationTypeButton
@@ -241,7 +240,7 @@ export function ColliderPanel({
                     key={decorationType}
                     onClick={() => selectType(decorationType)}
                   >
-                    {DECORATION_TYPE_OPTIONS[decorationType].content}
+                    {DECORATION_TYPE_CONTROL_OPTIONS[decorationType].indicator}
                   </DecorationTypeButton>
                 )
               })}

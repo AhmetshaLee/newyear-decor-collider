@@ -7,6 +7,13 @@ export const DECORATION_ALBUM_VALUES = [
 
 export type DecorationAlbum = (typeof DECORATION_ALBUM_VALUES)[number]
 
+export const DECORATION_ALBUM_LABELS = {
+  classic: 'Новогодняя классика',
+  fairytale: 'Рождественская сказка',
+  oriental: 'Восточный календарь',
+  magic: 'Зимнее чудо',
+} satisfies Record<DecorationAlbum, string>
+
 export const DECORATION_ALBUM_SYMBOLS = {
   classic: '*',
   fairytale: 'C',
@@ -40,3 +47,10 @@ export const DECORATION_TYPE_VALUES = [
 ] as const
 
 export type DecorationType = (typeof DECORATION_TYPE_VALUES)[number]
+
+export const DECORATION_TYPE_LABELS = {
+  top: 'Верхушка',
+  lights: 'Гирлянды',
+  toys: 'Навесные игрушки',
+  floor: 'Нижние игрушки',
+} satisfies Record<DecorationType, string>

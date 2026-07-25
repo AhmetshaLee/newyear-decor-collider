@@ -4,7 +4,8 @@ import type {
   PlayerProgressTransactionResult,
 } from '@/entities/player-progress'
 import type { Decoration } from '@/entities/decoration'
-import { calculateCraftCost, type CraftConfig } from '@/shared/lib/collider'
+import { calculateCraftCost } from './craftPricing'
+import type { CraftRecipe } from './craftRecipe'
 import { filterRewardPool } from './filterRewardPool'
 
 export type CraftDecorationResult =
@@ -31,7 +32,7 @@ export type CraftDecorationAttempt = {
 
 export type CraftDecorationInput = {
   progress: PlayerProgress
-  config: CraftConfig
+  recipe: CraftRecipe
   decorations: readonly Decoration[]
   attempt: CraftDecorationAttempt
 }
@@ -72,11 +73,11 @@ function pickRandomDecoration(
 
 export function craftDecoration({
   progress,
-  config,
+  recipe,
   decorations,
   attempt,
 }: CraftDecorationInput): PlayerProgressTransactionResult<CraftDecorationResult> {
-  const cost = calculateCraftCost(config)
+  const cost = calculateCraftCost(recipe)
 
   if (progress.userShards < cost) {
     return {
@@ -90,7 +91,7 @@ export function craftDecoration({
 
   const rewardPool = filterRewardPool({
     decorations,
-    config,
+    recipe,
     unlockedCollectionIds: progress.unlockedCollectionIds,
   })
 

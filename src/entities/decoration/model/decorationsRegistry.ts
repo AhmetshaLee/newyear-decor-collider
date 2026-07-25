@@ -2,7 +2,7 @@ import type {
   DecorationAlbum,
   DecorationLevel,
   DecorationType,
-} from '@/shared/lib/decorations'
+} from './decorationValues'
 
 export type Decoration = {
   id: string
@@ -12,13 +12,6 @@ export type Decoration = {
   name: string
   description: string
 }
-
-export const DECORATION_ALBUM_LABELS = {
-  classic: 'Новогодняя классика',
-  fairytale: 'Рождественская сказка',
-  oriental: 'Восточный календарь',
-  magic: 'Зимнее чудо / Магия',
-} satisfies Record<DecorationAlbum, string>
 
 export const DECORATIONS_REGISTRY = [
   {
