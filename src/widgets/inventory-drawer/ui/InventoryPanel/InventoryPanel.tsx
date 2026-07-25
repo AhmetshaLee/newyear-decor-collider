@@ -5,8 +5,10 @@ import {
   DecorationSlot,
   DecorationVisual,
 } from '@/entities/decoration'
-import { useRecycleInventoryItems } from '@/features/recycle-inventory'
-import { calculateRecycleShards } from '@/shared/lib/inventory'
+import {
+  calculateRecycleShards,
+  useRecycleInventoryItems,
+} from '@/features/recycle-inventory'
 import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 
 import styles from './InventoryPanel.module.scss'

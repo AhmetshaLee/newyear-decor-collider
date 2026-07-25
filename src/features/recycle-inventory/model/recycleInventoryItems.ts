@@ -2,7 +2,7 @@ import type {
   PlayerProgress,
   PlayerProgressTransactionResult,
 } from '@/entities/player-progress'
-import { calculateRecycleShards } from '@/shared/lib/inventory'
+import { calculateRecycleShards } from './calculateRecycleShards'
 
 export type RecycleInventoryItemsInput = {
   progress: PlayerProgress
