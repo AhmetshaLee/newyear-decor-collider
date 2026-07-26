@@ -3,10 +3,17 @@ import type {
   InventoryItem,
   PlayerProgressTransactionResult,
 } from '@/entities/player-progress'
-import type { Decoration } from '@/entities/decoration'
+import {
+  calculateDecorationRecycleValue,
+  type Decoration,
+} from '@/entities/decoration'
 import { calculateCraftCost } from './craftPricing'
 import type { CraftRecipe } from './craftRecipe'
 import { filterRewardPool } from './filterRewardPool'
+import {
+  pickRandomCraftDecoration,
+  pickWeightedCraftDecoration,
+} from './pickCraftDecoration'
 
 export type CraftDecorationResult =
   | {
@@ -27,7 +34,8 @@ export type CraftDecorationResult =
 export type CraftDecorationAttempt = {
   itemId: string
   timestamp: number
-  randomValue: number
+  levelRandomValue: number
+  decorationRandomValue: number
 }
 
 export type CraftDecorationInput = {
@@ -47,28 +55,15 @@ function createInventoryItemId(timestamp: number, randomValue: number) {
 
 export function createCraftDecorationAttempt(): CraftDecorationAttempt {
   const timestamp = Date.now()
-  const randomValue = Math.random()
+  const levelRandomValue = Math.random()
+  const decorationRandomValue = Math.random()
 
   return {
-    itemId: createInventoryItemId(timestamp, randomValue),
+    itemId: createInventoryItemId(timestamp, decorationRandomValue),
     timestamp,
-    randomValue,
+    levelRandomValue,
+    decorationRandomValue,
   }
-}
-
-function pickRandomDecoration(
-  decorations: readonly Decoration[],
-  randomValue: number,
-) {
-  const randomIndex = Math.max(
-    0,
-    Math.min(
-      Math.floor(randomValue * decorations.length),
-      decorations.length - 1,
-    ),
-  )
-
-  return decorations[randomIndex]
 }
 
 export function craftDecoration({
@@ -105,13 +100,20 @@ export function craftDecoration({
     }
   }
 
-  const decoration = pickRandomDecoration(rewardPool, attempt.randomValue)
+  const decoration =
+    recipe.level === 'random'
+      ? pickWeightedCraftDecoration(
+          rewardPool,
+          attempt.levelRandomValue,
+          attempt.decorationRandomValue,
+        )
+      : pickRandomCraftDecoration(rewardPool, attempt.decorationRandomValue)
 
   const item: InventoryItem = {
     id: attempt.itemId,
     decorationId: decoration.id,
     timestamp: attempt.timestamp,
-    craftCost: cost,
+    recycleValue: calculateDecorationRecycleValue(decoration.level),
   }
 
   const isAlreadyUnlocked = progress.unlockedCollectionIds.includes(

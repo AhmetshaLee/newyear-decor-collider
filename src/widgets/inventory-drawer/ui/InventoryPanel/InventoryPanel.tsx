@@ -5,10 +5,7 @@ import {
   DecorationSlot,
   DecorationVisual,
 } from '@/entities/decoration'
-import {
-  calculateRecycleShards,
-  useRecycleInventoryItems,
-} from '@/features/recycle-inventory'
+import { useRecycleInventoryItems } from '@/features/recycle-inventory'
 import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 
 import styles from './InventoryPanel.module.scss'
@@ -48,7 +45,7 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
     inventoryItems.length > 0 && selectedItems.length === inventoryItems.length
 
   const recycleShardsPreview = selectedItems.reduce(
-    (sum, item) => sum + calculateRecycleShards(item.craftCost),
+    (sum, item) => sum + item.recycleValue,
     0,
   )
 

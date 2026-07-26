@@ -2,7 +2,7 @@ export type InventoryItem = {
   id: string
   decorationId: string
   timestamp: number
-  craftCost: number
+  recycleValue: number
 }
 
 export type CalendarProgress = {
