@@ -1,7 +1,9 @@
+import { getDecorationById } from '@/entities/decoration'
 import type {
   PlayerProgress,
   PlayerProgressTransactionResult,
 } from '@/entities/player-progress'
+import { calculateDecorationRecycleValue } from './recyclePricing'
 
 export type RecycleInventoryItemsInput = {
   progress: PlayerProgress
@@ -25,12 +27,15 @@ export function recycleInventoryItems({
   itemIds,
 }: RecycleInventoryItemsInput): PlayerProgressTransactionResult<RecycleInventoryItemsResult> {
   const itemIdSet = new Set(itemIds)
+  const selectedEntries = progress.inventory.flatMap((item) => {
+    if (!itemIdSet.has(item.id)) return []
 
-  const selectedItems = progress.inventory.filter((item) =>
-    itemIdSet.has(item.id),
-  )
+    const decoration = getDecorationById(item.decorationId)
 
-  if (selectedItems.length === 0) {
+    return decoration === undefined ? [] : [{ item, decoration }]
+  })
+
+  if (selectedEntries.length === 0) {
     return {
       progress,
       result: {
@@ -41,22 +46,25 @@ export function recycleInventoryItems({
     }
   }
 
-  const gainedShards = selectedItems.reduce(
-    (sum, item) => sum + item.recycleValue,
+  const selectedItemIds = new Set(selectedEntries.map(({ item }) => item.id))
+  const gainedShards = selectedEntries.reduce(
+    (shards, { decoration }) =>
+      shards + calculateDecorationRecycleValue(decoration),
     0,
   )
-
   const nextProgress: PlayerProgress = {
     ...progress,
     userShards: progress.userShards + gainedShards,
-    inventory: progress.inventory.filter((item) => !itemIdSet.has(item.id)),
+    inventory: progress.inventory.filter(
+      (item) => !selectedItemIds.has(item.id),
+    ),
   }
 
   return {
     progress: nextProgress,
     result: {
       status: 'success',
-      recycledItemsCount: selectedItems.length,
+      recycledItemsCount: selectedEntries.length,
       gainedShards,
     },
   }

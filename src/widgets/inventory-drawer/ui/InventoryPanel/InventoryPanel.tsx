@@ -1,11 +1,14 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { usePlayerProgress } from '@/entities/player-progress'
 import {
-  DECORATIONS_REGISTRY,
   DecorationSlot,
   DecorationVisual,
+  getDecorationById,
 } from '@/entities/decoration'
-import { useRecycleInventoryItems } from '@/features/recycle-inventory'
+import {
+  calculateDecorationRecycleValue,
+  useRecycleInventoryItems,
+} from '@/features/recycle-inventory'
 import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 
 import styles from './InventoryPanel.module.scss'
@@ -30,22 +33,23 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
     null,
   )
 
-  const decorationsById = useMemo(() => {
-    return new Map(
-      DECORATIONS_REGISTRY.map((decoration) => [decoration.id, decoration]),
-    )
-  }, [])
-
   const inventoryItems = progress.inventory
-  const selectedItems = inventoryItems.filter((item) =>
+  const inventoryEntries = inventoryItems.map((item) => ({
+    item,
+    decoration: getDecorationById(item.decorationId),
+  }))
+  const recyclableEntries = inventoryEntries.flatMap(({ item, decoration }) =>
+    decoration === undefined ? [] : [{ item, decoration }],
+  )
+  const selectedEntries = recyclableEntries.filter(({ item }) =>
     selectedItemIds.has(item.id),
   )
-
   const isAllSelected =
-    inventoryItems.length > 0 && selectedItems.length === inventoryItems.length
-
-  const recycleShardsPreview = selectedItems.reduce(
-    (sum, item) => sum + item.recycleValue,
+    recyclableEntries.length > 0 &&
+    selectedEntries.length === recyclableEntries.length
+  const recycleShards = selectedEntries.reduce(
+    (shards, { decoration }) =>
+      shards + calculateDecorationRecycleValue(decoration),
     0,
   )
 
@@ -63,22 +67,22 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
   const toggleAllSelection = () => {
     setSelectedItemIds((currentIds) => {
       const isEveryItemSelected =
-        inventoryItems.length > 0 &&
-        inventoryItems.every((item) => currentIds.has(item.id))
+        recyclableEntries.length > 0 &&
+        recyclableEntries.every(({ item }) => currentIds.has(item.id))
 
       if (isEveryItemSelected) return new Set<string>()
 
-      return new Set(inventoryItems.map((item) => item.id))
+      return new Set(recyclableEntries.map(({ item }) => item.id))
     })
   }
 
   const openRecycleConfirmation = () => {
-    if (selectedItems.length === 0) return
+    if (selectedEntries.length === 0) return
 
     setPendingRecycle({
-      itemIds: selectedItems.map((item) => item.id),
-      itemsCount: selectedItems.length,
-      gainedShards: recycleShardsPreview,
+      itemIds: selectedEntries.map(({ item }) => item.id),
+      itemsCount: selectedEntries.length,
+      gainedShards: recycleShards,
     })
   }
 
@@ -111,7 +115,7 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
           <button
             className={styles.actionButton}
             type="button"
-            disabled={inventoryItems.length === 0}
+            disabled={recyclableEntries.length === 0}
             onClick={toggleAllSelection}
           >
             {isAllSelected ? 'Снять выбор' : 'Выбрать всё'}
@@ -120,10 +124,10 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
           <button
             className={`${styles.actionButton} ${styles.recycleButton}`}
             type="button"
-            disabled={selectedItems.length === 0}
+            disabled={selectedEntries.length === 0}
             onClick={openRecycleConfirmation}
           >
-            Разбить: +{recycleShardsPreview}
+            Разбить: +{recycleShards}
           </button>
 
           <button
@@ -143,9 +147,9 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
           </p>
         ) : (
           <div className={styles.grid}>
-            {inventoryItems.map((item) => {
-              const decoration = decorationsById.get(item.decorationId)
-              const isSelected = selectedItemIds.has(item.id)
+            {inventoryEntries.map(({ item, decoration }) => {
+              const isUnknown = decoration === undefined
+              const isSelected = !isUnknown && selectedItemIds.has(item.id)
               const itemName = decoration?.name ?? 'Неизвестное украшение'
               const itemSlotClassName = isSelected
                 ? `${styles.itemSlot} ${styles.selectedItemSlot}`
@@ -158,6 +162,7 @@ export function InventoryPanel({ onClose }: InventoryPanelProps) {
               return (
                 <button
                   className={styles.itemControl}
+                  disabled={isUnknown}
                   key={item.id}
                   onClick={() => toggleItemSelection(item.id)}
                   title={itemName}

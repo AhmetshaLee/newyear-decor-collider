@@ -14,9 +14,9 @@ export function useRecycleInventoryItems(): UseRecycleInventoryItemsResult {
 
   const recycleItems = useCallback(
     (itemIds: readonly string[]) => {
-      return commitProgress((currentProgresss) =>
+      return commitProgress((currentProgress) =>
         recycleInventoryItems({
-          progress: currentProgresss,
+          progress: currentProgress,
           itemIds,
         }),
       )

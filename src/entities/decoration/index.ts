@@ -1,8 +1,12 @@
-export { DECORATIONS_REGISTRY } from './model/decorationsRegistry'
+export {
+  DECORATIONS_REGISTRY,
+  getDecorationById,
+} from './model/decorationsRegistry'
 export type { Decoration } from './model/decorationsRegistry'
 
+export { calculateDecorationValue } from './model/decorationEconomy'
+
 export {
-  calculateDecorationRecycleValue,
   DECORATION_ALBUM_LABELS,
   DECORATION_ALBUM_SYMBOLS,
   DECORATION_ALBUM_VALUES,

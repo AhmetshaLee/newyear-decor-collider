@@ -143,3 +143,11 @@ export const DECORATIONS_REGISTRY = [
     description: 'Большая снежная сфера, в которой кружится маленькая вьюга.',
   },
 ] satisfies readonly Decoration[]
+
+const DECORATIONS_BY_ID = new Map<string, Decoration>(
+  DECORATIONS_REGISTRY.map((decoration) => [decoration.id, decoration]),
+)
+
+export function getDecorationById(decorationId: string) {
+  return DECORATIONS_BY_ID.get(decorationId)
+}

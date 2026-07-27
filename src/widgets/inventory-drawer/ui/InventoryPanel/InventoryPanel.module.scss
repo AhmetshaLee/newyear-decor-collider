@@ -126,6 +126,10 @@
   outline-offset: 2px;
 }
 
+.itemControl:disabled {
+  cursor: default;
+}
+
 .selectedItemSlot {
   border-color: #b95c52;
   background: #503532;

@@ -3,10 +3,7 @@ import type {
   InventoryItem,
   PlayerProgressTransactionResult,
 } from '@/entities/player-progress'
-import {
-  calculateDecorationRecycleValue,
-  type Decoration,
-} from '@/entities/decoration'
+import type { Decoration } from '@/entities/decoration'
 import { calculateCraftCost } from './craftPricing'
 import type { CraftRecipe } from './craftRecipe'
 import { filterRewardPool } from './filterRewardPool'
@@ -113,7 +110,6 @@ export function craftDecoration({
     id: attempt.itemId,
     decorationId: decoration.id,
     timestamp: attempt.timestamp,
-    recycleValue: calculateDecorationRecycleValue(decoration.level),
   }
 
   const isAlreadyUnlocked = progress.unlockedCollectionIds.includes(
