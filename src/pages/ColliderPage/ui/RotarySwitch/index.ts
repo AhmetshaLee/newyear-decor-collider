@@ -1,4 +1,1 @@
-export {
-  RotarySwitch,
-  type RotarySwitchArc,
-} from './RotarySwitch'
+export { RotarySwitch, type RotarySwitchArc } from './RotarySwitch'
