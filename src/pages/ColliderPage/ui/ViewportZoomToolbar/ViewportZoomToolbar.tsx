@@ -39,7 +39,7 @@ export function ViewportZoomToolbar({
         className={styles.button}
         type="button"
         onClick={onReset}
-        title="Сбросить масштаб"
+        title="Сбросить вид"
       >
         R
       </button>
