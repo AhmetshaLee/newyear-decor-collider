@@ -1,11 +1,18 @@
 // ==== COLLIDER LAYOUT ====
 
 .panel {
+  position: relative;
   width: 1280px;
   height: 720px;
   display: grid;
   place-items: center;
   padding: 32px;
+}
+
+.panelSurface {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
   border: 1px solid rgba(7, 13, 11, 0.4);
   border-radius: 10px;
   background: #4c4b48;
@@ -13,9 +20,14 @@
     inset 0 2px 0 rgba(255, 255, 255, 0.14),
     inset 0 -18px 36px rgba(0, 0, 0, 0.28),
     0 28px 70px rgba(0, 0, 0, 0.36);
+  contain: paint;
+  pointer-events: none;
+  transform: translateZ(0);
 }
 
 .panelGrid {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   display: grid;

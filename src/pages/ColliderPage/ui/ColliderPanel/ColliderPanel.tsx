@@ -137,6 +137,8 @@ export function ColliderPanel({
 
   return (
     <section className={styles.panel}>
+      <div aria-hidden="true" className={styles.panelSurface} />
+
       <div className={styles.panelGrid}>
         <div className={styles.monitorSlot}>
           <StatusMonitor
