@@ -66,9 +66,6 @@
   white-space: nowrap;
   background: transparent;
   transform: translate(-50%, -50%);
-  transition:
-    color 140ms ease,
-    text-shadow 140ms ease;
 }
 
 .growRight .item {
@@ -87,12 +84,13 @@
 }
 
 .itemContent {
+  position: relative;
+  top: -1px;
   width: max-content;
   height: 100%;
   display: grid;
   place-items: center;
   line-height: 1;
-  transform: translateY(-0.04em);
 }
 
 .itemContent > img,
@@ -145,6 +143,7 @@
     0 4px 7px rgba(0, 0, 0, 0.24);
   transform: rotate(var(--knob-angle));
   transition: transform 180ms ease;
+  will-change: transform;
 }
 
 .pointer {
