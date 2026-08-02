@@ -24,6 +24,7 @@ const WHEEL_ZOOM_SENSITIVITY = 0.001
 const MAX_WHEEL_DELTA = 100
 const WHEEL_LINE_HEIGHT = 16
 const WHEEL_COMPOSITING_IDLE = 180
+const RESIZE_SETTLE_DELAY = 100
 const PAN_BLOCKING_SELECTOR =
   'button, a, input, select, textarea, dialog, [contenteditable="true"]'
 
@@ -278,11 +279,27 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
 
     updateFitScale()
 
-    const resizeObserver = new ResizeObserver(() => updateFitScale())
+    let resizeTimer: number | null = null
+    const resizeObserver = new ResizeObserver(() => {
+      if (resizeTimer !== null) {
+        window.clearTimeout(resizeTimer)
+      }
+
+      resizeTimer = window.setTimeout(() => {
+        resizeTimer = null
+        updateFitScale()
+      }, RESIZE_SETTLE_DELAY)
+    })
 
     resizeObserver.observe(viewport)
 
-    return () => resizeObserver.disconnect()
+    return () => {
+      resizeObserver.disconnect()
+
+      if (resizeTimer !== null) {
+        window.clearTimeout(resizeTimer)
+      }
+    }
   }, [updateFitScale])
 
   useEffect(() => {
