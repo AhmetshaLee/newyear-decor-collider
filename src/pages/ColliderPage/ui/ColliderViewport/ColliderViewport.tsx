@@ -25,6 +25,7 @@ const MAX_WHEEL_DELTA = 100
 const WHEEL_LINE_HEIGHT = 16
 const WHEEL_COMPOSITING_IDLE = 180
 const RESIZE_SETTLE_DELAY = 100
+const MIN_VISIBLE_PANEL_RATIO = 0.25
 const PAN_BLOCKING_SELECTOR =
   'button, a, input, select, textarea, dialog, [contenteditable="true"]'
 
@@ -68,6 +69,22 @@ function getFitScale(width: number, height: number) {
 
 function getPanelTransform({ x, y }: Point, scale: number) {
   return `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`
+}
+
+function getConstrainedPan(pan: Point, viewport: ViewportRect, scale: number) {
+  const panelWidth = PANEL_WIDTH * scale
+  const panelHeight = PANEL_HEIGHT * scale
+  const minVisibleWidth =
+    Math.min(panelWidth, viewport.width) * MIN_VISIBLE_PANEL_RATIO
+  const minVisibleHeight =
+    Math.min(panelHeight, viewport.height) * MIN_VISIBLE_PANEL_RATIO
+  const maxX = (viewport.width + panelWidth) / 2 - minVisibleWidth
+  const maxY = (viewport.height + panelHeight) / 2 - minVisibleHeight
+
+  return {
+    x: Math.min(Math.max(pan.x, -maxX), maxX),
+    y: Math.min(Math.max(pan.y, -maxY), maxY),
+  }
 }
 
 function getAnchoredPan(
@@ -134,14 +151,19 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
       width,
       height,
     }
+    const currentScale = clampScale(nextFitScale * userZoomRef.current)
+    const nextPan = getConstrainedPan(
+      panRef.current,
+      viewportRectRef.current,
+      currentScale,
+    )
+
+    panRef.current = nextPan
     fitScaleRef.current = nextFitScale
     setFitScale(nextFitScale)
     panelRef.current?.style.setProperty(
       'transform',
-      getPanelTransform(
-        panRef.current,
-        clampScale(nextFitScale * userZoomRef.current),
-      ),
+      getPanelTransform(nextPan, currentScale),
     )
 
     return nextFitScale
@@ -171,14 +193,20 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
       return
     }
 
-    panRef.current.x += event.clientX - drag.x
-    panRef.current.y += event.clientY - drag.y
+    const currentScale = clampScale(fitScaleRef.current * userZoomRef.current)
+    const nextPan = getConstrainedPan(
+      {
+        x: panRef.current.x + event.clientX - drag.x,
+        y: panRef.current.y + event.clientY - drag.y,
+      },
+      viewportRectRef.current,
+      currentScale,
+    )
+
+    panRef.current = nextPan
     drag.x = event.clientX
     drag.y = event.clientY
-    panel.style.transform = getPanelTransform(
-      panRef.current,
-      clampScale(fitScaleRef.current * userZoomRef.current),
-    )
+    panel.style.transform = getPanelTransform(nextPan, currentScale)
   }
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -195,10 +223,9 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
 
     if (currentScale === nextScale) return
 
-    const nextPan = getAnchoredPan(
-      panRef.current,
-      anchor,
-      currentScale,
+    const nextPan = getConstrainedPan(
+      getAnchoredPan(panRef.current, anchor, currentScale, nextScale),
+      viewportRectRef.current,
       nextScale,
     )
 
