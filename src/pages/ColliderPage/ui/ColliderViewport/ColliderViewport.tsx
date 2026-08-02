@@ -2,7 +2,6 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -16,11 +15,9 @@ const PANEL_WIDTH = 1280
 const PANEL_HEIGHT = 720
 const FIT_PADDING = 0.92
 const MIN_SCALE = 0.5
-const MAX_SCALE = 2
-const USER_ZOOM_STEP = 0.1
-const MIN_USER_ZOOM = 0.5
-const MAX_USER_ZOOM = 2
-const WHEEL_ZOOM_SENSITIVITY = 0.001
+const MAX_SCALE = 1.25
+const BUTTON_ZOOM_FACTOR = 1.2
+const WHEEL_ZOOM_SENSITIVITY = 0.002
 const MAX_WHEEL_DELTA = 100
 const WHEEL_LINE_HEIGHT = 16
 const WHEEL_COMPOSITING_IDLE = 180
@@ -51,12 +48,17 @@ type PendingWheel = Point & {
   delta: number
 }
 
-function clampScale(scale: number) {
-  return Math.min(Math.max(scale, MIN_SCALE), MAX_SCALE)
+type ZoomSnapshot = {
+  fitScale: number
+  scale: number
 }
 
-function clampUserZoom(zoom: number) {
-  return Math.min(Math.max(zoom, MIN_USER_ZOOM), MAX_USER_ZOOM)
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max)
+}
+
+function clampScale(scale: number) {
+  return clamp(scale, MIN_SCALE, MAX_SCALE)
 }
 
 function getFitScale(width: number, height: number) {
@@ -64,7 +66,7 @@ function getFitScale(width: number, height: number) {
   const heightRatio = height / PANEL_HEIGHT
   const scaleToFitPanel = Math.min(widthRatio, heightRatio)
 
-  return clampScale(scaleToFitPanel * FIT_PADDING)
+  return clamp(scaleToFitPanel * FIT_PADDING, MIN_SCALE, MAX_SCALE)
 }
 
 function getPanelTransform({ x, y }: Point, scale: number) {
@@ -122,8 +124,10 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const panRef = useRef<Point>({ x: 0, y: 0 })
   const dragRef = useRef<Drag | null>(null)
-  const fitScaleRef = useRef(1)
-  const userZoomRef = useRef(1)
+  const zoomRef = useRef<ZoomSnapshot>({
+    fitScale: 1,
+    scale: 1,
+  })
   const viewportRectRef = useRef<ViewportRect>({
     x: 0,
     y: 0,
@@ -133,8 +137,10 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
   const pendingWheelRef = useRef<PendingWheel | null>(null)
   const wheelFrameRef = useRef<number | null>(null)
   const wheelIdleRef = useRef<number | null>(null)
-  const [fitScale, setFitScale] = useState(1)
-  const [userZoom, setUserZoom] = useState(1)
+  const [zoom, setZoom] = useState<ZoomSnapshot>({
+    fitScale: 1,
+    scale: 1,
+  })
 
   const updateFitScale = useCallback(() => {
     const viewportElement = viewportRef.current
@@ -144,6 +150,12 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
     const viewportRect = viewportElement.getBoundingClientRect()
     const { width, height } = viewportRect
     const nextFitScale = getFitScale(width, height)
+    const userZoom = zoomRef.current.scale / zoomRef.current.fitScale
+    const nextScale = clampScale(nextFitScale * userZoom)
+    const nextZoom = {
+      fitScale: nextFitScale,
+      scale: nextScale,
+    }
 
     viewportRectRef.current = {
       x: viewportRect.left,
@@ -151,28 +163,22 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
       width,
       height,
     }
-    const currentScale = clampScale(nextFitScale * userZoomRef.current)
     const nextPan = getConstrainedPan(
       panRef.current,
       viewportRectRef.current,
-      currentScale,
+      nextScale,
     )
 
     panRef.current = nextPan
-    fitScaleRef.current = nextFitScale
-    setFitScale(nextFitScale)
+    zoomRef.current = nextZoom
+    setZoom(nextZoom)
     panelRef.current?.style.setProperty(
       'transform',
-      getPanelTransform(nextPan, currentScale),
+      getPanelTransform(nextPan, nextScale),
     )
 
     return nextFitScale
   }, [])
-
-  const scale = useMemo(
-    () => clampScale(fitScale * userZoom),
-    [fitScale, userZoom],
-  )
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.button !== 0 || blocksPanning(event.target)) return
@@ -193,20 +199,20 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
       return
     }
 
-    const currentScale = clampScale(fitScaleRef.current * userZoomRef.current)
+    const { scale } = zoomRef.current
     const nextPan = getConstrainedPan(
       {
         x: panRef.current.x + event.clientX - drag.x,
         y: panRef.current.y + event.clientY - drag.y,
       },
       viewportRectRef.current,
-      currentScale,
+      scale,
     )
 
     panRef.current = nextPan
     drag.x = event.clientX
     drag.y = event.clientY
-    panel.style.transform = getPanelTransform(nextPan, currentScale)
+    panel.style.transform = getPanelTransform(nextPan, scale)
   }
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -216,26 +222,30 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
     delete event.currentTarget.dataset.panning
   }
 
-  const changeZoom = useCallback((nextZoom: number, anchor: Point) => {
-    const clampedZoom = clampUserZoom(nextZoom)
-    const currentScale = clampScale(fitScaleRef.current * userZoomRef.current)
-    const nextScale = clampScale(fitScaleRef.current * clampedZoom)
+  const changeZoom = useCallback((scale: number, anchor: Point) => {
+    const currentZoom = zoomRef.current
+    const nextScale = clampScale(scale)
 
-    if (currentScale === nextScale) return
+    if (currentZoom.scale === nextScale) return
+
+    const nextZoom = {
+      fitScale: currentZoom.fitScale,
+      scale: nextScale,
+    }
 
     const nextPan = getConstrainedPan(
-      getAnchoredPan(panRef.current, anchor, currentScale, nextScale),
+      getAnchoredPan(panRef.current, anchor, currentZoom.scale, nextScale),
       viewportRectRef.current,
       nextScale,
     )
 
     panRef.current = nextPan
-    userZoomRef.current = clampedZoom
+    zoomRef.current = nextZoom
     panelRef.current?.style.setProperty(
       'transform',
       getPanelTransform(nextPan, nextScale),
     )
-    setUserZoom(clampedZoom)
+    setZoom(nextZoom)
   }, [])
 
   const applyPendingWheel = useCallback(() => {
@@ -247,40 +257,43 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
 
     if (pendingWheel === null) return
 
-    const wheelDelta = Math.min(
-      Math.max(pendingWheel.delta, -MAX_WHEEL_DELTA),
+    const wheelDelta = clamp(
+      pendingWheel.delta,
+      -MAX_WHEEL_DELTA,
       MAX_WHEEL_DELTA,
     )
-    const zoomFactor = Math.exp(-wheelDelta * WHEEL_ZOOM_SENSITIVITY)
+    const nextScale =
+      zoomRef.current.scale * 2 ** (-wheelDelta * WHEEL_ZOOM_SENSITIVITY)
     const viewportRect = viewportRectRef.current
     const anchor = {
       x: pendingWheel.x - viewportRect.x - viewportRect.width / 2,
       y: pendingWheel.y - viewportRect.y - viewportRect.height / 2,
     }
 
-    changeZoom(userZoomRef.current * zoomFactor, anchor)
+    changeZoom(nextScale, anchor)
   }, [changeZoom])
 
-  const zoomOut = () => {
-    changeZoom(Number((userZoomRef.current - USER_ZOOM_STEP).toFixed(3)), {
-      x: 0,
-      y: 0,
-    })
-  }
-
-  const zoomIn = () => {
-    changeZoom(Number((userZoomRef.current + USER_ZOOM_STEP).toFixed(3)), {
-      x: 0,
-      y: 0,
-    })
-  }
-
-  const resetView = () => {
+  const clearPendingWheelInput = () => {
     if (wheelFrameRef.current !== null) {
       window.cancelAnimationFrame(wheelFrameRef.current)
       wheelFrameRef.current = null
-      pendingWheelRef.current = null
     }
+
+    pendingWheelRef.current = null
+  }
+
+  const zoomOut = () => {
+    clearPendingWheelInput()
+    changeZoom(zoomRef.current.scale / BUTTON_ZOOM_FACTOR, { x: 0, y: 0 })
+  }
+
+  const zoomIn = () => {
+    clearPendingWheelInput()
+    changeZoom(zoomRef.current.scale * BUTTON_ZOOM_FACTOR, { x: 0, y: 0 })
+  }
+
+  const resetView = () => {
+    clearPendingWheelInput()
 
     if (wheelIdleRef.current !== null) {
       window.clearTimeout(wheelIdleRef.current)
@@ -288,11 +301,15 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
       delete viewportRef.current?.dataset.zooming
     }
 
-    const nextFitScale = updateFitScale() ?? fitScaleRef.current
+    const nextFitScale = updateFitScale() ?? zoomRef.current.fitScale
+    const nextZoom = {
+      fitScale: nextFitScale,
+      scale: nextFitScale,
+    }
 
     panRef.current = { x: 0, y: 0 }
-    userZoomRef.current = 1
-    setUserZoom(1)
+    zoomRef.current = nextZoom
+    setZoom(nextZoom)
     panelRef.current?.style.setProperty(
       'transform',
       getPanelTransform(panRef.current, nextFitScale),
@@ -410,10 +427,9 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
         <div className={styles.overlayControls}>
           <ViewportZoomToolbar
             className={styles.zoomToolbar}
-            userZoomPercent={Math.round(userZoom * 100)}
-            realScalePercent={Math.round(scale * 100)}
-            canZoomOut={scale > MIN_SCALE}
-            canZoomIn={scale < MAX_SCALE}
+            zoomPercent={Math.round(zoom.scale * 100)}
+            canZoomOut={zoom.scale > MIN_SCALE}
+            canZoomIn={zoom.scale < MAX_SCALE}
             onZoomOut={zoomOut}
             onZoomIn={zoomIn}
             onReset={resetView}

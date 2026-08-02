@@ -29,18 +29,8 @@
 }
 
 .zoomValue {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
   color: #173f35;
   font-size: clamp(14px, 0.9vw, 16px);
   font-weight: 600;
   text-align: center;
-}
-
-.realZoomValue {
-  font-size: 0.82em;
-  font-weight: 500;
-  opacity: 0.68;
 }

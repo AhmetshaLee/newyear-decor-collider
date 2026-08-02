@@ -2,8 +2,7 @@ import styles from './ViewportZoomToolbar.module.scss'
 
 type ViewportZoomToolbarProps = {
   className?: string
-  userZoomPercent: number
-  realScalePercent: number
+  zoomPercent: number
   canZoomOut: boolean
   canZoomIn: boolean
   onZoomOut: () => void
@@ -13,8 +12,7 @@ type ViewportZoomToolbarProps = {
 
 export function ViewportZoomToolbar({
   className,
-  userZoomPercent,
-  realScalePercent,
+  zoomPercent,
   canZoomOut,
   canZoomIn,
   onZoomOut,
@@ -52,10 +50,7 @@ export function ViewportZoomToolbar({
       >
         +
       </button>
-      <span className={styles.zoomValue}>
-        <span>{userZoomPercent}%</span>
-        <span className={styles.realZoomValue}>[{realScalePercent}%]</span>
-      </span>
+      <span className={styles.zoomValue}>{zoomPercent}%</span>
     </div>
   )
 }
