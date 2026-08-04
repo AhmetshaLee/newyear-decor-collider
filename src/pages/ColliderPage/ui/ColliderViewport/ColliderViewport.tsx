@@ -70,7 +70,7 @@ function getFitScale(width: number, height: number) {
 }
 
 function getPanelTransform({ x, y }: Point, scale: number) {
-  return `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`
+  return `translate3d(-50%, -50%, 0) translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0) scale(${scale})`
 }
 
 function getConstrainedPan(pan: Point, viewport: ViewportRect, scale: number) {
