@@ -6,7 +6,7 @@ import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftButton } from '../CraftButton'
 import { CraftCost } from '../CraftCost'
 import { CraftRewardDialog } from '../CraftRewardDialog'
-import { CalendarLink } from '../CalendarLink'
+import { CalendarButton } from '../CalendarButton'
 import { RotarySwitch, type RotarySwitchArc } from '../RotarySwitch'
 import {
   ANTI_REPEAT_MODE_VALUES,
@@ -33,6 +33,7 @@ import {
 import styles from './ColliderPanel.module.scss'
 
 type ColliderPanelProps = {
+  onOpenCalendar: () => void
   onOpenInventory: () => void
   onOpenCollection: () => void
 }
@@ -65,6 +66,7 @@ const INITIAL_CRAFT_RECIPE: CraftRecipe = {
 }
 
 export function ColliderPanel({
+  onOpenCalendar,
   onOpenCollection,
   onOpenInventory,
 }: ColliderPanelProps) {
@@ -202,7 +204,7 @@ export function ColliderPanel({
         </section>
 
         <div className={styles.utilitySlot}>
-          <CalendarLink />
+          <CalendarButton onClick={onOpenCalendar} />
 
           <div className={styles.serviceButtons}>
             <DecorationTypeButton isSelected={false} onClick={onOpenInventory}>

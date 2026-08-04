@@ -1,22 +1,11 @@
 import { Navigate, createBrowserRouter } from 'react-router'
-import { BasePageLayout } from '@/app/layouts/BasePageLayout'
 import { ImmersivePageLayout } from '@/app/layouts/ImmersivePageLayout'
-import { CalendarPage } from '@/pages/CalendarPage'
 import { ColliderPage } from '@/pages/ColliderPage'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <Navigate to="/collider" replace />,
-  },
-  {
-    element: <BasePageLayout />,
-    children: [
-      {
-        path: '/calendar',
-        element: <CalendarPage />,
-      },
-    ],
   },
   {
     element: <ImmersivePageLayout />,

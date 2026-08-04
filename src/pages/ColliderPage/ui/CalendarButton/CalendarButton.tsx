@@ -1,21 +1,24 @@
-import { Link } from 'react-router'
-
-import styles from './CalendarLink.module.scss'
+import styles from './CalendarButton.module.scss'
 
 const CALENDAR_CELLS = Array.from({ length: 21 }, (_, index) => index)
 
-type CalendarLinkProps = {
+type CalendarButtonProps = {
   className?: string
+  onClick: () => void
 }
 
-export function CalendarLink({ className }: CalendarLinkProps) {
-  const linkClassName =
+export function CalendarButton({ className, onClick }: CalendarButtonProps) {
+  const buttonClassName =
     className === undefined
       ? styles.calendar
       : `${styles.calendar} ${className}`
 
   return (
-    <Link className={linkClassName} to="/calendar">
+    <button
+      className={buttonClassName}
+      type="button"
+      onClick={onClick}
+    >
       <span className={styles.header}>Календарь</span>
 
       <span className={styles.sheet}>
@@ -23,6 +26,6 @@ export function CalendarLink({ className }: CalendarLinkProps) {
           <span className={styles.day} key={cell} />
         ))}
       </span>
-    </Link>
+    </button>
   )
 }
