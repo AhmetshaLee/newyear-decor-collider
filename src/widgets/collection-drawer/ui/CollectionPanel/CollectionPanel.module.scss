@@ -89,7 +89,11 @@
 
 .tab:hover,
 .closeButton:hover {
-  filter: brightness(1.12);
+  background: #59615c;
+}
+
+.active:hover {
+  background: #7a4039;
 }
 
 // ==== COLLECTION CONTENT ====
@@ -123,7 +127,6 @@
 
 .lockedDecorationSlot .decorationVisual {
   opacity: 0.34;
-  filter: grayscale(1);
 }
 
 .unlockedDecorationSlot {

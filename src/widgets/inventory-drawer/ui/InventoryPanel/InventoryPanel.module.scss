@@ -62,7 +62,11 @@
 }
 
 .actionButton:hover:not(:disabled) {
-  filter: brightness(1.12);
+  background: #59615c;
+}
+
+.recycleButton:hover:not(:disabled) {
+  background: #7a4039;
 }
 
 .actionButton:disabled {

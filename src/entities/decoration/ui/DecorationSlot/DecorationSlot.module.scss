@@ -25,7 +25,6 @@
   line-height: 1;
   opacity: var(--decoration-level-opacity, 1);
   isolation: isolate;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .level::before {
@@ -34,14 +33,12 @@
   width: 2.4em;
   height: 2.4em;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--decoration-level-color) 72%, transparent) 0%,
-    color-mix(in srgb, var(--decoration-level-color) 28%, transparent) 42%,
-    transparent 72%
+  background: color-mix(
+    in srgb,
+    var(--decoration-level-color) 34%,
+    transparent
   );
   content: '';
-  filter: blur(2px);
 }
 
 .level[data-decoration-level='lvl_2'] {

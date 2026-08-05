@@ -104,9 +104,6 @@
 
 .item:not(:disabled):hover {
   color: rgba(255, 216, 182, 0.86);
-  text-shadow:
-    0 0 6px rgba(255, 137, 72, 0.55),
-    0 0 14px rgba(255, 107, 54, 0.34);
 }
 
 .disabledRoot .item,
@@ -122,9 +119,6 @@
 
 .activeItem {
   color: #ffb078;
-  text-shadow:
-    0 0 8px rgba(255, 107, 54, 0.8),
-    0 0 18px rgba(255, 107, 54, 0.52);
 }
 
 .knob {
@@ -150,7 +144,6 @@
   height: 108px;
   background: linear-gradient(90deg, #080a09 0 26%, #171b1a 52%, #090b0a 100%);
   clip-path: polygon(46% 0, 54% 0, 82% 100%, 18% 100%);
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.26));
   pointer-events: none;
   transform: translateX(-50%);
 }
