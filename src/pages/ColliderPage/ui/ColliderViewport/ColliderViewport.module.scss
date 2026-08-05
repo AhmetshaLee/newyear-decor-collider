@@ -4,44 +4,57 @@
   height: 100%;
   overflow: hidden;
   background: #f3f1ea;
-  cursor: grab;
   touch-action: none;
-}
-
-.viewport[data-panning] {
-  cursor: grabbing;
 }
 
 .viewport :where(button:not(:disabled), a[href]) {
   cursor: pointer;
 }
 
-.panelLayer {
+.cameraLayer {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  transform-origin: center center;
+  will-change: transform;
+}
+
+.cameraLayer[data-navigating] {
+  transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cameraLayer[data-zooming] {
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scaleLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.scaleLayer[data-zooming] {
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.colliderFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate3d(-50%, -50%, 0);
   user-select: none;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
+@media (prefers-reduced-motion: reduce) {
+  .cameraLayer[data-navigating] {
+    transition: none;
+  }
 
-.overlayControls {
-  --toolbar-offset: clamp(16px, 2vw, 36px);
+  .cameraLayer[data-zooming] {
+    transition: none;
+  }
 
-  position: absolute;
-  right: var(--toolbar-offset);
-  bottom: var(--toolbar-offset);
-  left: var(--toolbar-offset);
-}
-
-.zoomToolbar {
-  position: absolute;
-  right: 0;
-  bottom: 0;
+  .scaleLayer[data-zooming] {
+    transition: none;
+  }
 }

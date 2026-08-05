@@ -4,26 +4,27 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
+  type TransitionEvent,
 } from 'react'
-import { ViewportZoomToolbar } from '../ViewportZoomToolbar'
+import {
+  getViewportDestinationOffset,
+  ViewportDestinations,
+  ViewportNavigation,
+  type ViewportPosition,
+} from '../ViewportNavigation'
 
 import styles from './ColliderViewport.module.scss'
 
 const PANEL_WIDTH = 1280
 const PANEL_HEIGHT = 720
-const FIT_PADDING = 0.92
-const MIN_SCALE = 0.5
-const MAX_SCALE = 1.25
-const BUTTON_ZOOM_FACTOR = 1.2
-const WHEEL_ZOOM_SENSITIVITY = 0.002
-const MAX_WHEEL_DELTA = 100
+const FIT_PADDING = 0.85
+const MIN_USER_ZOOM = 0.9
+const MAX_USER_ZOOM = 1.1
 const WHEEL_LINE_HEIGHT = 16
 const RESIZE_SETTLE_DELAY = 100
-const MIN_VISIBLE_PANEL_RATIO = 0.25
-const PAN_BLOCKING_SELECTOR =
-  'button, a, input, select, textarea, dialog, [contenteditable="true"]'
+const NAVIGATION_DURATION = 560
+const ZOOM_DURATION = 240
 
 type ColliderViewportProps = {
   children: ReactNode
@@ -34,72 +35,43 @@ type Point = {
   y: number
 }
 
-type Drag = Point & {
-  pointerId: number
-}
-
-type ViewportRect = Point & {
+type ViewportRect = {
   width: number
   height: number
-}
-
-type PendingWheel = Point & {
-  delta: number
 }
 
 type ZoomSnapshot = {
   fitScale: number
   scale: number
+  userZoom: number
 }
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max)
-}
-
-function clampScale(scale: number) {
-  return clamp(scale, MIN_SCALE, MAX_SCALE)
-}
+type TransformMode = 'navigation' | 'zoom'
 
 function getFitScale(width: number, height: number) {
   const widthRatio = width / PANEL_WIDTH
   const heightRatio = height / PANEL_HEIGHT
-  const scaleToFitPanel = Math.min(widthRatio, heightRatio)
 
-  return clamp(scaleToFitPanel * FIT_PADDING, MIN_SCALE, MAX_SCALE)
+  return Math.min(widthRatio, heightRatio) * FIT_PADDING
 }
 
-function getPanelTransform({ x, y }: Point, scale: number) {
-  return `translate(-50%, -50%) translate(${Math.round(x)}px, ${Math.round(y)}px) scale(${scale})`
-}
+function getNavigationPan(position: ViewportPosition, scale: number): Point {
+  if (position === 'center') return { x: 0, y: 0 }
 
-function getConstrainedPan(pan: Point, viewport: ViewportRect, scale: number) {
-  const panelWidth = PANEL_WIDTH * scale
-  const panelHeight = PANEL_HEIGHT * scale
-  const minVisibleWidth =
-    Math.min(panelWidth, viewport.width) * MIN_VISIBLE_PANEL_RATIO
-  const minVisibleHeight =
-    Math.min(panelHeight, viewport.height) * MIN_VISIBLE_PANEL_RATIO
-  const maxX = (viewport.width + panelWidth) / 2 - minVisibleWidth
-  const maxY = (viewport.height + panelHeight) / 2 - minVisibleHeight
+  const panelOffset = getViewportDestinationOffset(position)
 
   return {
-    x: Math.min(Math.max(pan.x, -maxX), maxX),
-    y: Math.min(Math.max(pan.y, -maxY), maxY),
+    x: -panelOffset.x * scale,
+    y: -panelOffset.y * scale,
   }
 }
 
-function getAnchoredPan(
-  pan: Point,
-  anchor: Point,
-  currentScale: number,
-  nextScale: number,
-) {
-  const scaleRatio = nextScale / currentScale
+function getCameraTransform({ x, y }: Point) {
+  return `translate(${Math.round(x)}px, ${Math.round(y)}px)`
+}
 
-  return {
-    x: anchor.x - (anchor.x - pan.x) * scaleRatio,
-    y: anchor.y - (anchor.y - pan.y) * scaleRatio,
-  }
+function getScaleTransform(scale: number) {
+  return `scale(${scale})`
 }
 
 function normalizeWheelDelta(event: WheelEvent, viewportHeight: number) {
@@ -109,203 +81,207 @@ function normalizeWheelDelta(event: WheelEvent, viewportHeight: number) {
       : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
         ? viewportHeight
         : 1
+
   return event.deltaY * modeMultiplier
 }
 
-function blocksPanning(target: EventTarget) {
-  return (
-    target instanceof Element && target.closest(PAN_BLOCKING_SELECTOR) !== null
-  )
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
 export function ColliderViewport({ children }: ColliderViewportProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
-  const panelRef = useRef<HTMLDivElement>(null)
-  const panRef = useRef<Point>({ x: 0, y: 0 })
-  const dragRef = useRef<Drag | null>(null)
+  const cameraRef = useRef<HTMLDivElement>(null)
+  const scaleRef = useRef<HTMLDivElement>(null)
+  const positionRef = useRef<ViewportPosition>('center')
+  const zoomAnchorRef = useRef<Point>({ x: 0, y: 0 })
   const zoomRef = useRef<ZoomSnapshot>({
     fitScale: 1,
     scale: 1,
+    userZoom: 1,
   })
   const viewportRectRef = useRef<ViewportRect>({
-    x: 0,
-    y: 0,
     width: PANEL_WIDTH,
     height: PANEL_HEIGHT,
   })
-  const pendingWheelRef = useRef<PendingWheel | null>(null)
+  const pendingWheelDeltaRef = useRef(0)
   const wheelFrameRef = useRef<number | null>(null)
-  const [zoom, setZoom] = useState<ZoomSnapshot>({
-    fitScale: 1,
-    scale: 1,
-  })
+  const zoomTimerRef = useRef<number | null>(null)
+  const navigationTimerRef = useRef<number | null>(null)
+  const navigationLockedRef = useRef(false)
+  const [position, setPosition] = useState<ViewportPosition>('center')
+  const [isNavigationLocked, setIsNavigationLocked] = useState(false)
+
+  const applyViewTransform = useCallback(
+    (
+      nextPosition: ViewportPosition,
+      scale: number,
+      mode: TransformMode = 'navigation',
+    ) => {
+      let pan: Point
+
+      if (nextPosition === 'center') {
+        pan = { x: 0, y: 0 }
+        zoomAnchorRef.current = { x: 0, y: 0 }
+      } else {
+        const panelOffset = getViewportDestinationOffset(nextPosition)
+
+        if (mode === 'zoom') {
+          pan = {
+            x: zoomAnchorRef.current.x - panelOffset.x * scale,
+            y: zoomAnchorRef.current.y - panelOffset.y * scale,
+          }
+        } else {
+          pan = getNavigationPan(nextPosition, scale)
+          zoomAnchorRef.current = {
+            x: pan.x + panelOffset.x * scale,
+            y: pan.y + panelOffset.y * scale,
+          }
+        }
+      }
+
+      cameraRef.current?.style.setProperty('transform', getCameraTransform(pan))
+      scaleRef.current?.style.setProperty('transform', getScaleTransform(scale))
+    },
+    [],
+  )
 
   const updateFitScale = useCallback(() => {
     const viewportElement = viewportRef.current
 
-    if (!viewportElement) return
+    if (viewportElement === null) return
 
     const viewportRect = viewportElement.getBoundingClientRect()
     const { width, height } = viewportRect
     const nextFitScale = getFitScale(width, height)
-    const userZoom = zoomRef.current.scale / zoomRef.current.fitScale
-    const nextScale = clampScale(nextFitScale * userZoom)
-    const nextZoom = {
+    const nextScale = nextFitScale * zoomRef.current.userZoom
+
+    viewportRectRef.current = { width, height }
+    zoomRef.current = {
       fitScale: nextFitScale,
       scale: nextScale,
+      userZoom: zoomRef.current.userZoom,
+    }
+    applyViewTransform(positionRef.current, nextScale)
+  }, [applyViewTransform])
+
+  const finishNavigation = useCallback(() => {
+    if (navigationTimerRef.current !== null) {
+      window.clearTimeout(navigationTimerRef.current)
+      navigationTimerRef.current = null
     }
 
-    viewportRectRef.current = {
-      x: viewportRect.left,
-      y: viewportRect.top,
-      width,
-      height,
+    navigationLockedRef.current = false
+    setIsNavigationLocked(false)
+
+    if (cameraRef.current !== null) {
+      delete cameraRef.current.dataset.navigating
     }
-    const nextPan = getConstrainedPan(
-      panRef.current,
-      viewportRectRef.current,
-      nextScale,
-    )
-
-    panRef.current = nextPan
-    zoomRef.current = nextZoom
-    setZoom(nextZoom)
-    panelRef.current?.style.setProperty(
-      'transform',
-      getPanelTransform(nextPan, nextScale),
-    )
-
-    return nextFitScale
   }, [])
 
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0 || blocksPanning(event.target)) return
-
-    event.currentTarget.dataset.panning = ''
-    dragRef.current = {
-      pointerId: event.pointerId,
-      x: event.clientX,
-      y: event.clientY,
-    }
-  }
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current
-    const panel = panelRef.current
-
-    if (drag === null || drag.pointerId !== event.pointerId || panel === null) {
-      return
-    }
-
-    const { scale } = zoomRef.current
-    const nextPan = getConstrainedPan(
-      {
-        x: panRef.current.x + event.clientX - drag.x,
-        y: panRef.current.y + event.clientY - drag.y,
-      },
-      viewportRectRef.current,
-      scale,
-    )
-
-    panRef.current = nextPan
-    drag.x = event.clientX
-    drag.y = event.clientY
-    panel.style.transform = getPanelTransform(nextPan, scale)
-  }
-
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (dragRef.current?.pointerId !== event.pointerId) return
-
-    dragRef.current = null
-    delete event.currentTarget.dataset.panning
-  }
-
-  const changeZoom = useCallback((scale: number, anchor: Point) => {
-    const currentZoom = zoomRef.current
-    const nextScale = clampScale(scale)
-
-    if (currentZoom.scale === nextScale) return
-
-    const nextZoom = {
-      fitScale: currentZoom.fitScale,
-      scale: nextScale,
-    }
-
-    const nextPan = getConstrainedPan(
-      getAnchoredPan(panRef.current, anchor, currentZoom.scale, nextScale),
-      viewportRectRef.current,
-      nextScale,
-    )
-
-    panRef.current = nextPan
-    zoomRef.current = nextZoom
-    panelRef.current?.style.setProperty(
-      'transform',
-      getPanelTransform(nextPan, nextScale),
-    )
-    setZoom(nextZoom)
-  }, [])
-
-  const applyPendingWheel = useCallback(() => {
-    wheelFrameRef.current = null
-
-    const pendingWheel = pendingWheelRef.current
-
-    pendingWheelRef.current = null
-
-    if (pendingWheel === null) return
-
-    const wheelDelta = clamp(
-      pendingWheel.delta,
-      -MAX_WHEEL_DELTA,
-      MAX_WHEEL_DELTA,
-    )
-    const nextScale =
-      zoomRef.current.scale * 2 ** (-wheelDelta * WHEEL_ZOOM_SENSITIVITY)
-    const viewportRect = viewportRectRef.current
-    const anchor = {
-      x: pendingWheel.x - viewportRect.x - viewportRect.width / 2,
-      y: pendingWheel.y - viewportRect.y - viewportRect.height / 2,
-    }
-
-    changeZoom(nextScale, anchor)
-  }, [changeZoom])
-
-  const clearPendingWheelInput = () => {
+  const clearPendingWheelInput = useCallback(() => {
     if (wheelFrameRef.current !== null) {
       window.cancelAnimationFrame(wheelFrameRef.current)
       wheelFrameRef.current = null
     }
 
-    pendingWheelRef.current = null
-  }
+    pendingWheelDeltaRef.current = 0
+  }, [])
 
-  const zoomOut = () => {
-    clearPendingWheelInput()
-    changeZoom(zoomRef.current.scale / BUTTON_ZOOM_FACTOR, { x: 0, y: 0 })
-  }
-
-  const zoomIn = () => {
-    clearPendingWheelInput()
-    changeZoom(zoomRef.current.scale * BUTTON_ZOOM_FACTOR, { x: 0, y: 0 })
-  }
-
-  const resetView = () => {
-    clearPendingWheelInput()
-
-    const nextFitScale = updateFitScale() ?? zoomRef.current.fitScale
-    const nextZoom = {
-      fitScale: nextFitScale,
-      scale: nextFitScale,
+  const finishZoom = useCallback(() => {
+    if (zoomTimerRef.current !== null) {
+      window.clearTimeout(zoomTimerRef.current)
+      zoomTimerRef.current = null
     }
 
-    panRef.current = { x: 0, y: 0 }
-    zoomRef.current = nextZoom
-    setZoom(nextZoom)
-    panelRef.current?.style.setProperty(
-      'transform',
-      getPanelTransform(panRef.current, nextFitScale),
+    if (scaleRef.current !== null) {
+      delete scaleRef.current.dataset.zooming
+    }
+
+    if (cameraRef.current !== null) {
+      delete cameraRef.current.dataset.zooming
+    }
+  }, [])
+
+  const applyPendingWheel = useCallback(() => {
+    wheelFrameRef.current = null
+
+    const wheelDelta = pendingWheelDeltaRef.current
+    pendingWheelDeltaRef.current = 0
+
+    if (wheelDelta === 0) return
+
+    const currentZoom = zoomRef.current
+    const nextUserZoom = wheelDelta > 0 ? MIN_USER_ZOOM : MAX_USER_ZOOM
+
+    if (nextUserZoom === currentZoom.userZoom) return
+
+    const nextScale = currentZoom.fitScale * nextUserZoom
+
+    zoomRef.current = {
+      fitScale: currentZoom.fitScale,
+      scale: nextScale,
+      userZoom: nextUserZoom,
+    }
+
+    if (scaleRef.current !== null) {
+      scaleRef.current.dataset.zooming = ''
+    }
+
+    if (cameraRef.current !== null) {
+      cameraRef.current.dataset.zooming = ''
+    }
+
+    applyViewTransform(positionRef.current, nextScale, 'zoom')
+
+    if (zoomTimerRef.current !== null) {
+      window.clearTimeout(zoomTimerRef.current)
+    }
+
+    zoomTimerRef.current = window.setTimeout(finishZoom, ZOOM_DURATION + 50)
+  }, [applyViewTransform, finishZoom])
+
+  const handleNavigate = (nextPosition: ViewportPosition) => {
+    if (navigationLockedRef.current || nextPosition === positionRef.current) {
+      return
+    }
+
+    clearPendingWheelInput()
+    finishZoom()
+
+    positionRef.current = nextPosition
+    setPosition(nextPosition)
+
+    if (prefersReducedMotion()) {
+      applyViewTransform(nextPosition, zoomRef.current.scale)
+      return
+    }
+
+    navigationLockedRef.current = true
+    setIsNavigationLocked(true)
+
+    if (cameraRef.current !== null) {
+      cameraRef.current.dataset.navigating = ''
+    }
+
+    applyViewTransform(nextPosition, zoomRef.current.scale)
+    navigationTimerRef.current = window.setTimeout(
+      finishNavigation,
+      NAVIGATION_DURATION + 100,
     )
+  }
+
+  const handleCameraTransitionEnd = (
+    event: TransitionEvent<HTMLDivElement>,
+  ) => {
+    if (
+      event.target !== event.currentTarget ||
+      event.propertyName !== 'transform'
+    ) {
+      return
+    }
+
+    finishNavigation()
   }
 
   useLayoutEffect(() => {
@@ -323,6 +299,7 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
 
       resizeTimer = window.setTimeout(() => {
         resizeTimer = null
+        finishNavigation()
         updateFitScale()
       }, RESIZE_SETTLE_DELAY)
     })
@@ -336,7 +313,7 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
         window.clearTimeout(resizeTimer)
       }
     }
-  }, [updateFitScale])
+  }, [finishNavigation, updateFitScale])
 
   useEffect(() => {
     const viewport = viewportRef.current
@@ -346,6 +323,8 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
     const handleWheel = (event: WheelEvent) => {
       event.preventDefault()
 
+      if (navigationLockedRef.current) return
+
       const wheelDelta = normalizeWheelDelta(
         event,
         viewportRectRef.current.height,
@@ -353,13 +332,7 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
 
       if (wheelDelta === 0) return
 
-      const pendingWheel = pendingWheelRef.current
-
-      pendingWheelRef.current = {
-        x: event.clientX,
-        y: event.clientY,
-        delta: (pendingWheel?.delta ?? 0) + wheelDelta,
-      }
+      pendingWheelDeltaRef.current += wheelDelta
 
       if (wheelFrameRef.current === null) {
         wheelFrameRef.current = window.requestAnimationFrame(applyPendingWheel)
@@ -370,45 +343,40 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
 
     return () => {
       viewport.removeEventListener('wheel', handleWheel)
+      clearPendingWheelInput()
+    }
+  }, [applyPendingWheel, clearPendingWheelInput])
 
-      if (wheelFrameRef.current !== null) {
-        window.cancelAnimationFrame(wheelFrameRef.current)
-        wheelFrameRef.current = null
+  useEffect(() => {
+    return () => {
+      if (navigationTimerRef.current !== null) {
+        window.clearTimeout(navigationTimerRef.current)
       }
 
-      pendingWheelRef.current = null
+      if (zoomTimerRef.current !== null) {
+        window.clearTimeout(zoomTimerRef.current)
+      }
     }
-  }, [applyPendingWheel])
+  }, [])
 
   return (
-    <div
-      className={styles.viewport}
-      onPointerCancel={handlePointerUp}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      ref={viewportRef}
-    >
-      <div className={styles.panelLayer} ref={panelRef}>
-        {children}
-      </div>
-
+    <div className={styles.viewport} ref={viewportRef}>
       <div
-        className={styles.overlay}
-        onPointerDown={(event) => event.stopPropagation()}
+        className={styles.cameraLayer}
+        ref={cameraRef}
+        onTransitionEnd={handleCameraTransitionEnd}
       >
-        <div className={styles.overlayControls}>
-          <ViewportZoomToolbar
-            className={styles.zoomToolbar}
-            zoomPercent={Math.round(zoom.scale * 100)}
-            canZoomOut={zoom.scale > MIN_SCALE}
-            canZoomIn={zoom.scale < MAX_SCALE}
-            onZoomOut={zoomOut}
-            onZoomIn={zoomIn}
-            onReset={resetView}
-          />
+        <div className={styles.scaleLayer} ref={scaleRef}>
+          <div className={styles.colliderFrame}>{children}</div>
+          <ViewportDestinations />
         </div>
       </div>
+
+      <ViewportNavigation
+        isLocked={isNavigationLocked}
+        position={position}
+        onNavigate={handleNavigate}
+      />
     </div>
   )
 }

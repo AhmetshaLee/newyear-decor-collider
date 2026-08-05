@@ -1,0 +1,129 @@
+.destinations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.destination {
+  position: absolute;
+  top: var(--destination-y);
+  left: var(--destination-x);
+  width: var(--destination-width);
+  height: var(--destination-height);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(23, 63, 53, 0.24);
+  border-radius: 12px;
+  color: rgba(23, 63, 53, 0.72);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.5), transparent),
+    rgba(23, 63, 53, 0.07);
+  transform: translate(-50%, -50%);
+}
+
+.destinationLabel {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.navigation {
+  --navigation-edge-size: clamp(72px, 9vmin, 112px);
+
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+}
+
+.button {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border: 0;
+  padding: 18px;
+  color: #168acd;
+  font: inherit;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.button:hover,
+.button:focus-visible {
+  color: #0e78b6;
+  background: rgba(220, 238, 248, 0.64);
+}
+
+.button:focus-visible {
+  outline: 2px solid #168acd;
+  outline-offset: -3px;
+}
+
+.button:disabled {
+  cursor: default;
+}
+
+.button[data-direction='top'],
+.button[data-direction='bottom'] {
+  z-index: 1;
+  left: 0;
+  width: 100%;
+  height: var(--navigation-edge-size);
+}
+
+.button[data-direction='top'] {
+  top: 0;
+}
+
+.button[data-direction='bottom'] {
+  bottom: 0;
+}
+
+.button[data-direction='left'],
+.button[data-direction='right'] {
+  top: 0;
+  width: var(--navigation-edge-size);
+  height: 100%;
+  flex-direction: column;
+}
+
+.button[data-direction='left'] {
+  left: 0;
+}
+
+.button[data-direction='right'] {
+  right: 0;
+}
+
+.chevron {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border-top: 3px solid currentColor;
+  border-left: 3px solid currentColor;
+}
+
+.button[data-direction='top'] .chevron {
+  transform: rotate(45deg);
+}
+
+.button[data-direction='right'] .chevron {
+  transform: rotate(135deg);
+}
+
+.button[data-direction='bottom'] .chevron {
+  transform: rotate(225deg);
+}
+
+.button[data-direction='left'] .chevron {
+  transform: rotate(315deg);
+}
