@@ -25,11 +25,6 @@
   user-select: none;
 }
 
-.viewport[data-panning] .panelLayer,
-.viewport[data-zooming] .panelLayer {
-  will-change: transform;
-}
-
 .overlay {
   position: absolute;
   inset: 0;

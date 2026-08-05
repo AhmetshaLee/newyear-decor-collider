@@ -20,7 +20,6 @@ const BUTTON_ZOOM_FACTOR = 1.2
 const WHEEL_ZOOM_SENSITIVITY = 0.002
 const MAX_WHEEL_DELTA = 100
 const WHEEL_LINE_HEIGHT = 16
-const WHEEL_COMPOSITING_IDLE = 180
 const RESIZE_SETTLE_DELAY = 100
 const MIN_VISIBLE_PANEL_RATIO = 0.25
 const PAN_BLOCKING_SELECTOR =
@@ -70,7 +69,7 @@ function getFitScale(width: number, height: number) {
 }
 
 function getPanelTransform({ x, y }: Point, scale: number) {
-  return `translate3d(-50%, -50%, 0) translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0) scale(${scale})`
+  return `translate(-50%, -50%) translate(${Math.round(x)}px, ${Math.round(y)}px) scale(${scale})`
 }
 
 function getConstrainedPan(pan: Point, viewport: ViewportRect, scale: number) {
@@ -136,7 +135,6 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
   })
   const pendingWheelRef = useRef<PendingWheel | null>(null)
   const wheelFrameRef = useRef<number | null>(null)
-  const wheelIdleRef = useRef<number | null>(null)
   const [zoom, setZoom] = useState<ZoomSnapshot>({
     fitScale: 1,
     scale: 1,
@@ -295,12 +293,6 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
   const resetView = () => {
     clearPendingWheelInput()
 
-    if (wheelIdleRef.current !== null) {
-      window.clearTimeout(wheelIdleRef.current)
-      wheelIdleRef.current = null
-      delete viewportRef.current?.dataset.zooming
-    }
-
     const nextFitScale = updateFitScale() ?? zoomRef.current.fitScale
     const nextZoom = {
       fitScale: nextFitScale,
@@ -361,19 +353,6 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
 
       if (wheelDelta === 0) return
 
-      if (!viewport.hasAttribute('data-zooming')) {
-        viewport.dataset.zooming = ''
-      }
-
-      if (wheelIdleRef.current !== null) {
-        window.clearTimeout(wheelIdleRef.current)
-      }
-
-      wheelIdleRef.current = window.setTimeout(() => {
-        delete viewport.dataset.zooming
-        wheelIdleRef.current = null
-      }, WHEEL_COMPOSITING_IDLE)
-
       const pendingWheel = pendingWheelRef.current
 
       pendingWheelRef.current = {
@@ -397,13 +376,7 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
         wheelFrameRef.current = null
       }
 
-      if (wheelIdleRef.current !== null) {
-        window.clearTimeout(wheelIdleRef.current)
-        wheelIdleRef.current = null
-      }
-
       pendingWheelRef.current = null
-      delete viewport.dataset.zooming
     }
   }, [applyPendingWheel])
 
