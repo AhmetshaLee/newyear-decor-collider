@@ -30,7 +30,7 @@
     'monitorPanel monitorPanel decorationType craft'
     'albumRotor levelRotor decorationType craft';
   grid-template-columns: repeat(4, 286px);
-  grid-template-rows: 220px 48px 356px;
+  grid-template-rows: 260px 72px 292px;
   align-items: center;
   column-gap: 24px;
   row-gap: 16px;
@@ -38,21 +38,8 @@
 
 .monitorSlot {
   grid-area: monitorPanel;
-  justify-self: center;
-}
-
-.utilitySlot {
-  grid-area: utility;
   align-self: start;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.serviceButtons {
-  display: flex;
-  gap: 14px;
-  margin-block-start: 124px;
+  justify-self: center;
 }
 
 // ==== ROTORS ====
@@ -132,6 +119,7 @@
   flex-direction: column;
   align-items: center;
   gap: 18px;
+  margin-inline-start: 28px;
 }
 
 .costControl {

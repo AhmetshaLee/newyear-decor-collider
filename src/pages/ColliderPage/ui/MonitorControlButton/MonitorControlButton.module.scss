@@ -1,0 +1,35 @@
+.button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(74, 145, 92, 0.54);
+  border-radius: 4px;
+  color: #62d789;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  background:
+    linear-gradient(180deg, rgba(103, 191, 126, 0.13), transparent 48%),
+    #172a23;
+  box-shadow: inset 0 0 0 1px rgba(5, 13, 10, 0.72);
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+.button:hover {
+  border-color: rgba(130, 224, 157, 0.78);
+  color: #a1efb8;
+  background:
+    linear-gradient(180deg, rgba(126, 222, 152, 0.22), transparent 48%),
+    #1d382d;
+}
+
+.button:focus-visible {
+  outline: 2px solid #a1efb8;
+  outline-offset: 2px;
+}

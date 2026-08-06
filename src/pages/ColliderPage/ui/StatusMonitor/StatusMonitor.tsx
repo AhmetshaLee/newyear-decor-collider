@@ -1,3 +1,5 @@
+import { type ReactNode } from 'react'
+
 import styles from './StatusMonitor.module.scss'
 
 type StatusMonitorProps = {
@@ -7,6 +9,8 @@ type StatusMonitorProps = {
   albumLabel: string
   decorationTypeLabel: string
   antiRepeatModeLabel: string
+  controls?: ReactNode
+  footerLabel?: ReactNode
 }
 
 export function StatusMonitor({
@@ -16,6 +20,8 @@ export function StatusMonitor({
   albumLabel,
   decorationTypeLabel,
   antiRepeatModeLabel,
+  controls,
+  footerLabel,
 }: StatusMonitorProps) {
   return (
     <div className={styles.panel}>
@@ -29,6 +35,13 @@ export function StatusMonitor({
           <p className={styles.line}>Тип украшения: {decorationTypeLabel}</p>
           <p className={styles.line}>Антиповторитель: {antiRepeatModeLabel}</p>
         </div>
+
+        {(controls !== undefined || footerLabel !== undefined) && (
+          <div className={styles.footer}>
+            <div className={styles.controls}>{controls}</div>
+            <span className={styles.footerLabel}>{footerLabel}</span>
+          </div>
+        )}
       </div>
     </div>
   )

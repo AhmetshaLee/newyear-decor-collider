@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ControlLabel } from '../ControlLabel'
 import { StatusMonitor } from '../StatusMonitor'
+import { MonitorControlButton } from '../MonitorControlButton'
 import { DecorationTypeButton } from '../DecorationTypeButton'
 import { DecorationTypeButtonGroup } from '../DecorationTypeButtonGroup'
 import { CraftButton } from '../CraftButton'
@@ -151,6 +152,23 @@ export function ColliderPanel({
             antiRepeatModeLabel={
               ANTI_REPEAT_CONTROL_OPTIONS[recipe.antiRepeatMode].label
             }
+            controls={
+              <>
+                <MonitorControlButton
+                  ariaLabel="Открыть инвентарь"
+                  onClick={onOpenInventory}
+                >
+                  I
+                </MonitorControlButton>
+                <MonitorControlButton
+                  ariaLabel="Открыть книгу коллекций"
+                  onClick={onOpenCollection}
+                >
+                  C
+                </MonitorControlButton>
+              </>
+            }
+            footerLabel="Коллайдер"
           />
         </div>
 
@@ -199,18 +217,6 @@ export function ColliderPanel({
             }
           />
         </section>
-
-        <div className={styles.utilitySlot}>
-          <div className={styles.serviceButtons}>
-            <DecorationTypeButton isSelected={false} onClick={onOpenInventory}>
-              [ I ]
-            </DecorationTypeButton>
-
-            <DecorationTypeButton isSelected={false} onClick={onOpenCollection}>
-              [ C ]
-            </DecorationTypeButton>
-          </div>
-        </div>
 
         <div className={styles.typeSlot}>
           <div className={`${styles.typeControl} ${styles.randomTypeControl}`}>
