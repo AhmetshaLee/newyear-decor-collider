@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { type CSSProperties, type ReactNode } from 'react'
 import {
   DESTINATION_CONFIG,
   VIEWPORT_DIRECTIONS,
@@ -12,6 +12,10 @@ type ViewportNavigationProps = {
   position: ViewportPosition
   isLocked: boolean
   onNavigate: (position: ViewportPosition) => void
+}
+
+type ViewportDestinationsProps = {
+  calendarPanel: ReactNode
 }
 
 type DestinationStyle = CSSProperties &
@@ -31,9 +35,11 @@ function getReturnDirection(position: ViewportDirection): ViewportDirection {
   return 'right'
 }
 
-export function ViewportDestinations() {
+export function ViewportDestinations({
+  calendarPanel,
+}: ViewportDestinationsProps) {
   return (
-    <div aria-hidden="true" className={styles.destinations}>
+    <div className={styles.destinations}>
       {VIEWPORT_DIRECTIONS.map((direction) => {
         const config = DESTINATION_CONFIG[direction]
         const destinationStyle: DestinationStyle = {
@@ -47,10 +53,17 @@ export function ViewportDestinations() {
           <div
             className={styles.destination}
             data-direction={direction}
+            data-interactive={direction === 'right' ? '' : undefined}
             key={direction}
             style={destinationStyle}
           >
-            <span className={styles.destinationLabel}>{config.label}</span>
+            {direction === 'right' ? (
+              calendarPanel
+            ) : (
+              <span aria-hidden="true" className={styles.destinationLabel}>
+                {config.label}
+              </span>
+            )}
           </div>
         )
       })}

@@ -7,7 +7,10 @@ type CalendarButtonProps = {
   onClick: () => void
 }
 
-export function CalendarButton({ className, onClick }: CalendarButtonProps) {
+export function CalendarButton({
+  className,
+  onClick,
+}: CalendarButtonProps) {
   const buttonClassName =
     className === undefined
       ? styles.calendar

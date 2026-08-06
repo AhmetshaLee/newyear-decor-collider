@@ -8,7 +8,7 @@ import {
   type TransitionEvent,
 } from 'react'
 import {
-  getViewportDestinationOffset,
+  getViewportCameraOffset,
   ViewportDestinations,
   ViewportNavigation,
   type ViewportPosition,
@@ -27,6 +27,7 @@ const NAVIGATION_DURATION = 560
 const ZOOM_DURATION = 240
 
 type ColliderViewportProps = {
+  calendarPanel: ReactNode
   children: ReactNode
 }
 
@@ -58,11 +59,11 @@ function getFitScale(width: number, height: number) {
 function getNavigationPan(position: ViewportPosition, scale: number): Point {
   if (position === 'center') return { x: 0, y: 0 }
 
-  const panelOffset = getViewportDestinationOffset(position)
+  const cameraOffset = getViewportCameraOffset(position)
 
   return {
-    x: -panelOffset.x * scale,
-    y: -panelOffset.y * scale,
+    x: -cameraOffset.x * scale,
+    y: -cameraOffset.y * scale,
   }
 }
 
@@ -89,7 +90,10 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-export function ColliderViewport({ children }: ColliderViewportProps) {
+export function ColliderViewport({
+  calendarPanel,
+  children,
+}: ColliderViewportProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const cameraRef = useRef<HTMLDivElement>(null)
   const scaleRef = useRef<HTMLDivElement>(null)
@@ -124,18 +128,18 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
         pan = { x: 0, y: 0 }
         zoomAnchorRef.current = { x: 0, y: 0 }
       } else {
-        const panelOffset = getViewportDestinationOffset(nextPosition)
+        const cameraOffset = getViewportCameraOffset(nextPosition)
 
         if (mode === 'zoom') {
           pan = {
-            x: zoomAnchorRef.current.x - panelOffset.x * scale,
-            y: zoomAnchorRef.current.y - panelOffset.y * scale,
+            x: zoomAnchorRef.current.x - cameraOffset.x * scale,
+            y: zoomAnchorRef.current.y - cameraOffset.y * scale,
           }
         } else {
           pan = getNavigationPan(nextPosition, scale)
           zoomAnchorRef.current = {
-            x: pan.x + panelOffset.x * scale,
-            y: pan.y + panelOffset.y * scale,
+            x: pan.x + cameraOffset.x * scale,
+            y: pan.y + cameraOffset.y * scale,
           }
         }
       }
@@ -368,7 +372,7 @@ export function ColliderViewport({ children }: ColliderViewportProps) {
       >
         <div className={styles.scaleLayer} ref={scaleRef}>
           <div className={styles.colliderFrame}>{children}</div>
-          <ViewportDestinations />
+          <ViewportDestinations calendarPanel={calendarPanel} />
         </div>
       </div>
 

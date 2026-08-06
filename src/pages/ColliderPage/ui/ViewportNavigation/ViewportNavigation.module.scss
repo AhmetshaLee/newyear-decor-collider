@@ -24,6 +24,12 @@
   transform: translate(-50%, -50%);
 }
 
+.destination[data-interactive] {
+  border: 0;
+  background: none;
+  pointer-events: auto;
+}
+
 .destinationLabel {
   font-size: 48px;
   font-weight: 700;

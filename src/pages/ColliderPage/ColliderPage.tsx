@@ -1,5 +1,6 @@
 import { ColliderPanel } from './ui/ColliderPanel'
 import { ColliderViewport } from './ui/ColliderViewport'
+import { CalendarButton } from './ui/CalendarButton'
 import { useColliderPanel } from './model/useColliderPanel'
 import { InventoryDrawer } from '@/widgets/inventory-drawer'
 import { CollectionDrawer } from '@/widgets/collection-drawer'
@@ -10,9 +11,10 @@ export function ColliderPage() {
 
   return (
     <>
-      <ColliderViewport>
+      <ColliderViewport
+        calendarPanel={<CalendarButton onClick={() => openPanel('calendar')} />}
+      >
         <ColliderPanel
-          onOpenCalendar={() => openPanel('calendar')}
           onOpenCollection={() => openPanel('collection')}
           onOpenInventory={() => openPanel('inventory')}
         />

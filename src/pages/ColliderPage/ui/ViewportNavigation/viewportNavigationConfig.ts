@@ -11,6 +11,7 @@ type DestinationConfig = {
   label: string
   ariaLabel: string
   offset: Point
+  cameraOffset: Point
   width: number
   height: number
 }
@@ -27,20 +28,23 @@ export const DESTINATION_CONFIG = {
     label: '?',
     ariaLabel: 'Перейти к верхней панели',
     offset: { x: 0, y: -758 },
+    cameraOffset: { x: 0, y: -758 },
     width: 1000,
     height: 520,
   },
   right: {
     label: 'Календарь',
     ariaLabel: 'Перейти к панели календаря',
-    offset: { x: 1228, y: 0 },
-    width: 900,
-    height: 600,
+    offset: { x: 1138, y: 180 },
+    cameraOffset: { x: 1138, y: 0 },
+    width: 720,
+    height: 360,
   },
   bottom: {
     label: '?',
     ariaLabel: 'Перейти к нижней панели',
     offset: { x: 0, y: 758 },
+    cameraOffset: { x: 0, y: 758 },
     width: 1000,
     height: 520,
   },
@@ -48,6 +52,7 @@ export const DESTINATION_CONFIG = {
     label: 'Ёлка',
     ariaLabel: 'Перейти к панели ёлки',
     offset: { x: -1258, y: 0 },
+    cameraOffset: { x: -1258, y: 0 },
     width: 960,
     height: 720,
   },
@@ -57,4 +62,8 @@ export function getViewportDestinationOffset(
   position: ViewportDirection,
 ): Point {
   return DESTINATION_CONFIG[position].offset
+}
+
+export function getViewportCameraOffset(position: ViewportDirection): Point {
+  return DESTINATION_CONFIG[position].cameraOffset
 }
