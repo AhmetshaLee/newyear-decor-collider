@@ -1,3 +1,18 @@
+:root,
+html[data-theme='light'] {
+  --collider-viewport-background: #f3f1ea;
+}
+
+html[data-theme='dark'] {
+  --collider-viewport-background: #20211f;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --collider-viewport-background: #20211f;
+  }
+}
+
 html {
   scrollbar-gutter: auto;
 }

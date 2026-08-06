@@ -22,6 +22,7 @@ import {
 } from '@/features/craft-decoration'
 import { DECORATION_TYPE_VALUES, type Decoration } from '@/entities/decoration'
 import { usePlayerProgress } from '@/entities/player-progress'
+import { useTheme, type Theme } from '@/shared/model/theme'
 import { useNotification } from '@/shared/ui/Notification'
 import {
   ALBUM_CONTROL_OPTIONS,
@@ -55,6 +56,19 @@ const ANTI_REPEAT_ROTARY_ARC = {
   endAngle: 80,
 } satisfies RotarySwitchArc
 
+const THEME_ROTARY_ARC = {
+  radius: 66,
+  startAngle: -15,
+  endAngle: 15,
+} satisfies RotarySwitchArc
+
+const THEME_VALUES = ['light', 'dark'] as const satisfies readonly Theme[]
+
+const THEME_INDICATORS = {
+  light: 'Светлая',
+  dark: 'Темная',
+} satisfies Record<Theme, string>
+
 const DECORATION_PROJECT_TITLE = 'Проект украшения'
 
 const INITIAL_CRAFT_RECIPE: CraftRecipe = {
@@ -69,6 +83,7 @@ export function ColliderPanel({
   onOpenInventory,
 }: ColliderPanelProps) {
   const { progress } = usePlayerProgress()
+  const { theme, setTheme } = useTheme()
   const { createDecoration } = useCraftDecoration()
   const { notify } = useNotification()
   const [recipe, setRecipe] = useState<CraftRecipe>(INITIAL_CRAFT_RECIPE)
@@ -215,6 +230,19 @@ export function ColliderPanel({
             renderValue={(antiRepeatMode) =>
               ANTI_REPEAT_CONTROL_OPTIONS[antiRepeatMode].indicator
             }
+          />
+        </section>
+
+        <section className={`${styles.rotaryPanel} ${styles.themeSlot}`}>
+          <ControlLabel className={styles.rotorLabel}>Тема</ControlLabel>
+
+          <RotarySwitch
+            arc={THEME_ROTARY_ARC}
+            className={styles.themeRotorAnchor}
+            values={THEME_VALUES}
+            value={theme}
+            onValueChange={setTheme}
+            renderValue={(themeValue) => THEME_INDICATORS[themeValue]}
           />
         </section>
 

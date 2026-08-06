@@ -26,7 +26,7 @@
   height: 100%;
   display: grid;
   grid-template-areas:
-    'monitorPanel monitorPanel antiRepeat utility'
+    'monitorPanel monitorPanel antiRepeat theme'
     'monitorPanel monitorPanel decorationType craft'
     'albumRotor levelRotor decorationType craft';
   grid-template-columns: repeat(4, 286px);
@@ -40,6 +40,16 @@
   grid-area: monitorPanel;
   align-self: start;
   justify-self: center;
+}
+
+.themeSlot {
+  grid-area: theme;
+  align-self: start;
+  justify-self: center;
+}
+
+.themeRotorAnchor {
+  margin: 38px 0 28px 40px;
 }
 
 // ==== ROTORS ====
