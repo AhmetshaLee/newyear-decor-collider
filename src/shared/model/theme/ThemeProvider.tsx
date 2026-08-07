@@ -1,34 +1,57 @@
 import {
   useCallback,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react'
 import { ThemeContext } from './ThemeContext'
-import { applyDocumentTheme, getSystemTheme, type Theme } from './theme'
+import {
+  loadColorScheme,
+  persistColorScheme,
+  subscribeToColorSchemeStorage,
+} from './colorSchemeStorage'
+import {
+  applyDocumentTheme,
+  getSystemTheme,
+  subscribeToSystemTheme,
+} from './browserTheme'
+import { resolveTheme, type ColorScheme, type Theme } from './theme'
 
 type ThemeProviderProps = {
   children: ReactNode
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setCurrentTheme] = useState<Theme>(getSystemTheme)
+  const [colorScheme, setCurrentColorScheme] =
+    useState<ColorScheme>(loadColorScheme)
+  const [systemTheme, setSystemTheme] = useState<Theme>(getSystemTheme)
+  const resolvedTheme = resolveTheme(colorScheme, systemTheme)
 
   useLayoutEffect(() => {
-    applyDocumentTheme(theme)
-  }, [theme])
+    applyDocumentTheme(resolvedTheme)
+  }, [resolvedTheme])
 
-  const setTheme = useCallback((nextTheme: Theme) => {
-    setCurrentTheme(nextTheme)
+  useEffect(() => {
+    return subscribeToSystemTheme(setSystemTheme)
+  }, [])
+
+  useEffect(() => {
+    return subscribeToColorSchemeStorage(setCurrentColorScheme)
+  }, [])
+
+  const setColorScheme = useCallback((nextColorScheme: ColorScheme) => {
+    setCurrentColorScheme(nextColorScheme)
+    persistColorScheme(nextColorScheme)
   }, [])
 
   const contextValue = useMemo(
     () => ({
-      theme,
-      setTheme,
+      colorScheme,
+      setColorScheme,
     }),
-    [setTheme, theme],
+    [colorScheme, setColorScheme],
   )
 
   return <ThemeContext value={contextValue}>{children}</ThemeContext>

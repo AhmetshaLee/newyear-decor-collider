@@ -1,3 +1,3 @@
 export { ThemeProvider } from './ThemeProvider'
-export { THEMES, type Theme } from './theme'
+export { COLOR_SCHEMES, type ColorScheme } from './theme'
 export { useTheme } from './useTheme'

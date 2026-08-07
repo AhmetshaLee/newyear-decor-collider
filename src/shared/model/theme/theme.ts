@@ -1,19 +1,16 @@
-export const THEMES = ['light', 'dark'] as const
+export const COLOR_SCHEMES = ['auto', 'light', 'dark'] as const
 
-export type Theme = (typeof THEMES)[number]
+export type ColorScheme = (typeof COLOR_SCHEMES)[number]
+export type Theme = Exclude<ColorScheme, 'auto'>
+export const DEFAULT_COLOR_SCHEME: ColorScheme = 'auto'
 
-const THEME_ATTRIBUTE = 'data-theme'
-
-export function getSystemTheme(): Theme {
-  if (typeof window === 'undefined') {
-    return 'light'
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light'
+export function isColorScheme(value: unknown): value is ColorScheme {
+  return COLOR_SCHEMES.some((colorScheme) => colorScheme === value)
 }
 
-export function applyDocumentTheme(theme: Theme) {
-  document.documentElement.setAttribute(THEME_ATTRIBUTE, theme)
+export function resolveTheme(
+  colorScheme: ColorScheme,
+  systemTheme: Theme,
+): Theme {
+  return colorScheme === 'auto' ? systemTheme : colorScheme
 }
