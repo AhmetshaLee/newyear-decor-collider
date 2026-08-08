@@ -1,13 +1,9 @@
 import { useSearchParams } from 'react-router'
 
-export type ColliderPanelName = 'inventory' | 'collection' | 'calendar'
+export type ColliderPanelName = 'inventory' | 'collection'
 
 function getColliderPanelName(value: string | null): ColliderPanelName | null {
-  if (
-    value === 'inventory' ||
-    value === 'collection' ||
-    value === 'calendar'
-  ) {
+  if (value === 'inventory' || value === 'collection') {
     return value
   }
 
