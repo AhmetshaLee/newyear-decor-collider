@@ -1,19 +1,13 @@
-export type CalendarRewardVisual = 'shards' | 'toy'
-
-export type CalendarRewardPresentation = 'contained' | 'featured'
-
-export type CalendarStickerColor = 'coral' | 'sage' | 'ochre'
-
 export type CalendarDayRewardDisplay = {
-  visual: CalendarRewardVisual
-  presentation: CalendarRewardPresentation
+  visual: 'shards' | 'toy'
+  presentation: 'contained' | 'featured'
   badge?: string
-  sticker?: CalendarStickerColor
+  sticker?: 'coral' | 'sage' | 'ochre'
 }
 
 export type CalendarDayDisplay = {
   day: number
-  reward: CalendarDayRewardDisplay | null
+  reward?: CalendarDayRewardDisplay
 }
 
 type DailyCalendarDisplayConfig = {
@@ -33,7 +27,7 @@ export const DAILY_CALENDAR_DISPLAY_CONFIG = {
   days: [
     { day: 1, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 2, reward: { visual: 'shards', presentation: 'contained' } },
-    { day: 3, reward: null },
+    { day: 3 },
     { day: 4, reward: { visual: 'toy', presentation: 'contained' } },
     {
       day: 5,
@@ -45,22 +39,22 @@ export const DAILY_CALENDAR_DISPLAY_CONFIG = {
       },
     },
     { day: 6, reward: { visual: 'shards', presentation: 'contained' } },
-    { day: 7, reward: null },
+    { day: 7 },
     { day: 8, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 9, reward: { visual: 'toy', presentation: 'contained' } },
-    { day: 10, reward: null },
+    { day: 10 },
     { day: 11, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 12, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 13, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 14, reward: { visual: 'toy', presentation: 'contained' } },
-    { day: 15, reward: null },
+    { day: 15 },
     { day: 16, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 17, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 18, reward: { visual: 'toy', presentation: 'contained' } },
-    { day: 19, reward: null },
+    { day: 19 },
     { day: 20, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 21, reward: { visual: 'shards', presentation: 'contained' } },
-    { day: 22, reward: null },
+    { day: 22 },
     { day: 23, reward: { visual: 'shards', presentation: 'contained' } },
     {
       day: 24,
@@ -73,7 +67,7 @@ export const DAILY_CALENDAR_DISPLAY_CONFIG = {
     },
     { day: 25, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 26, reward: { visual: 'toy', presentation: 'contained' } },
-    { day: 27, reward: null },
+    { day: 27 },
     { day: 28, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 29, reward: { visual: 'shards', presentation: 'contained' } },
     { day: 30, reward: { visual: 'toy', presentation: 'contained' } },

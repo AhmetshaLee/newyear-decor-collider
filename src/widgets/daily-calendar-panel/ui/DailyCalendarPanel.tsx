@@ -40,14 +40,12 @@ const CALENDAR_ROWS = Array.from(
   },
 )
 
-type RewardVisualProps = CalendarDayRewardDisplay
-
 function RewardVisual({
   visual,
   presentation,
   badge,
   sticker,
-}: RewardVisualProps) {
+}: CalendarDayRewardDisplay) {
   return (
     <span
       className={styles.rewardVisual}
@@ -69,16 +67,16 @@ export function DailyCalendarPanel() {
       <div className={styles.monthNote}>
         {DAILY_CALENDAR_DISPLAY_CONFIG.month}
       </div>
-      <span className={styles.paperClip} />
+      <span aria-hidden="true" className={styles.paperClip} />
 
       <div className={styles.paper}>
-        <div className={styles.binding}>
+        <div aria-hidden="true" className={styles.binding}>
           {Array.from({ length: 9 }, (_, index) => (
             <span className={styles.bindingSegment} key={index} />
           ))}
         </div>
 
-        <h2 className={styles.visuallyHidden} id="daily-calendar-title">
+        <h2 className={styles.visuallyHidden}>
           Календарь наград за {DAILY_CALENDAR_DISPLAY_CONFIG.month}
         </h2>
 
@@ -114,6 +112,8 @@ export function DailyCalendarPanel() {
                   const day = cell.day
                   const isActiveDay =
                     day.day === DAILY_CALENDAR_DISPLAY_CONFIG.activeDay
+                  const shouldShowDayNumber =
+                    day.reward?.presentation !== 'featured'
 
                   return (
                     <td
@@ -121,18 +121,11 @@ export function DailyCalendarPanel() {
                       data-active={isActiveDay ? '' : undefined}
                       key={day.day}
                     >
-                      {day.reward === null ? (
+                      {shouldShowDayNumber && (
                         <span className={styles.dayNumber}>{day.day}</span>
-                      ) : (
-                        <>
-                          {!(
-                            day.reward.visual === 'toy' &&
-                            day.reward.presentation === 'featured'
-                          ) && (
-                            <span className={styles.dayNumber}>{day.day}</span>
-                          )}
-                          <RewardVisual {...day.reward} />
-                        </>
+                      )}
+                      {day.reward !== undefined && (
+                        <RewardVisual {...day.reward} />
                       )}
                     </td>
                   )
