@@ -35,10 +35,10 @@ export const DESTINATION_CONFIG = {
   right: {
     label: 'Календарь',
     ariaLabel: 'Перейти к панели календаря',
-    offset: { x: 1228, y: 90 },
+    offset: { x: 1228, y: 62 },
     cameraOffset: { x: 1228, y: 0 },
     width: 900,
-    height: 540,
+    height: 596,
   },
   bottom: {
     label: '?',
