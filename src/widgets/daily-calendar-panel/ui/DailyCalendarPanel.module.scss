@@ -204,12 +204,6 @@
   cursor: pointer;
 }
 
-.dayCell[data-today] .dayNumber,
-.combinedCellPart[data-today] .dayNumber {
-  color: #b9342f;
-  opacity: 1;
-}
-
 .dayCell[data-state='claimed'] .dayNumber,
 .combinedCellPart[data-state='claimed'] .dayNumber {
   opacity: 0.48;
@@ -218,6 +212,12 @@
 .dayCell[data-state='locked'] .dayNumber,
 .combinedCellPart[data-state='locked'] .dayNumber {
   opacity: 0.34;
+}
+
+.dayCell[data-today] .dayNumber,
+.combinedCellPart[data-today] .dayNumber {
+  color: #b9342f;
+  opacity: 1;
 }
 
 .rewardVisual {
