@@ -24,13 +24,11 @@ type CalendarRewardDisplayConfig = {
 
 type DailyCalendarDisplayConfig = {
   weekdays: readonly string[]
-  activeDay: number
   rewards: readonly CalendarRewardDisplayConfig[]
 }
 
 export const DAILY_CALENDAR_DISPLAY_CONFIG = {
   weekdays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
-  activeDay: 1,
   rewards: [
     { day: 1, reward: { visual: 'shards', presentation: 'in-slot' } },
     { day: 2, reward: { visual: 'shards', presentation: 'in-slot' } },
@@ -40,7 +38,7 @@ export const DAILY_CALENDAR_DISPLAY_CONFIG = {
       reward: {
         visual: 'decoration',
         presentation: 'sticker',
-        stickerColor: 'coral',
+        stickerColor: 'ochre',
       },
     },
     { day: 6, reward: { visual: 'shards', presentation: 'in-slot' } },
@@ -51,7 +49,7 @@ export const DAILY_CALENDAR_DISPLAY_CONFIG = {
       reward: {
         visual: 'shards',
         presentation: 'sticker',
-        stickerColor: 'ochre',
+        stickerColor: 'sage',
       },
     },
     { day: 12, reward: { visual: 'shards', presentation: 'in-slot' } },

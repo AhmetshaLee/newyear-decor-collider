@@ -1,7 +1,10 @@
 import {
   createCalendarMonth,
+  getCalendarDayState,
+  type CalendarDayState,
   type CalendarMonth,
 } from '@/entities/daily-calendar'
+import { usePlayerProgress } from '@/entities/player-progress'
 import styles from './DailyCalendarPanel.module.scss'
 import {
   DAILY_CALENDAR_DISPLAY_CONFIG,
@@ -11,6 +14,8 @@ import {
 type CalendarDayCell = {
   kind: 'day'
   day: number
+  isToday: boolean
+  state: CalendarDayState
   reward?: CalendarDayRewardDisplay
 }
 
@@ -23,6 +28,8 @@ type CalendarVisualCell =
 
 function createCalendarCells(
   calendarMonth: CalendarMonth,
+  currentDayIndex: number,
+  todayDay: number,
 ): readonly CalendarCell[] {
   return calendarMonth.cells.map((day) => {
     if (day === null) return { kind: 'adjacent' }
@@ -30,6 +37,8 @@ function createCalendarCells(
     return {
       kind: 'day',
       day,
+      isToday: day === todayDay,
+      state: getCalendarDayState(day, currentDayIndex),
       reward: DAILY_CALENDAR_DISPLAY_CONFIG.rewards.find(
         (item) => item.day === day,
       )?.reward,
@@ -102,10 +111,6 @@ function RewardVisual({
   )
 }
 
-function isActiveDay(day: number): boolean {
-  return day === DAILY_CALENDAR_DISPLAY_CONFIG.activeDay
-}
-
 function CalendarCellContent({ cell }: { cell: CalendarDayCell }) {
   const shouldShowDayNumber = cell.reward?.presentation !== 'sticker'
 
@@ -126,10 +131,12 @@ function CalendarDayCell({ cell }: { cell: CalendarCell }) {
     return <td className={`${styles.dayCell} ${styles.otherMonthCell}`} />
   }
 
-  const isActive = isActiveDay(cell.day)
-
   return (
-    <td className={styles.dayCell} data-active={isActive ? '' : undefined}>
+    <td
+      className={styles.dayCell}
+      data-state={cell.state}
+      data-today={cell.isToday ? '' : undefined}
+    >
       <CalendarCellContent cell={cell} />
     </td>
   )
@@ -144,13 +151,12 @@ function CombinedCalendarDayCell({
     <td className={`${styles.dayCell} ${styles.combinedCell}`}>
       <div className={styles.combinedCellBody}>
         {cells.map((cell, cellIndex) => {
-          const isActive = isActiveDay(cell.day)
-
           return (
             <div
               className={styles.combinedCellPart}
-              data-active={isActive ? '' : undefined}
               data-part={cellIndex === 0 ? 'upper' : 'lower'}
+              data-state={cell.state}
+              data-today={cell.isToday ? '' : undefined}
               key={cell.day}
             >
               <CalendarCellContent cell={cell} />
@@ -163,8 +169,14 @@ function CombinedCalendarDayCell({
 }
 
 export function DailyCalendarPanel() {
-  const calendarMonth = createCalendarMonth(new Date())
-  const calendarCells = createCalendarCells(calendarMonth)
+  const { progress } = usePlayerProgress()
+  const today = new Date()
+  const calendarMonth = createCalendarMonth(today)
+  const calendarCells = createCalendarCells(
+    calendarMonth,
+    progress.calendar.currentDayIndex,
+    today.getDate(),
+  )
   const weekdayCount = DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.length
   const calendarRowCount = calendarCells.length / weekdayCount
   const calendarRows = Array.from(
