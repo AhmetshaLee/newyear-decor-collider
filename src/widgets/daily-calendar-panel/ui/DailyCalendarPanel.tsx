@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
   createCalendarMonth,
   getCalendarDayState,
@@ -5,6 +6,7 @@ import {
   type CalendarMonth,
 } from '@/entities/daily-calendar'
 import { usePlayerProgress } from '@/entities/player-progress'
+import { syncDailyCalendarMonth } from '@/features/sync-daily-calendar-month'
 import styles from './DailyCalendarPanel.module.scss'
 import {
   DAILY_CALENDAR_DISPLAY_CONFIG,
@@ -169,7 +171,7 @@ function CombinedCalendarDayCell({
 }
 
 export function DailyCalendarPanel() {
-  const { progress } = usePlayerProgress()
+  const { progress, commitProgress } = usePlayerProgress()
   const today = new Date()
   const calendarMonth = createCalendarMonth(today)
   const calendarCells = createCalendarCells(
@@ -193,6 +195,12 @@ export function DailyCalendarPanel() {
     calendarRows,
     weekdayCount,
   )
+
+  useEffect(() => {
+    const currentDate = new Date()
+
+    commitProgress((progress) => syncDailyCalendarMonth(progress, currentDate))
+  }, [commitProgress])
 
   return (
     <section className={styles.panel}>
