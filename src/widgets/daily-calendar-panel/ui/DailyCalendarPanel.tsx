@@ -1,90 +1,202 @@
+import {
+  createCalendarMonth,
+  type CalendarMonth,
+} from '@/entities/daily-calendar'
 import styles from './DailyCalendarPanel.module.scss'
 import {
   DAILY_CALENDAR_DISPLAY_CONFIG,
-  type CalendarDayDisplay,
   type CalendarDayRewardDisplay,
 } from './dailyCalendarDisplayConfig'
 
-type CalendarCell =
-  | { kind: 'currentMonth'; day: CalendarDayDisplay }
-  | { kind: 'otherMonth'; day: number }
+type CalendarDayCell = {
+  kind: 'day'
+  day: number
+  reward?: CalendarDayRewardDisplay
+}
 
-const CALENDAR_CELLS: readonly CalendarCell[] = [
-  ...DAILY_CALENDAR_DISPLAY_CONFIG.previousMonthDays.map((day) => ({
-    day,
-    kind: 'otherMonth' as const,
-  })),
-  ...DAILY_CALENDAR_DISPLAY_CONFIG.days.map((day) => ({
-    day,
-    kind: 'currentMonth' as const,
-  })),
-  ...DAILY_CALENDAR_DISPLAY_CONFIG.nextMonthDays.map((day) => ({
-    day,
-    kind: 'otherMonth' as const,
-  })),
-]
+type CalendarCell = CalendarDayCell | { kind: 'adjacent' }
 
-const CALENDAR_ROWS = Array.from(
-  {
-    length: Math.ceil(
-      CALENDAR_CELLS.length / DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.length,
-    ),
-  },
-  (_, rowIndex) => {
-    const rowStart = rowIndex * DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.length
+type CalendarVisualCell =
+  | CalendarCell
+  | { kind: 'empty' }
+  | { kind: 'combined'; cells: readonly [CalendarDayCell, CalendarDayCell] }
 
-    return CALENDAR_CELLS.slice(
-      rowStart,
-      rowStart + DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.length,
-    )
-  },
-)
+function createCalendarCells(
+  calendarMonth: CalendarMonth,
+): readonly CalendarCell[] {
+  return calendarMonth.cells.map((day) => {
+    if (day === null) return { kind: 'adjacent' }
+
+    return {
+      kind: 'day',
+      day,
+      reward: DAILY_CALENDAR_DISPLAY_CONFIG.rewards.find(
+        (item) => item.day === day,
+      )?.reward,
+    }
+  })
+}
+
+function createVisualCalendarRows(
+  calendarRows: readonly (readonly CalendarCell[])[],
+  weekdayCount: number,
+): readonly (readonly CalendarVisualCell[])[] {
+  if (calendarRows.length === 4) {
+    const emptyRow = Array.from({ length: weekdayCount }, () => ({
+      kind: 'empty' as const,
+    }))
+
+    return [...calendarRows, emptyRow]
+  }
+
+  if (calendarRows.length !== 6) {
+    return calendarRows
+  }
+
+  const previousRow = calendarRows[calendarRows.length - 2]
+  const lastRow = calendarRows[calendarRows.length - 1]
+
+  if (previousRow === undefined || lastRow === undefined) {
+    return calendarRows
+  }
+
+  const combinedRow = previousRow.map((cell, columnIndex) => {
+    const secondaryCell = lastRow[columnIndex]
+
+    if (cell.kind !== 'day' || secondaryCell?.kind !== 'day') {
+      return cell
+    }
+
+    return {
+      kind: 'combined' as const,
+      cells: [cell, secondaryCell] as const,
+    }
+  })
+
+  return [...calendarRows.slice(0, -2), combinedRow]
+}
 
 function RewardVisual({
-  visual,
-  presentation,
-  badge,
-  sticker,
-}: CalendarDayRewardDisplay) {
+  day,
+  reward,
+}: {
+  day: number
+  reward: CalendarDayRewardDisplay
+}) {
+  const { visual, presentation } = reward
+
   return (
     <span
       className={styles.rewardVisual}
-      data-sticker={sticker}
+      data-sticker-color={
+        presentation === 'sticker' ? reward.stickerColor : undefined
+      }
       data-visual={visual}
       data-presentation={presentation}
     >
       <span className={styles.rewardIcon} />
-      {badge !== undefined && (
-        <span className={styles.rewardBadge}>{badge}</span>
+      {presentation === 'sticker' && (
+        <span className={styles.rewardBadge}>{day}</span>
       )}
     </span>
   )
 }
 
+function isActiveDay(day: number): boolean {
+  return day === DAILY_CALENDAR_DISPLAY_CONFIG.activeDay
+}
+
+function CalendarCellContent({ cell }: { cell: CalendarDayCell }) {
+  const shouldShowDayNumber = cell.reward?.presentation !== 'sticker'
+
+  return (
+    <>
+      {shouldShowDayNumber && (
+        <span className={styles.dayNumber}>{cell.day}</span>
+      )}
+      {cell.reward !== undefined && (
+        <RewardVisual day={cell.day} reward={cell.reward} />
+      )}
+    </>
+  )
+}
+
+function CalendarDayCell({ cell }: { cell: CalendarCell }) {
+  if (cell.kind === 'adjacent') {
+    return <td className={`${styles.dayCell} ${styles.otherMonthCell}`} />
+  }
+
+  const isActive = isActiveDay(cell.day)
+
+  return (
+    <td className={styles.dayCell} data-active={isActive ? '' : undefined}>
+      <CalendarCellContent cell={cell} />
+    </td>
+  )
+}
+
+function CombinedCalendarDayCell({
+  cells,
+}: {
+  cells: readonly [CalendarDayCell, CalendarDayCell]
+}) {
+  return (
+    <td className={`${styles.dayCell} ${styles.combinedCell}`}>
+      <div className={styles.combinedCellBody}>
+        {cells.map((cell, cellIndex) => {
+          const isActive = isActiveDay(cell.day)
+
+          return (
+            <div
+              className={styles.combinedCellPart}
+              data-active={isActive ? '' : undefined}
+              data-part={cellIndex === 0 ? 'upper' : 'lower'}
+              key={cell.day}
+            >
+              <CalendarCellContent cell={cell} />
+            </div>
+          )
+        })}
+      </div>
+    </td>
+  )
+}
+
 export function DailyCalendarPanel() {
+  const calendarMonth = createCalendarMonth(new Date())
+  const calendarCells = createCalendarCells(calendarMonth)
+  const weekdayCount = DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.length
+  const calendarRowCount = calendarCells.length / weekdayCount
+  const calendarRows = Array.from(
+    {
+      length: calendarRowCount,
+    },
+    (_, rowIndex) => {
+      const rowStart = rowIndex * weekdayCount
+
+      return calendarCells.slice(rowStart, rowStart + weekdayCount)
+    },
+  )
+  const visualCalendarRows = createVisualCalendarRows(
+    calendarRows,
+    weekdayCount,
+  )
+
   return (
     <section className={styles.panel}>
-      <div className={styles.monthNote}>
-        {DAILY_CALENDAR_DISPLAY_CONFIG.month}
+      <div className={styles.monthNoteGroup}>
+        <div className={styles.monthNote}>{calendarMonth.label}</div>
+        <span className={styles.paperClip} />
       </div>
-      <span aria-hidden="true" className={styles.paperClip} />
 
       <div className={styles.paper}>
-        <div aria-hidden="true" className={styles.binding}>
+        <div className={styles.binding}>
           {Array.from({ length: 9 }, (_, index) => (
             <span className={styles.bindingSegment} key={index} />
           ))}
         </div>
 
-        <h2 className={styles.visuallyHidden}>
-          Календарь наград за {DAILY_CALENDAR_DISPLAY_CONFIG.month}
-        </h2>
-
         <table className={styles.calendarGrid}>
-          <caption className={styles.visuallyHidden}>
-            Демонстрационная сетка наград за{' '}
-            {DAILY_CALENDAR_DISPLAY_CONFIG.month}
-          </caption>
           <thead>
             <tr>
               {DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.map((weekday) => (
@@ -95,40 +207,28 @@ export function DailyCalendarPanel() {
             </tr>
           </thead>
           <tbody>
-            {CALENDAR_ROWS.map((row, rowIndex) => (
+            {visualCalendarRows.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                {row.map((cell) => {
-                  if (cell.kind === 'otherMonth') {
+                {row.map((cell, columnIndex) => {
+                  if (cell.kind === 'empty') {
                     return (
                       <td
                         className={`${styles.dayCell} ${styles.otherMonthCell}`}
-                        key={`other-${rowIndex}-${cell.day}`}
-                      >
-                        <span className={styles.dayNumber}>{cell.day}</span>
-                      </td>
+                        key={`empty-${rowIndex}-${columnIndex}`}
+                      />
                     )
                   }
 
-                  const day = cell.day
-                  const isActiveDay =
-                    day.day === DAILY_CALENDAR_DISPLAY_CONFIG.activeDay
-                  const shouldShowDayNumber =
-                    day.reward?.presentation !== 'featured'
+                  if (cell.kind === 'combined') {
+                    return (
+                      <CombinedCalendarDayCell
+                        cells={cell.cells}
+                        key={`combined-${rowIndex}-${columnIndex}`}
+                      />
+                    )
+                  }
 
-                  return (
-                    <td
-                      className={styles.dayCell}
-                      data-active={isActiveDay ? '' : undefined}
-                      key={day.day}
-                    >
-                      {shouldShowDayNumber && (
-                        <span className={styles.dayNumber}>{day.day}</span>
-                      )}
-                      {day.reward !== undefined && (
-                        <RewardVisual {...day.reward} />
-                      )}
-                    </td>
-                  )
+                  return <CalendarDayCell cell={cell} key={columnIndex} />
                 })}
               </tr>
             ))}
