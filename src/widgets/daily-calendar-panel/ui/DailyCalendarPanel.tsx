@@ -6,19 +6,21 @@ import {
   type CalendarMonth,
 } from '@/entities/daily-calendar'
 import { usePlayerProgress } from '@/entities/player-progress'
-import { syncDailyCalendarMonth } from '@/features/sync-daily-calendar-month'
-import styles from './DailyCalendarPanel.module.scss'
 import {
-  DAILY_CALENDAR_DISPLAY_CONFIG,
-  type CalendarDayRewardDisplay,
-} from './dailyCalendarDisplayConfig'
+  createCalendarRewardPlan,
+  syncDailyCalendarMonth,
+  type CalendarRewardSlot,
+} from '@/features/claim-daily-calendar'
+import styles from './DailyCalendarPanel.module.scss'
+
+const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const
 
 type CalendarDayCell = {
   kind: 'day'
   day: number
   isToday: boolean
   state: CalendarDayState
-  reward?: CalendarDayRewardDisplay
+  reward?: CalendarRewardSlot
 }
 
 type CalendarCell = CalendarDayCell | { kind: 'adjacent' }
@@ -32,6 +34,7 @@ function createCalendarCells(
   calendarMonth: CalendarMonth,
   currentDayIndex: number,
   todayDay: number,
+  rewardPlan: readonly CalendarRewardSlot[],
 ): readonly CalendarCell[] {
   return calendarMonth.cells.map((day) => {
     if (day === null) return { kind: 'adjacent' }
@@ -41,9 +44,7 @@ function createCalendarCells(
       day,
       isToday: day === todayDay,
       state: getCalendarDayState(day, currentDayIndex),
-      reward: DAILY_CALENDAR_DISPLAY_CONFIG.rewards.find(
-        (item) => item.day === day,
-      )?.reward,
+      reward: rewardPlan.find((item) => item.day === day),
     }
   })
 }
@@ -88,26 +89,23 @@ function createVisualCalendarRows(
 }
 
 function RewardVisual({
-  day,
-  reward,
+  slot,
 }: {
-  day: number
-  reward: CalendarDayRewardDisplay
+  slot: CalendarRewardSlot
 }) {
-  const { visual, presentation } = reward
+  const { presentation } = slot
 
   return (
     <span
       className={styles.rewardVisual}
       data-sticker-color={
-        presentation === 'sticker' ? reward.stickerColor : undefined
+        presentation === 'sticker' ? slot.stickerColor : undefined
       }
-      data-visual={visual}
       data-presentation={presentation}
     >
       <span className={styles.rewardIcon} />
       {presentation === 'sticker' && (
-        <span className={styles.rewardBadge}>{day}</span>
+        <span className={styles.rewardBadge}>{slot.day}</span>
       )}
     </span>
   )
@@ -122,7 +120,7 @@ function CalendarCellContent({ cell }: { cell: CalendarDayCell }) {
         <span className={styles.dayNumber}>{cell.day}</span>
       )}
       {cell.reward !== undefined && (
-        <RewardVisual day={cell.day} reward={cell.reward} />
+        <RewardVisual slot={cell.reward} />
       )}
     </>
   )
@@ -174,12 +172,21 @@ export function DailyCalendarPanel() {
   const { progress, commitProgress } = usePlayerProgress()
   const today = new Date()
   const calendarMonth = createCalendarMonth(today)
+  const daysInMonth = calendarMonth.cells.reduce<number>(
+    (lastDay, day) => (day === null ? lastDay : day),
+    0,
+  )
+  const rewardPlan = createCalendarRewardPlan(
+    today.getMonth(),
+    daysInMonth,
+  )
   const calendarCells = createCalendarCells(
     calendarMonth,
     progress.calendar.currentDayIndex,
     today.getDate(),
+    rewardPlan,
   )
-  const weekdayCount = DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.length
+  const weekdayCount = WEEKDAYS.length
   const calendarRowCount = calendarCells.length / weekdayCount
   const calendarRows = Array.from(
     {
@@ -219,7 +226,7 @@ export function DailyCalendarPanel() {
         <table className={styles.calendarGrid}>
           <thead>
             <tr>
-              {DAILY_CALENDAR_DISPLAY_CONFIG.weekdays.map((weekday) => (
+              {WEEKDAYS.map((weekday) => (
                 <th key={weekday} scope="col">
                   {weekday}
                 </th>

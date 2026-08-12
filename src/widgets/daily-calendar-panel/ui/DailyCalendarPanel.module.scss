@@ -304,42 +304,26 @@
   transform: scale(0.72);
 }
 
-.rewardVisual[data-visual='shards'] .rewardIcon::before {
+.rewardIcon::before {
   color: #c69249;
   content: '◆';
   font-size: 24px;
   transform: translate(-6px, 4px) rotate(-16deg);
 }
 
-.rewardVisual[data-visual='shards'] .rewardIcon::after {
+.rewardIcon::after {
   color: #e0b96f;
   content: '◆';
   font-size: 18px;
   transform: translate(7px, -4px) rotate(18deg);
 }
 
-.rewardVisual[data-presentation='sticker'][data-visual='shards']
-  .rewardIcon::before {
+.rewardVisual[data-presentation='sticker'] .rewardIcon::before {
   font-size: 44px;
 }
 
-.rewardVisual[data-presentation='sticker'][data-visual='shards']
-  .rewardIcon::after {
+.rewardVisual[data-presentation='sticker'] .rewardIcon::after {
   font-size: 30px;
-}
-
-.rewardVisual[data-visual='decoration'] {
-  color: #98473b;
-}
-
-.rewardVisual[data-visual='decoration'] .rewardIcon::before {
-  content: '✹';
-  font-size: 42px;
-}
-
-.rewardVisual[data-presentation='sticker'][data-visual='decoration']
-  .rewardIcon::before {
-  font-size: 62px;
 }
 
 .rewardBadge {
