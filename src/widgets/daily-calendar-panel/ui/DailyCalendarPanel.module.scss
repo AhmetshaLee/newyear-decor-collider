@@ -9,41 +9,6 @@
   background: #795b40;
 }
 
-.monthNoteGroup {
-  position: absolute;
-  top: 100px;
-  right: -96px;
-  z-index: 3;
-  width: 168px;
-}
-
-.monthNote {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 168px;
-  padding: 16px 12px 18px;
-  border: 1px solid #c0a67a;
-  color: #694b31;
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1;
-  text-align: center;
-  background: #ead5a9;
-  transform: rotate(-5deg);
-}
-
-.paperClip {
-  position: absolute;
-  top: 40px;
-  right: 106px;
-  width: 24px;
-  height: 72px;
-  border: 5px solid #8b857b;
-  border-radius: 12px;
-  transform: rotate(40deg);
-}
-
 .paper {
   position: relative;
   z-index: 2;
@@ -106,10 +71,14 @@
   background: #e1e3e0;
 }
 
+.combinedCell {
+  z-index: 2;
+}
+
 .combinedCell::before {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 0;
   pointer-events: none;
   content: '';
   background: linear-gradient(
@@ -121,21 +90,34 @@
 }
 
 .combinedCellBody {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
   height: 100%;
 }
 
 .combinedCellPart {
   position: relative;
   height: 50%;
-  cursor: default;
+  overflow: visible;
 }
 
-.combinedCellPart[data-part='upper'] .rewardVisual {
+.combinedCellPart[data-part='upper'] {
+  z-index: 2;
+}
+
+.combinedCellPart[data-part='lower'] {
+  z-index: 3;
+}
+
+.combinedCellPart[data-part='upper']
+  .rewardVisual[data-presentation='in-slot'] {
   left: 28%;
   transform: translate(-50%, -50%);
 }
 
-.combinedCellPart[data-part='lower'] .rewardVisual {
+.combinedCellPart[data-part='lower']
+  .rewardVisual[data-presentation='in-slot'] {
   left: 72%;
   transform: translate(-50%, -50%);
 }
@@ -147,7 +129,6 @@
   width: 110px;
   height: 60px;
   transform: translate(-50%, -50%) rotate(-2deg);
-  border-bottom: 0px;
 }
 
 .combinedCellPart[data-part='lower']
@@ -158,7 +139,6 @@
   width: 110px;
   height: 60px;
   transform: translate(-50%, -50%) rotate(-2deg);
-  border-bottom: 0px;
 }
 
 .combinedCellPart[data-part='lower'] .dayNumber {
@@ -168,10 +148,7 @@
   left: 8px;
 }
 
-.combinedCellPart[data-state='active'] .dayNumber {
-  opacity: 0.62;
-}
-
+.dayCell[data-state='active'],
 .combinedCellPart[data-state='active'] {
   cursor: pointer;
   outline: 3px dashed #b9342f;
@@ -193,12 +170,6 @@
   font-variant-numeric: tabular-nums;
   line-height: 1;
   opacity: 0.62;
-}
-
-.dayCell[data-state='active'] {
-  cursor: pointer;
-  outline: 3px dashed #b9342f;
-  outline-offset: -3px;
 }
 
 .dayCell[data-state='claimed'],
@@ -292,11 +263,11 @@
 .combinedCellPart[data-part]
   .rewardVisual[data-presentation='sticker']
   .rewardIcon {
-  --shard-icon-size: 100%;
-  --shard-icon-primary-size: 44px;
-  --shard-icon-secondary-size: 30px;
-  --shard-icon-primary-transform: translate(-6px, 4px) rotate(-16deg) scale(0.72);
-  --shard-icon-secondary-transform: translate(7px, -4px) rotate(18deg) scale(0.72);
+  --shard-icon-size: 42px;
+  --shard-icon-primary-size: 30px;
+  --shard-icon-secondary-size: 20px;
+  --shard-icon-primary-transform: translate(-4px, 3px) rotate(-16deg);
+  --shard-icon-secondary-transform: translate(5px, -3px) rotate(18deg);
 }
 
 .rewardBadge {

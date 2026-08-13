@@ -18,6 +18,8 @@ import {
   type CalendarCell,
   type CalendarVisualCell,
 } from './CalendarCell'
+import { DailyCalendarClaimNote } from './DailyCalendarClaimNote'
+import { DailyCalendarMonthNote } from './DailyCalendarMonthNote'
 import { DailyCalendarRewardDialog } from './DailyCalendarRewardDialog'
 import styles from './DailyCalendarPanel.module.scss'
 
@@ -97,6 +99,9 @@ export function DailyCalendarPanel() {
     normalizedProgress.calendar.lastClaimedTimestamp,
     today,
   )
+  const hasClaimedToday =
+    normalizedProgress.calendar.lastClaimedTimestamp !== null &&
+    !isCurrentDayAvailable
   const calendarCells = createCalendarCells(
     calendarMonth,
     normalizedProgress.calendar.currentDayIndex,
@@ -141,6 +146,9 @@ export function DailyCalendarPanel() {
     setClaimedAmount(null)
   }
 
+  const shouldShowClaimNote =
+    claimedAmount === null && hasClaimedToday
+
   useEffect(() => {
     const currentDate = new Date()
 
@@ -149,10 +157,7 @@ export function DailyCalendarPanel() {
 
   return (
     <section className={styles.panel}>
-      <div className={styles.monthNoteGroup}>
-        <div className={styles.monthNote}>{calendarMonth.label}</div>
-        <span className={styles.paperClip} />
-      </div>
+      <DailyCalendarMonthNote label={calendarMonth.label} />
 
       <div className={styles.paper}>
         <div className={styles.binding}>
@@ -198,6 +203,8 @@ export function DailyCalendarPanel() {
           </tbody>
         </table>
       </div>
+
+      {shouldShowClaimNote && <DailyCalendarClaimNote />}
 
       {claimedAmount !== null && (
         <DailyCalendarRewardDialog
