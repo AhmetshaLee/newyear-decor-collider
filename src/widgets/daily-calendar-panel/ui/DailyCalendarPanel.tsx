@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   createCalendarMonth,
   getCalendarDayState,
@@ -13,6 +13,7 @@ import {
   syncDailyCalendarMonth,
   type CalendarRewardSlot,
 } from '@/features/claim-daily-calendar'
+import { RewardDialog } from '@/shared/ui/RewardDialog'
 import styles from './DailyCalendarPanel.module.scss'
 
 const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const
@@ -45,11 +46,7 @@ function createCalendarCells(
       kind: 'day',
       day,
       isToday: day === todayDay,
-      state: getCalendarDayState(
-        day,
-        currentDayIndex,
-        isCurrentDayAvailable,
-      ),
+      state: getCalendarDayState(day, currentDayIndex, isCurrentDayAvailable),
       reward: rewardPlan.find((item) => item.day === day),
     }
   })
@@ -94,11 +91,7 @@ function createVisualCalendarRows(
   return [...calendarRows.slice(0, -2), combinedRow]
 }
 
-function RewardVisual({
-  slot,
-}: {
-  slot: CalendarRewardSlot
-}) {
+function RewardVisual({ slot }: { slot: CalendarRewardSlot }) {
   const { presentation } = slot
 
   return (
@@ -125,9 +118,7 @@ function CalendarCellContent({ cell }: { cell: CalendarDayCell }) {
       {shouldShowDayNumber && (
         <span className={styles.dayNumber}>{cell.day}</span>
       )}
-      {cell.reward !== undefined && (
-        <RewardVisual slot={cell.reward} />
-      )}
+      {cell.reward !== undefined && <RewardVisual slot={cell.reward} />}
     </>
   )
 }
@@ -144,11 +135,7 @@ function CalendarCellAction({
   }
 
   return (
-    <button
-      className={styles.claimButton}
-      type="button"
-      onClick={onClaim}
-    >
+    <button className={styles.claimButton} type="button" onClick={onClaim}>
       <CalendarCellContent cell={cell} />
     </button>
   )
@@ -206,16 +193,14 @@ function CombinedCalendarDayCell({
 
 export function DailyCalendarPanel() {
   const { progress, commitProgress } = usePlayerProgress()
+  const [claimedAmount, setClaimedAmount] = useState<number | null>(null)
   const today = new Date()
   const calendarMonth = createCalendarMonth(today)
   const daysInMonth = calendarMonth.cells.reduce<number>(
     (lastDay, day) => (day === null ? lastDay : day),
     0,
   )
-  const rewardPlan = createCalendarRewardPlan(
-    today.getMonth(),
-    daysInMonth,
-  )
+  const rewardPlan = createCalendarRewardPlan(today.getMonth(), daysInMonth)
   const normalizedProgress = syncDailyCalendarMonth(progress, today).progress
   const isCurrentDayAvailable = isCalendarTimeLockExpired(
     normalizedProgress.calendar.lastClaimedTimestamp,
@@ -248,13 +233,21 @@ export function DailyCalendarPanel() {
   const handleClaim = () => {
     const currentDate = new Date()
 
-    commitProgress((currentProgress) =>
+    const amount = commitProgress((currentProgress) =>
       claimDailyCalendarReward({
         progress: currentProgress,
         currentDate,
         rewardPlan,
       }),
     )
+
+    if (amount !== null) {
+      setClaimedAmount(amount)
+    }
+  }
+
+  const closeRewardDialog = () => {
+    setClaimedAmount(null)
   }
 
   useEffect(() => {
@@ -314,6 +307,30 @@ export function DailyCalendarPanel() {
           </tbody>
         </table>
       </div>
+
+      {claimedAmount !== null && (
+        <RewardDialog
+          actionsSlot={
+            <button
+              className={styles.rewardDialogButton}
+              type="button"
+              onClick={closeRewardDialog}
+            >
+              Забрать
+            </button>
+          }
+          isOpen={true}
+          onClose={closeRewardDialog}
+          title="Награда получена"
+          visualSlot={
+            <span className={styles.rewardDialogVisual}>
+              <span className={styles.rewardDialogIcon} />
+            </span>
+          }
+        >
+          <p className={styles.rewardDialogAmount}>+{claimedAmount} осколков</p>
+        </RewardDialog>
+      )}
     </section>
   )
 }
