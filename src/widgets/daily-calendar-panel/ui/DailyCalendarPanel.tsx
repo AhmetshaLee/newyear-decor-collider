@@ -27,7 +27,6 @@ type CalendarCell = CalendarDayCell | { kind: 'adjacent' }
 
 type CalendarVisualCell =
   | CalendarCell
-  | { kind: 'empty' }
   | { kind: 'combined'; cells: readonly [CalendarDayCell, CalendarDayCell] }
 
 function createCalendarCells(
@@ -54,11 +53,11 @@ function createVisualCalendarRows(
   weekdayCount: number,
 ): readonly (readonly CalendarVisualCell[])[] {
   if (calendarRows.length === 4) {
-    const emptyRow = Array.from({ length: weekdayCount }, () => ({
-      kind: 'empty' as const,
+    const adjacentRow = Array.from({ length: weekdayCount }, () => ({
+      kind: 'adjacent' as const,
     }))
 
-    return [...calendarRows, emptyRow]
+    return [...calendarRows, adjacentRow]
   }
 
   if (calendarRows.length !== 6) {
@@ -237,15 +236,6 @@ export function DailyCalendarPanel() {
             {visualCalendarRows.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {row.map((cell, columnIndex) => {
-                  if (cell.kind === 'empty') {
-                    return (
-                      <td
-                        className={`${styles.dayCell} ${styles.otherMonthCell}`}
-                        key={`empty-${rowIndex}-${columnIndex}`}
-                      />
-                    )
-                  }
-
                   if (cell.kind === 'combined') {
                     return (
                       <CombinedCalendarDayCell
