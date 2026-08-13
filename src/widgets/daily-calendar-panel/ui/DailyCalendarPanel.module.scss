@@ -281,50 +281,22 @@
   transform: translate(-50%, -48%) rotate(-2deg);
 }
 
-.rewardIcon {
-  position: relative;
-  display: grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  font-family: Georgia, serif;
-  line-height: 1;
-}
-
 .rewardVisual[data-presentation='sticker'] .rewardIcon {
-  width: 60px;
-  height: 60px;
-  transform: scale(1.12);
+  --shard-icon-size: 60px;
+  --shard-icon-primary-size: 44px;
+  --shard-icon-secondary-size: 30px;
+  --shard-icon-primary-transform: translate(-6px, 4px) rotate(-16deg) scale(1.12);
+  --shard-icon-secondary-transform: translate(7px, -4px) rotate(18deg) scale(1.12);
 }
 
 .combinedCellPart[data-part]
   .rewardVisual[data-presentation='sticker']
   .rewardIcon {
-  width: 100%;
-  height: 100%;
-  transform: scale(0.72);
-}
-
-.rewardIcon::before {
-  color: #c69249;
-  content: '◆';
-  font-size: 24px;
-  transform: translate(-6px, 4px) rotate(-16deg);
-}
-
-.rewardIcon::after {
-  color: #e0b96f;
-  content: '◆';
-  font-size: 18px;
-  transform: translate(7px, -4px) rotate(18deg);
-}
-
-.rewardVisual[data-presentation='sticker'] .rewardIcon::before {
-  font-size: 44px;
-}
-
-.rewardVisual[data-presentation='sticker'] .rewardIcon::after {
-  font-size: 30px;
+  --shard-icon-size: 100%;
+  --shard-icon-primary-size: 44px;
+  --shard-icon-secondary-size: 30px;
+  --shard-icon-primary-transform: translate(-6px, 4px) rotate(-16deg) scale(0.72);
+  --shard-icon-secondary-transform: translate(7px, -4px) rotate(18deg) scale(0.72);
 }
 
 .rewardBadge {
@@ -356,62 +328,4 @@
   .rewardVisual[data-presentation='sticker']
   .rewardBadge {
   background: #b9342f;
-}
-
-.rewardDialogVisual {
-  display: grid;
-  width: 132px;
-  height: 132px;
-  place-items: center;
-  border: 1px solid rgba(207, 116, 106, 0.72);
-  border-radius: 18px;
-  background:
-    linear-gradient(145deg, rgba(88, 54, 50, 0.7), transparent 48%), #2d3531;
-}
-
-.rewardDialogIcon {
-  position: relative;
-  display: grid;
-  width: 52px;
-  height: 52px;
-  place-items: center;
-}
-
-.rewardDialogIcon::before {
-  color: #c69249;
-  content: '◆';
-  font-family: Georgia, serif;
-  font-size: 54px;
-  line-height: 1;
-  transform: translate(-10px, 7px) rotate(-16deg);
-}
-
-.rewardDialogIcon::after {
-  color: #e0b96f;
-  content: '◆';
-  font-family: Georgia, serif;
-  font-size: 40px;
-  line-height: 1;
-  transform: translate(12px, -7px) rotate(18deg);
-}
-
-.rewardDialogAmount {
-  margin: 0;
-  color: #f4fbff;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-.rewardDialogButton {
-  min-width: 128px;
-  height: 36px;
-  border: 1px solid rgba(160, 222, 255, 0.62);
-  border-radius: 6px;
-  padding: 0 18px;
-  color: #f4fbff;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  background: rgba(60, 151, 206, 0.48);
 }

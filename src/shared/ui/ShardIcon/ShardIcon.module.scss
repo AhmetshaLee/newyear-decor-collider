@@ -1,0 +1,29 @@
+.icon {
+  position: relative;
+  display: grid;
+  width: var(--shard-icon-size, 36px);
+  height: var(--shard-icon-size, 36px);
+  place-items: center;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+.icon::before {
+  color: var(--shard-icon-primary-color, #c69249);
+  content: '◆';
+  font-size: var(--shard-icon-primary-size, 24px);
+  transform: var(
+    --shard-icon-primary-transform,
+    translate(-6px, 4px) rotate(-16deg)
+  );
+}
+
+.icon::after {
+  color: var(--shard-icon-secondary-color, #e0b96f);
+  content: '◆';
+  font-size: var(--shard-icon-secondary-size, 18px);
+  transform: var(
+    --shard-icon-secondary-transform,
+    translate(7px, -4px) rotate(18deg)
+  );
+}
