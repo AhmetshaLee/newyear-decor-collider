@@ -174,12 +174,8 @@
 
 .combinedCellPart[data-state='active'] {
   cursor: pointer;
-  box-shadow: inset 0 0 0 2px #b9342f;
-}
-
-.combinedCellPart[data-state='active'] .rewardVisual {
-  opacity: 1;
-  cursor: pointer;
+  outline: 3px dashed #b9342f;
+  outline-offset: -3px;
 }
 
 .otherMonthCell {
@@ -200,13 +196,40 @@
 }
 
 .dayCell[data-state='active'] {
-  border-color: #b9342f;
   cursor: pointer;
+  outline: 3px dashed #b9342f;
+  outline-offset: -3px;
+}
+
+.dayCell[data-state='claimed'],
+.combinedCellPart[data-state='claimed'] {
+  background: #c9ccca;
+}
+
+.claimButton {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  background: transparent;
+}
+
+.claimButton:focus-visible {
+  outline: 2px solid #694b31;
+  outline-offset: -6px;
 }
 
 .dayCell[data-state='claimed'] .dayNumber,
 .combinedCellPart[data-state='claimed'] .dayNumber {
   opacity: 0.48;
+}
+
+.dayCell[data-state='claimed'] .rewardIcon,
+.combinedCellPart[data-state='claimed'] .rewardIcon {
+  opacity: 0.42;
 }
 
 .dayCell[data-state='locked'] .dayNumber,
@@ -229,28 +252,7 @@
   width: 44px;
   height: 44px;
   place-items: center;
-  opacity: 0.42;
   transform: translate(-50%, -38%);
-}
-
-.dayCell[data-state='active'] .rewardVisual,
-.combinedCellPart[data-state='active'] .rewardVisual {
-  opacity: 1;
-}
-
-.dayCell[data-state='locked'] .rewardVisual:not([data-presentation='sticker']),
-.combinedCellPart[data-state='locked']
-  .rewardVisual:not([data-presentation='sticker']) {
-  opacity: 0.28;
-}
-
-.dayCell:not([data-state='active'])
-  .rewardVisual[data-presentation='sticker']
-  .rewardIcon,
-.combinedCellPart:not([data-state='active'])
-  .rewardVisual[data-presentation='sticker']
-  .rewardIcon {
-  opacity: 0.42;
 }
 
 .rewardVisual[data-presentation='sticker'] {
@@ -259,7 +261,6 @@
   height: 100px;
   border: 2px solid #a4665b;
   border-radius: 4px;
-  opacity: 1;
   transform: translate(-50%, -48%) rotate(-4deg);
 }
 

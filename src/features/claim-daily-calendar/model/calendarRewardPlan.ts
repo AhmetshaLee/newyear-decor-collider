@@ -26,6 +26,7 @@ const DEFAULT_REWARD_SLOTS = [
   { day: 1, amount: 100, presentation: 'in-slot' },
   { day: 2, amount: 120, presentation: 'in-slot' },
   { day: 3, amount: 140, presentation: 'in-slot' },
+  { day: 4, amount: 160, presentation: 'in-slot' },
   { day: 5, amount: 180, presentation: 'in-slot' },
   { day: 6, amount: 200, presentation: 'in-slot' },
   { day: 7, amount: 220, presentation: 'in-slot' },

@@ -2,11 +2,13 @@ import { useEffect } from 'react'
 import {
   createCalendarMonth,
   getCalendarDayState,
+  isCalendarTimeLockExpired,
   type CalendarDayState,
   type CalendarMonth,
 } from '@/entities/daily-calendar'
 import { usePlayerProgress } from '@/entities/player-progress'
 import {
+  claimDailyCalendarReward,
   createCalendarRewardPlan,
   syncDailyCalendarMonth,
   type CalendarRewardSlot,
@@ -33,6 +35,7 @@ function createCalendarCells(
   calendarMonth: CalendarMonth,
   currentDayIndex: number,
   todayDay: number,
+  isCurrentDayAvailable: boolean,
   rewardPlan: readonly CalendarRewardSlot[],
 ): readonly CalendarCell[] {
   return calendarMonth.cells.map((day) => {
@@ -42,7 +45,11 @@ function createCalendarCells(
       kind: 'day',
       day,
       isToday: day === todayDay,
-      state: getCalendarDayState(day, currentDayIndex),
+      state: getCalendarDayState(
+        day,
+        currentDayIndex,
+        isCurrentDayAvailable,
+      ),
       reward: rewardPlan.find((item) => item.day === day),
     }
   })
@@ -125,7 +132,35 @@ function CalendarCellContent({ cell }: { cell: CalendarDayCell }) {
   )
 }
 
-function CalendarDayCell({ cell }: { cell: CalendarCell }) {
+function CalendarCellAction({
+  cell,
+  onClaim,
+}: {
+  cell: CalendarDayCell
+  onClaim: () => void
+}) {
+  if (cell.state !== 'active') {
+    return <CalendarCellContent cell={cell} />
+  }
+
+  return (
+    <button
+      className={styles.claimButton}
+      type="button"
+      onClick={onClaim}
+    >
+      <CalendarCellContent cell={cell} />
+    </button>
+  )
+}
+
+function CalendarDayCell({
+  cell,
+  onClaim,
+}: {
+  cell: CalendarCell
+  onClaim: () => void
+}) {
   if (cell.kind === 'adjacent') {
     return <td className={`${styles.dayCell} ${styles.otherMonthCell}`} />
   }
@@ -136,15 +171,17 @@ function CalendarDayCell({ cell }: { cell: CalendarCell }) {
       data-state={cell.state}
       data-today={cell.isToday ? '' : undefined}
     >
-      <CalendarCellContent cell={cell} />
+      <CalendarCellAction cell={cell} onClaim={onClaim} />
     </td>
   )
 }
 
 function CombinedCalendarDayCell({
   cells,
+  onClaim,
 }: {
   cells: readonly [CalendarDayCell, CalendarDayCell]
+  onClaim: () => void
 }) {
   return (
     <td className={`${styles.dayCell} ${styles.combinedCell}`}>
@@ -158,7 +195,7 @@ function CombinedCalendarDayCell({
               data-today={cell.isToday ? '' : undefined}
               key={cell.day}
             >
-              <CalendarCellContent cell={cell} />
+              <CalendarCellAction cell={cell} onClaim={onClaim} />
             </div>
           )
         })}
@@ -179,10 +216,16 @@ export function DailyCalendarPanel() {
     today.getMonth(),
     daysInMonth,
   )
+  const normalizedProgress = syncDailyCalendarMonth(progress, today).progress
+  const isCurrentDayAvailable = isCalendarTimeLockExpired(
+    normalizedProgress.calendar.lastClaimedTimestamp,
+    today,
+  )
   const calendarCells = createCalendarCells(
     calendarMonth,
-    progress.calendar.currentDayIndex,
+    normalizedProgress.calendar.currentDayIndex,
     today.getDate(),
+    isCurrentDayAvailable,
     rewardPlan,
   )
   const weekdayCount = WEEKDAYS.length
@@ -201,6 +244,18 @@ export function DailyCalendarPanel() {
     calendarRows,
     weekdayCount,
   )
+
+  const handleClaim = () => {
+    const currentDate = new Date()
+
+    commitProgress((currentProgress) =>
+      claimDailyCalendarReward({
+        progress: currentProgress,
+        currentDate,
+        rewardPlan,
+      }),
+    )
+  }
 
   useEffect(() => {
     const currentDate = new Date()
@@ -240,12 +295,19 @@ export function DailyCalendarPanel() {
                     return (
                       <CombinedCalendarDayCell
                         cells={cell.cells}
+                        onClaim={handleClaim}
                         key={`combined-${rowIndex}-${columnIndex}`}
                       />
                     )
                   }
 
-                  return <CalendarDayCell cell={cell} key={columnIndex} />
+                  return (
+                    <CalendarDayCell
+                      cell={cell}
+                      onClaim={handleClaim}
+                      key={columnIndex}
+                    />
+                  )
                 })}
               </tr>
             ))}
